@@ -392,17 +392,17 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     </a>
     <!-- Language Switcher -->
     <div class="relative" x-data="{ langOpen: false }">
-      <button @click="langOpen=!langOpen" class="tb-btn flex items-center gap-1" title="Language" style="width:auto;padding:0 10px;">
+      <button @click="langOpen=!langOpen" class="tb-btn flex items-center gap-1" title="Language" style="width:auto;padding:0 10px;" id="langBtn">
         <i class="fas fa-language"></i>
-        <span style="font-size:11px;font-weight:700;text-transform:uppercase">{{ app()->getLocale() }}</span>
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>
       </button>
       <div x-show="langOpen" x-cloak @click.away="langOpen=false"
            class="absolute right-0 top-full mt-2 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-50"
            style="min-width:160px" x-transition>
-        <a href="{{ route('lang.switch', 'en') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='en' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}">🇬🇧 English</a>
-        <a href="{{ route('lang.switch', 'ar') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='ar' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}">🇸🇦 العربية</a>
-        <a href="{{ route('lang.switch', 'ro') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='ro' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}">🇷🇴 Română</a>
-        <a href="{{ route('lang.switch', 'pl') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='pl' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}">🇵🇱 Polski</a>
+        <a href="#" onclick="switchLanguage('en', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='en' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="en">🇬🇧 English</a>
+        <a href="#" onclick="switchLanguage('ar', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='ar' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ar">🇸🇦 العربية</a>
+        <a href="#" onclick="switchLanguage('ro', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='ro' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ro">🇷🇴 Română</a>
+        <a href="#" onclick="switchLanguage('pl', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='pl' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="pl">🇵🇱 Polski</a>
       </div>
     </div>
     <div class="relative" x-data="{ open: false }">
@@ -455,6 +455,12 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
 </div><!-- x-data -->
 
 <script>
+  // Notification polling configuration
+  let notificationPollInterval = null;
+  let lastNotificationCount = 0;
+  let isNotificationDropdownOpen = false;
+  let notificationFetchTimeout = null;
+  
   // Fetch unread notifications and update badge
   async function fetchNotifications() {
     try {
@@ -472,35 +478,42 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
       // Use the count from the API (includes pending redemptions for shop users)
       let badgeCount = data.count;
       
-      if (badgeCount > 0) {
-        badge.textContent = badgeCount;
-        badge.style.display = 'flex';
-      } else {
-        badge.style.display = 'none';
+      // Only update if count changed (reduce DOM updates)
+      if (badgeCount !== lastNotificationCount) {
+        lastNotificationCount = badgeCount;
+        if (badgeCount > 0) {
+          badge.textContent = badgeCount;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
       }
       
-      // Update notification list
-      if (data.notifications && data.notifications.length > 0) {
-        let html = '';
-        data.notifications.forEach(notif => {
-          html += `
-            <div class="px-4 py-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition" onclick="markAsRead(${notif.id})">
-              <div class="flex items-start gap-3">
-                <div class="flex-shrink-0 mt-1">
-                  <div class="w-2 h-2 rounded-full ${notif.read_at ? 'bg-slate-300' : 'bg-green-500'}"></div>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-slate-900">${notif.title}</p>
-                  <p class="text-xs text-slate-600 mt-0.5">${notif.message}</p>
-                  <p class="text-xs text-slate-400 mt-1">${new Date(notif.created_at).toLocaleString()}</p>
+      // Only update notification list if dropdown is open
+      if (isNotificationDropdownOpen) {
+        // Update notification list
+        if (data.notifications && data.notifications.length > 0) {
+          let html = '';
+          data.notifications.forEach(notif => {
+            html += `
+              <div class="px-4 py-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition" onclick="markAsRead(${notif.id})">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 mt-1">
+                    <div class="w-2 h-2 rounded-full ${notif.read_at ? 'bg-slate-300' : 'bg-green-500'}"></div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-slate-900">${notif.title}</p>
+                    <p class="text-xs text-slate-600 mt-0.5">${notif.message}</p>
+                    <p class="text-xs text-slate-400 mt-1">${new Date(notif.created_at).toLocaleString()}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          `;
-        });
-        list.innerHTML = html;
-      } else {
-        list.innerHTML = '<div class="px-4 py-6 text-sm text-slate-500 text-center">No notifications</div>';
+            `;
+          });
+          list.innerHTML = html;
+        } else {
+          list.innerHTML = '<div class="px-4 py-6 text-sm text-slate-500 text-center">No notifications</div>';
+        }
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -543,17 +556,84 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     }
   }
   
-  // Fetch notifications on page load and every 10 seconds
+  // Start polling notifications (only when dropdown is open)
+  function startNotificationPolling() {
+    if (!notificationPollInterval) {
+      fetchNotifications(); // Fetch immediately
+      notificationPollInterval    // Polling moved to smart polling that only runs when dropdown is open// Poll every 30 seconds instead of 10
+    }
+  }
+  
+  // Stop polling notifications
+  function stopNotificationPolling() {
+    if (notificationPollInterval) {
+      clearInterval(notificationPollInterval);
+      notificationPollInterval = null;
+    }
+  }
+  
+  // Initialize on page load
   document.addEventListener('DOMContentLoaded', function() {
+    // Fetch badge count immediately (lightweight)
     fetchNotifications();
-    setInterval(fetchNotifications, 10000);
     
-    // Fetch when notification button is clicked
+    // Start polling when notification button is clicked
     const notifBtn = document.getElementById('notif-btn');
     if (notifBtn) {
-      notifBtn.addEventListener('click', fetchNotifications);
+      notifBtn.addEventListener('click', function() {
+        isNotificationDropdownOpen = !isNotificationDropdownOpen;
+        if (isNotificationDropdownOpen) {
+          startNotificationPolling();
+        } else {
+          stopNotificationPolling();
+        }
+      });
+    }
+    
+    // Stop polling when dropdown closes
+    const notifDropdown = document.querySelector('[x-show="notifOpen"]');
+    if (notifDropdown) {
+      notifDropdown.addEventListener('click.away', function() {
+        isNotificationDropdownOpen = false;
+        stopNotificationPolling();
+      });
     }
   });
+  
+  // Language switching function
+  function switchLanguage(lang, event) {
+    event.preventDefault();
+    
+    // Update the language code display
+    document.getElementById('langCode').textContent = lang.toUpperCase();
+    
+    // Update the active language option styling
+    document.querySelectorAll('.lang-option').forEach(option => {
+      if (option.dataset.lang === lang) {
+        option.classList.add('text-green-600', 'font-semibold', 'bg-green-50');
+        option.classList.remove('text-slate-700', 'hover:bg-slate-50');
+      } else {
+        option.classList.remove('text-green-600', 'font-semibold', 'bg-green-50');
+        option.classList.add('text-slate-700', 'hover:bg-slate-50');
+      }
+    });
+    
+    // Send AJAX request to switch language
+    const langRoute = '{{ route("lang.switch", "") }}';
+    fetch(langRoute + '/' + lang, {
+      method: 'GET',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+      }
+    }).then(response => {
+      if (response.ok) {
+        // Reload the page to apply language changes
+        window.location.reload();
+      }
+    }).catch(error => {
+      console.error('Error switching language:', error);
+    });
+  }
 </script>
 
 @yield('scripts')
