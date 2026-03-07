@@ -89,15 +89,18 @@
 </div>
 
 <!-- Footer -->
-<footer style="background:#0f172a;color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid #1e293b">
+<footer style="background:linear-gradient(135deg,#0f4c81 0%,#1a5fa0 100%);color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,.1)">
     <div style="max-width:1200px;margin:0 auto">
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:30px">
             <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
                     <img src="{{ asset('images/logo.png') }}" alt="eVoucher Logo" style="width:36px;height:36px;object-fit:contain">
-                    <div style="font-size:16px;font-weight:800">eVoucher</div>
+                    <div>
+                        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">BAKUP CIC</div>
+                        <div style="font-size:16px;font-weight:800">eVoucher</div>
+                    </div>
                 </div>
-                <p style="font-size:13px;color:#94a3b8;line-height:1.6">Food Support Platform helping reduce food waste and support vulnerable communities in Northamptonshire.</p>
+                <p style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6">Connecting near-expiry food with families in need across Northamptonshire. Free to use, community powered, and backed by the NHS.</p>
             </div>
             <div>
                 <h4 style="font-size:14px;font-weight:700;margin-bottom:12px">Quick Links</h4>
@@ -118,8 +121,13 @@
                 </ul>
             </div>
         </div>
-        <div style="border-top:1px solid #1e293b;padding-top:20px;text-align:center;font-size:12px;color:#64748b">
-            <p style="margin:0">© 2026 eVoucher Food Support Platform. All rights reserved.</p>
+            <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.4)">© 2026 eVoucher Food Support Platform — Built for BAKUP CIC · Northamptonshire Pilot</p>
+            <div style="display:flex;gap:12px">
+                <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px">NHS Backed</span>
+                <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px">BAKUP CIC</span>
+                <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px">Zero Waste</span>
+            </div>
         </div>
     </div>
 </footer>
