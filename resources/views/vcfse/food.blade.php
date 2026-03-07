@@ -111,16 +111,41 @@
           <i class="fas fa-info-circle"></i> {{ $item->collection_instructions }}
         </div>
         @endif
-        <!-- Expiry Warning -->
-        @php $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->expiry_date), false); @endphp
-        @if($daysLeft <= 2)
-          <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
-            <i class="fas fa-exclamation-triangle"></i> Expires in {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }}!
-          </div>
-        @elseif($daysLeft <= 5)
-          <div class="badge badge-yellow w-full justify-center mb-2" style="display:flex">
-            <i class="fas fa-clock"></i> Expires in {{ $daysLeft }} days
-          </div>
+        <!-- Surplus Allocation Timer -->
+        @if($item->listing_type === 'surplus')
+          @php
+            $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
+              ->where('status', 'pending')
+              ->first();
+            $timeRemaining = $allocation ? $allocation->getTimeRemainingMinutes() : null;
+            $isExpired = $allocation ? $allocation->isExpired() : false;
+          @endphp
+          @if($allocation && !$isExpired)
+            <div class="badge badge-orange w-full justify-center mb-2" style="display:flex;background:#fed7aa;color:#92400e;border:1px solid #fdba74">
+              <i class="fas fa-hourglass-end"></i> 
+              @if($timeRemaining > 0)
+                {{ $timeRemaining }} mins remaining
+              @else
+                Expires soon!
+              @endif
+            </div>
+          @elseif($isExpired)
+            <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
+              <i class="fas fa-times-circle"></i> Allocation Expired
+            </div>
+          @endif
+        @else
+          <!-- Expiry Warning -->
+          @php $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->expiry_date), false); @endphp
+          @if($daysLeft <= 2)
+            <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
+              <i class="fas fa-exclamation-triangle"></i> Expires in {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }}!
+            </div>
+          @elseif($daysLeft <= 5)
+            <div class="badge badge-yellow w-full justify-center mb-2" style="display:flex">
+              <i class="fas fa-clock"></i> Expires in {{ $daysLeft }} days
+            </div>
+          @endif
         @endif
         <!-- Collection Time -->
         @if($item->collection_time)
@@ -128,8 +153,20 @@
           <i class="fas fa-clock"></i> Collection: {{ $item->collection_time }}
         </div>
         @endif
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
           <span style="font-size:18px;font-weight:800;color:#16a34a">FREE</span>
+          @if($item->listing_type === 'surplus')
+            @php
+              $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
+                ->where('status', 'pending')
+                ->first();
+            @endphp
+            @if($allocation && !$allocation->isExpired())
+              <button type="button" class="btn btn-sm btn-success claim-btn" data-item-id="{{ $item->id }}" style="font-size:11px;padding:6px 12px">
+                <i class="fas fa-check"></i> Claim
+              </button>
+            @endif
+          @endif
           <span style="font-size:11px;color:#94a3b8">{{ $item->listing_type === 'surplus' ? 'VCFSE Collection' : 'Available to All' }}</span>
         </div>
       </div>
@@ -145,3 +182,36 @@
   @endif
 @endif
 @endsection
+
+<script>
+document.querySelectorAll('.claim-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const itemId = this.getAttribute('data-item-id');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    
+    if (confirm('Are you sure you want to claim this item?')) {
+      fetch(`/api/surplus/claim/${itemId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Item claimed successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to claim item'));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while claiming the item');
+      });
+    }
+  });
+});
+</script>
