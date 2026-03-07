@@ -176,6 +176,36 @@
     </div>
   </div>
 </div>
+
+<!-- Recent Donations -->
+<div class="card mt-6">
+  <div class="card-hd">
+    <div class="card-title"><i class="fas fa-heart text-red-500"></i> Recent Donations</div>
+    <a href="{{ route('admin.donations.index') }}" class="btn btn-secondary btn-sm">View All</a>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="data-table">
+      <thead><tr><th>Email</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>
+        @forelse($recentDonations ?? [] as $donation)
+        <tr>
+          <td style="font-size:12px;color:#64748b">{{ $donation->email }}</td>
+          <td style="font-weight:600">£{{ number_format($donation->amount, 2) }}</td>
+          <td>
+            @if($donation->status === 'succeeded')<span class="badge badge-green">Succeeded</span>
+            @elseif($donation->status === 'pending')<span class="badge badge-yellow">Pending</span>
+            @elseif($donation->status === 'failed')<span class="badge badge-red">Failed</span>
+            @else<span class="badge badge-gray">{{ ucfirst($donation->status) }}</span>@endif
+          </td>
+          <td style="font-size:12px;color:#64748b">{{ $donation->created_at->format('d M Y') }}</td>
+        </tr>
+        @empty
+        <tr><td colspan="4" class="text-center py-8 text-slate-400">No donations yet</td></tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
+</div>
 @endsection
 @section('scripts')
 <script>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Models\Donation;
 
 class DonationController extends Controller
 {
@@ -44,19 +45,51 @@ class DonationController extends Controller
             ]);
 
             if ($paymentIntent->status === 'succeeded') {
+                // Save donation to database
+                Donation::create([
+                    'amount' => $validated['amount'],
+                    'email' => $validated['email'],
+                    'payment_intent_id' => $paymentIntent->id,
+                    'payment_method_id' => $validated['payment_method_id'],
+                    'status' => 'succeeded',
+                    'metadata' => json_encode($paymentIntent->metadata)
+                ]);
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Thank you for your donation!',
+                    'message' => 'Thank you for your donation of £' . $validated['amount'] . '!',
                     'amount' => $validated['amount'],
                     'email' => $validated['email']
                 ]);
             } else {
+                // Save failed donation
+                Donation::create([
+                    'amount' => $validated['amount'],
+                    'email' => $validated['email'],
+                    'payment_intent_id' => $paymentIntent->id,
+                    'payment_method_id' => $validated['payment_method_id'],
+                    'status' => 'failed',
+                    'metadata' => json_encode($paymentIntent->metadata)
+                ]);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Payment processing failed. Please try again.'
                 ], 400);
             }
         } catch (\Exception $e) {
+            // Save error donation
+            try {
+                Donation::create([
+                    'amount' => $validated['amount'] ?? 0,
+                    'email' => $validated['email'] ?? 'unknown',
+                    'status' => 'failed',
+                    'metadata' => json_encode(['error' => $e->getMessage()])
+                ]);
+            } catch (\Exception $dbError) {
+                // Log if database save fails
+            }
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
