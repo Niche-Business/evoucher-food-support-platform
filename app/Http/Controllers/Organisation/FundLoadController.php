@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Organisation;
 use App\Http\Controllers\Controller;
 use App\Models\BankDeposit;
 use App\Models\SystemLog;
+use App\Models\OrganisationProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
@@ -20,8 +21,8 @@ class FundLoadController extends Controller
     public function showLoadForm()
     {
         $user = Auth::user();
-        $profile = $user->organisationProfile;
-        $walletBalance = $profile ? (float)$profile->wallet_balance : 0.0;
+        $profile = $user->organisationProfile ?? new OrganisationProfile();
+        $walletBalance = (float)($profile->wallet_balance ?? 0);
         
         // Check if organisation has verified bank deposits
         $bankDeposits = BankDeposit::where('organisation_user_id', $user->id)
@@ -29,7 +30,7 @@ class FundLoadController extends Controller
             ->latest()
             ->get();
 
-        return view('organisation.fund-load', compact('walletBalance', 'bankDeposits'));
+        return view('organisation.fund-load', compact('walletBalance', 'bankDeposits', 'user'));
     }
 
     public function createPaymentIntent(Request $request)
@@ -52,7 +53,14 @@ class FundLoadController extends Controller
                 ],
             ]);
 
-            SystemLog::log('fund_load_initiated', 'fund_load', null, "Fund load of £{$request->amount} initiated by {$user->name}");
+            SystemLog::create([
+                'user_id' => $user->id,
+                'action' => 'fund_load_initiated',
+                'entity_type' => 'fund_load',
+                'entity_id' => null,
+                'description' => "Fund load of £{$request->amount} initiated by {$user->name}",
+                'ip_address' => $request->ip(),
+            ]);
 
             return response()->json([
                 'clientSecret' => $paymentIntent->client_secret,
@@ -80,9 +88,21 @@ class FundLoadController extends Controller
                 $profile = $user->organisationProfile;
                 if ($profile) {
                     $profile->increment('wallet_balance', $request->amount);
+                } else {
+                    OrganisationProfile::create([
+                        'user_id' => $user->id,
+                        'wallet_balance' => $request->amount,
+                    ]);
                 }
 
-                SystemLog::log('fund_load_completed', 'fund_load', null, "Fund load of £{$request->amount} completed by {$user->name}");
+                SystemLog::create([
+                    'user_id' => $user->id,
+                    'action' => 'fund_load_completed',
+                    'entity_type' => 'fund_load',
+                    'entity_id' => null,
+                    'description' => "Fund load of £{$request->amount} completed by {$user->name}",
+                    'ip_address' => $request->ip(),
+                ]);
 
                 return response()->json([
                     'success' => true,
@@ -100,8 +120,6 @@ class FundLoadController extends Controller
     public function loadHistory()
     {
         $user = Auth::user();
-        // In a real app, you'd have a FundLoad model to track transactions
-        // For now, we'll show recent system logs
         $logs = SystemLog::where('user_id', $user->id)
             ->where('action', 'fund_load_completed')
             ->latest()

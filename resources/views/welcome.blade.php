@@ -110,6 +110,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a}
       <div class="hero-btns">
         <a href="{{ route('register') }}" class="btn-hero-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
         <a href="{{ url('/food') }}" class="btn-hero-secondary"><i class="fas fa-basket-shopping"></i> Browse Food</a>
+        <button onclick="openDonateModal()" class="btn-hero-secondary"><i class="fas fa-heart"></i> Donate</button>
       </div>
     </div>
   </div>
@@ -121,6 +122,17 @@ body{font-family:'Inter',sans-serif;color:#0f172a}
     <div class="stat-item"><div class="stat-num">NHS</div><div class="stat-lbl">Community Backed</div></div>
   </div>
 </div>
+
+<!-- Notifications -->
+@auth
+<div style="background:#dbeafe;border-left:4px solid #3b82f6;padding:16px 40px;display:flex;align-items:center;gap:16px">
+  <i class="fas fa-bell" style="font-size:20px;color:#3b82f6"></i>
+  <div>
+    <div style="font-weight:bold;color:#1e40af">Notifications</div>
+    <div style="font-size:14px;color:#1e40af">You have <span id="notification-count">0</span> new notifications</div>
+  </div>
+</div>
+@endauth
 
 <!-- How It Works -->
 <div class="section" style="background:#fff">
@@ -189,11 +201,102 @@ body{font-family:'Inter',sans-serif;color:#0f172a}
   <div style="font-size:16px;color:rgba(255,255,255,.65);max-width:500px;margin:0 auto 36px;line-height:1.7">
     Join the Northamptonshire eVoucher pilot and help us reduce food waste while supporting families in need.
   </div>
-  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-    <a href="{{ route('register') }}" class="btn-hero-primary"><i class="fas fa-rocket"></i> Register Now</a>
-    <a href="{{ route('login') }}" class="btn-hero-secondary"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+      <div class="hero-btns">
+        <a href="{{ route('register') }}" class="btn-hero-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
+        <a href="{{ url('/food') }}" class="btn-hero-secondary"><i class="fas fa-basket-shopping"></i> Browse Food</a>
+        <button onclick="openDonateModal()" class="btn-hero-secondary" style="border:none;cursor:pointer"><i class="fas fa-heart"></i> Donate</button>
+      </div>
+</div>
+
+<!-- Donate Modal -->
+<div id="donateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999">
+  <div style="background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:32px;max-width:420px;width:90%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h2 style="font-size:24px;font-weight:bold">Make a Donation</h2>
+      <button onclick="closeDonateModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#999">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form id="donate-form" style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Donation Amount (£)</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button type="button" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;cursor:pointer" onclick="setAmount(5)">£5</button>
+          <button type="button" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;cursor:pointer" onclick="setAmount(10)">£10</button>
+          <button type="button" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;cursor:pointer" onclick="setAmount(20)">£20</button>
+          <button type="button" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;cursor:pointer" onclick="setAmount(50)">£50</button>
+        </div>
+        <input type="number" id="donateAmount" name="amount" min="1" step="0.01" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px" placeholder="Or enter custom amount">
+      </div>
+
+      <div>
+        <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Email</label>
+        <input type="email" name="email" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px" placeholder="your@email.com">
+      </div>
+
+      <div id="card-element" style="padding:10px;border:1px solid #ddd;border-radius:8px"></div>
+      <div id="card-errors" style="color:#dc2626;font-size:14px"></div>
+
+      <button type="submit" style="width:100%;background:#16a34a;color:#fff;padding:12px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;font-size:15px">
+        <i class="fas fa-lock mr-2"></i>Donate Securely
+      </button>
+    </form>
+
+    <p style="font-size:12px;color:#999;margin-top:16px;text-align:center">
+      <i class="fas fa-shield-alt mr-1"></i>Your donation is secure and encrypted with Stripe
+    </p>
   </div>
 </div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  let stripe, elements, cardElement;
+
+  function openDonateModal() {
+    document.getElementById('donateModal').style.display = 'flex';
+    
+    if (!stripe) {
+      stripe = Stripe('{{ config("services.stripe.public") }}');
+      elements = stripe.elements();
+      cardElement = elements.create('card');
+      cardElement.mount('#card-element');
+
+      cardElement.addEventListener('change', (event) => {
+        const displayError = document.getElementById('card-errors');
+        displayError.textContent = event.error ? event.error.message : '';
+      });
+    }
+  }
+
+  function closeDonateModal() {
+    document.getElementById('donateModal').style.display = 'none';
+  }
+
+  function setAmount(amount) {
+    document.getElementById('donateAmount').value = amount;
+  }
+
+  document.getElementById('donate-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const amount = document.getElementById('donateAmount').value;
+    const email = document.querySelector('input[name="email"]').value;
+
+    alert('Thank you for your donation of £' + amount + '! This feature will be fully integrated with Stripe.');
+    closeDonateModal();
+  });
+
+  // Load notification count
+  @auth
+  fetch('/api/notifications/count')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('notification-count').textContent = data.count || 0;
+    })
+    .catch(() => {});
+  @endauth
+</script>
 
 <div class="footer">
   <div style="margin-bottom:8px">

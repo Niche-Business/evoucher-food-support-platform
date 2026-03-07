@@ -20,6 +20,7 @@ use App\Http\Controllers\Recipient\VoucherController as RecipientVoucher;
 use App\Http\Controllers\Shop\DashboardController as ShopDashboard;
 use App\Http\Controllers\Shop\FoodListingController as ShopListing;
 use App\Http\Controllers\Shop\PayoutController as ShopPayout;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 // Language Switcher
@@ -140,7 +141,7 @@ Route::prefix('vcfse')->name('vcfse.')->middleware(['auth', 'approved', 'role:vc
     Route::get('/dashboard', [OrgDashboard::class, 'vcfseDashboard'])->name('dashboard');
     Route::get('/food', [OrgDashboard::class, 'browseFood'])->name('food');
     Route::get('/fund-load', [OrgFundLoad::class, 'showLoadForm'])->name('fund-load');
-    Route::post('/fund-load/payment-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.payment-intent');
+    Route::post('/fund-load/create-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.create-intent');
     Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
     Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
@@ -152,11 +153,21 @@ Route::prefix('school')->name('school.')->middleware(['auth', 'approved', 'role:
     Route::get('/dashboard', [OrgDashboard::class, 'schoolDashboard'])->name('dashboard');
     Route::get('/food', [OrgDashboard::class, 'browseFood'])->name('food');
     Route::get('/fund-load', [OrgFundLoad::class, 'showLoadForm'])->name('fund-load');
-    Route::post('/fund-load/payment-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.payment-intent');
+    Route::post('/fund-load/create-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.create-intent');
     Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
     Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [OrgDashboard::class, 'updateProfile'])->name('profile.update');
+});
+
+// Notifications
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/unread', [NotificationController::class, 'getUnread'])->name('unread');
+    Route::post('/{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+    Route::delete('/{notification}', [NotificationController::class, 'delete'])->name('delete');
+    Route::delete('/delete-all', [NotificationController::class, 'deleteAll'])->name('delete-all');
 });
 
 // Stripe Webhook

@@ -7,14 +7,13 @@
     <p>Available food items near you in Northamptonshire</p>
 </div>
 
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+    <p class="text-blue-800"><i class="fas fa-info-circle mr-2"></i>You can only see discounted food items. Browse and redeem your vouchers below.</p>
+</div>
+
 <form method="GET" style="display:flex;gap:10px;margin-bottom:20px">
-    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search food items..."
+    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search discounted food items..."
         class="form-input" style="flex:1">
-    <select name="type" class="form-select" style="width:auto;min-width:160px">
-        <option value="">All Types</option>
-        <option value="free" {{ request('type') === 'free' ? 'selected' : '' }}>Free Items</option>
-        <option value="discounted" {{ request('type') === 'discounted' ? 'selected' : '' }}>Food to Go (Discounted)</option>
-    </select>
     <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
 </form>
 
@@ -29,15 +28,9 @@
         <div class="food-card-body">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
                 <h3 style="font-size:14px;font-weight:700;color:#0f172a;line-height:1.3">{{ $listing->item_name }}</h3>
-                @if($listing->listing_type === 'discounted')
                 <span class="badge badge-orange" style="flex-shrink:0">
-                    <i class="fas fa-tag"></i> Food to Go
+                    <i class="fas fa-tag"></i> Discounted
                 </span>
-                @else
-                <span class="badge badge-green" style="flex-shrink:0">
-                    <i class="fas fa-gift"></i> Free
-                </span>
-                @endif
             </div>
             @if($listing->listing_type === 'discounted' && $listing->discounted_price)
             <div style="margin-bottom:8px">
