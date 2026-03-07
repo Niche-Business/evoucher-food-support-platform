@@ -4,10 +4,13 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\UserController as AdminUser;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucher;
 use App\Http\Controllers\Admin\ReportController as AdminReport;
-use App\Http\Controllers\Admin\FundLoadController as AdminFundLoad;
-use App\Http\Controllers\Admin\PayoutController as AdminPayout;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\FoodListingController;
+use App\Http\Controllers\Admin\FundLoadController as AdminFundLoad;use App\Http\Controllers\Admin\PayoutController as AdminPayout;
+use App\Http\Controllers\Admin\BroadcastController as AdminBroadcast;
+use App\Http\Controllers\Admin\SystemLogController as AdminSystemLog;
+use App\Http\Controllers\Admin\BankDepositController as AdminBankDeposit;
+use App\Http\Controllers\Admin\ReportGeneratorController as AdminReportGenerator;
+use App\Http\Controllers\Organisation\FundLoadController as OrgFundLoad;
+use App\Http\Controllers\Auth\RegisterController;e App\Http\Controllers\FoodListingController;
 use App\Http\Controllers\Organisation\DashboardController as OrgDashboard;
 use App\Http\Controllers\Organisation\DonationController;
 use App\Http\Controllers\Recipient\DashboardController as RecipientDashboard;
@@ -69,6 +72,27 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'approved', 'role:ad
     Route::patch('/payouts/{id}/approve', [AdminPayout::class, 'approve'])->name('payouts.approve');
     Route::post('/payouts/{id}/mark-paid', [AdminPayout::class, 'markPaid'])->name('payouts.mark-paid');
     Route::post('/payouts/{id}/reject', [AdminPayout::class, 'reject'])->name('payouts.reject');
+    // Broadcasts
+    Route::get('/broadcasts', [AdminBroadcast::class, 'index'])->name('broadcasts.index');
+    Route::get('/broadcasts/create', [AdminBroadcast::class, 'create'])->name('broadcasts.create');
+    Route::post('/broadcasts', [AdminBroadcast::class, 'store'])->name('broadcasts.store');
+    Route::get('/broadcasts/{broadcast}', [AdminBroadcast::class, 'show'])->name('broadcasts.show');
+    Route::post('/broadcasts/{broadcast}/send', [AdminBroadcast::class, 'send'])->name('broadcasts.send');
+    Route::delete('/broadcasts/{broadcast}', [AdminBroadcast::class, 'destroy'])->name('broadcasts.destroy');
+    // System Logs
+    Route::get('/logs', [AdminSystemLog::class, 'index'])->name('logs.index');
+    Route::get('/logs/{log}', [AdminSystemLog::class, 'show'])->name('logs.show');
+    Route::get('/logs/export', [AdminSystemLog::class, 'export'])->name('logs.export');
+    // Bank Deposits
+    Route::get('/bank-deposits', [AdminBankDeposit::class, 'index'])->name('bank-deposits.index');
+    Route::get('/bank-deposits/{deposit}', [AdminBankDeposit::class, 'show'])->name('bank-deposits.show');
+    Route::patch('/bank-deposits/{deposit}/verify', [AdminBankDeposit::class, 'verify'])->name('bank-deposits.verify');
+    Route::patch('/bank-deposits/{deposit}/reject', [AdminBankDeposit::class, 'reject'])->name('bank-deposits.reject');
+    // Reports
+    Route::get('/reports/vouchers', [AdminReportGenerator::class, 'vouchersReport'])->name('reports.vouchers');
+    Route::get('/reports/redemptions', [AdminReportGenerator::class, 'redemptionsReport'])->name('reports.redemptions');
+    Route::get('/reports/users', [AdminReportGenerator::class, 'usersReport'])->name('reports.users');
+    Route::get('/reports/food-listings', [AdminReportGenerator::class, 'foodListingsReport'])->name('reports.food-listings');
 });
 
 // Shop
@@ -113,11 +137,10 @@ Route::prefix('recipient')->name('recipient.')->middleware(['auth', 'role:recipi
 Route::prefix('vcfse')->name('vcfse.')->middleware(['auth', 'approved', 'role:vcfse'])->group(function () {
     Route::get('/dashboard', [OrgDashboard::class, 'vcfseDashboard'])->name('dashboard');
     Route::get('/food', [OrgDashboard::class, 'browseFood'])->name('food');
-    Route::get('/donate', [DonationController::class, 'showForm'])->name('donate');
-    Route::post('/donate', [DonationController::class, 'initiate'])->name('donate.initiate');
-    Route::get('/donate/success', [DonationController::class, 'success'])->name('donate.success');
-    Route::get('/donate/cancel', [DonationController::class, 'cancel'])->name('donate.cancel');
-    Route::get('/donations', [OrgDashboard::class, 'donations'])->name('donations');
+    Route::get('/fund-load', [OrgFundLoad::class, 'showLoadForm'])->name('fund-load');
+    Route::post('/fund-load/payment-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.payment-intent');
+    Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
+    Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [OrgDashboard::class, 'updateProfile'])->name('profile.update');
 });
@@ -126,11 +149,10 @@ Route::prefix('vcfse')->name('vcfse.')->middleware(['auth', 'approved', 'role:vc
 Route::prefix('school')->name('school.')->middleware(['auth', 'approved', 'role:school_care'])->group(function () {
     Route::get('/dashboard', [OrgDashboard::class, 'schoolDashboard'])->name('dashboard');
     Route::get('/food', [OrgDashboard::class, 'browseFood'])->name('food');
-    Route::get('/donate', [DonationController::class, 'showForm'])->name('donate');
-    Route::post('/donate', [DonationController::class, 'initiate'])->name('donate.initiate');
-    Route::get('/donate/success', [DonationController::class, 'success'])->name('donate.success');
-    Route::get('/donate/cancel', [DonationController::class, 'cancel'])->name('donate.cancel');
-    Route::get('/donations', [OrgDashboard::class, 'donations'])->name('donations');
+    Route::get('/fund-load', [OrgFundLoad::class, 'showLoadForm'])->name('fund-load');
+    Route::post('/fund-load/payment-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.payment-intent');
+    Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
+    Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [OrgDashboard::class, 'updateProfile'])->name('profile.update');
 });

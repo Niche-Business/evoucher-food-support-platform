@@ -18,10 +18,10 @@ class DashboardController extends Controller
             ->where('expiry_date', '>=', now()->toDateString())
             ->get();
         $recent_redemptions = Redemption::where('recipient_user_id', $user->id)->with('foodListing')->latest()->take(3)->get();
-        // Recipients see Free and Discounted listings only (not Free Surplus which is VCFSE-only)
+        // Recipients see ONLY Discounted listings (NOT Free or Surplus)
         $availableFood      = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
-            ->whereIn('listing_type', ['free', 'discounted'])
+            ->where('listing_type', 'discounted')
             ->latest()->take(6)->get();
         $total_voucher_value= $active_vouchers->sum('remaining_value');
         return view('recipient.dashboard', compact('active_vouchers','recent_redemptions','availableFood','total_voucher_value'));
@@ -29,14 +29,13 @@ class DashboardController extends Controller
 
     public function browse(Request $request)
     {
-        // Recipients see Free and Discounted listings only (not Free Surplus which is VCFSE-only)
+        // Recipients see ONLY Discounted listings (NOT Free or Surplus)
         $query = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
-            ->whereIn('listing_type', ['free', 'discounted'])
+            ->where('listing_type', 'discounted')
             ->with('shop.shopProfile');
         if ($request->search) $query->where('item_name','like','%'.$request->search.'%');
         if ($request->max_value) $query->where('voucher_value','<=',$request->max_value);
-        if ($request->type && in_array($request->type, ['free', 'discounted'])) $query->where('listing_type', $request->type);
         $listings = $query->latest()->paginate(12);
         return view('recipient.food.browse', compact('listings'));
     }
@@ -44,8 +43,8 @@ class DashboardController extends Controller
     public function showListing(FoodListing $listing)
     {
         abort_if($listing->status !== 'available', 404, 'This item is no longer available.');
-        // Recipients cannot access surplus listings
-        abort_if($listing->listing_type === 'surplus', 403, 'This listing is not available for recipients.');
+        // Recipients can only access discounted listings
+        abort_if($listing->listing_type !== 'discounted', 403, 'This listing is not available for recipients.');
         $listing->load('shop.shopProfile');
         // Show ALL active/partially_used vouchers with any remaining balance
         // so recipients can use partial vouchers for items they can afford
