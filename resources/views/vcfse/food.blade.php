@@ -155,25 +155,28 @@
         @endif
         <div class="flex items-center justify-between gap-2">
           <span style="font-size:18px;font-weight:800;color:#16a34a">FREE</span>
-          @if($item->listing_type === 'surplus')
-            @php
-              $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
-                ->where('status', 'pending')
-                ->first();
-            @endphp
-            @if($allocation && !$allocation->isExpired())
-              <form method="POST" action="{{ route('vcfse.food.claim', $item->id) }}" style="display:inline">
-                @csrf
-                <button type="submit" class="btn btn-success" style="font-size:13px;padding:8px 16px;font-weight:600;border-radius:6px;box-shadow:0 2px 8px rgba(34,197,94,0.3);transition:all 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(34,197,94,0.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(34,197,94,0.3)';this.style.transform='translateY(0)'" onclick="return confirm('Are you sure you want to claim this item? This will reserve it for your organization.')">
-                  <i class="fas fa-hand-holding-heart" style="margin-right:6px"></i> Claim Now
-                </button>
-              </form>
-            @elseif($allocation && $allocation->isExpired())
-              <span style="font-size:11px;color:#ef4444;font-weight:600"><i class="fas fa-times-circle"></i> Expired</span>
-            @endif
-          @endif
           <span style="font-size:11px;color:#94a3b8">{{ $item->listing_type === 'surplus' ? 'VCFSE Collection' : 'Available to All' }}</span>
         </div>
+        <!-- Claim Button Footer -->
+        @if($item->listing_type === 'surplus')
+          @php
+            $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
+              ->where('status', 'pending')
+              ->first();
+          @endphp
+          @if($allocation && !$allocation->isExpired())
+            <form method="POST" action="{{ route('vcfse.food.claim', $item->id) }}" style="margin-top:12px">
+              @csrf
+              <button type="submit" class="btn btn-success w-full" style="font-size:13px;padding:10px 16px;font-weight:600;border-radius:6px;box-shadow:0 2px 8px rgba(34,197,94,0.3);transition:all 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(34,197,94,0.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(34,197,94,0.3)';this.style.transform='translateY(0)'" onclick="return confirm('Are you sure you want to claim this item? This will reserve it for your organization.')">
+                <i class="fas fa-hand-holding-heart" style="margin-right:6px"></i> Claim Now
+              </button>
+            </form>
+          @elseif($allocation && $allocation->isExpired())
+            <div style="margin-top:12px;padding:10px;background:#fee2e2;border-radius:6px;text-align:center;color:#dc2626;font-weight:600;font-size:12px">
+              <i class="fas fa-times-circle"></i> Allocation Expired
+            </div>
+          @endif
+        @endif
       </div>
     </div>
     @endforeach
