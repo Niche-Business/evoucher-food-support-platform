@@ -88,10 +88,6 @@
     @endif
 </div>
 
-</div>
-
-@endsection
-
 <!-- Footer -->
 <footer style="background:linear-gradient(135deg,#0f4c81 0%,#1a5fa0 100%);color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,.1);width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw">
     <div style="max-width:1200px;margin:0 auto;padding:0 24px">
@@ -125,7 +121,7 @@
                 </ul>
             </div>
         </div>
-            <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
             <p style="margin:0;font-size:12px;color:rgba(255,255,255,.4)">© 2026 eVoucher Food Support Platform — Built for BAKUP CIC · Northamptonshire Pilot</p>
             <div style="display:flex;gap:12px">
                 <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px">NHS Backed</span>
@@ -146,3 +142,5 @@
     background: #059669 !important;
 }
 </style>
+
+@endsection
