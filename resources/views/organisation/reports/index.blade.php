@@ -33,8 +33,8 @@
       <i class="fas fa-file-pdf"></i>
     </div>
     <div class="stat-label">PDF Reports</div>
-    <div class="stat-value">2</div>
-    <div class="stat-change" style="color:#7e22ce">Available for download</div>
+    <div class="stat-value">{{ ($fundLoads->count() > 0 || $bankDeposits->count() > 0) ? 2 : 0 }}</div>
+    <div class="stat-change" style="color:#7e22ce">{{ ($fundLoads->count() > 0 || $bankDeposits->count() > 0) ? 'Available for download' : 'No data available' }}</div>
   </div>
   
   <div class="stat-card">
@@ -42,8 +42,8 @@
       <i class="fas fa-file-excel"></i>
     </div>
     <div class="stat-label">Excel Reports</div>
-    <div class="stat-value">2</div>
-    <div class="stat-change" style="color:#c2410c">Available for download</div>
+    <div class="stat-value">{{ ($fundLoads->count() > 0 || $bankDeposits->count() > 0) ? 2 : 0 }}</div>
+    <div class="stat-change" style="color:#c2410c">{{ ($fundLoads->count() > 0 || $bankDeposits->count() > 0) ? 'Available for download' : 'No data available' }}</div>
   </div>
 </div>
 
