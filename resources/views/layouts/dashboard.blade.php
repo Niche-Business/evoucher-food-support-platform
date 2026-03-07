@@ -377,7 +377,10 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
            x-transition>
         <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
           <span class="font-semibold text-sm">Notifications</span>
-          <a href="{{ route('notifications.index') }}" class="text-xs text-green-600 hover:text-green-700">View All</a>
+          <div class="flex gap-2">
+            <button onclick="markAllAsRead()" class="text-xs text-green-600 hover:text-green-700 font-medium">Mark All Read</button>
+            <a href="{{ route('notifications.index') }}" class="text-xs text-green-600 hover:text-green-700">View All</a>
+          </div>
         </div>
         <div id="notif-list" style="max-height:300px;overflow-y:auto">
           <div class="px-4 py-3 text-sm text-slate-500 text-center">Loading...</div>
@@ -504,15 +507,36 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   // Mark notification as read
   async function markAsRead(notifId) {
     try {
-      await fetch(`/api/notifications/${notifId}/read`, {
+      const response = await fetch(`/notifications/${notifId}/read`, {
         method: 'POST',
         headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          'Content-Type': 'application/json'
         }
       });
-      fetchNotifications();
+      if (response.ok) {
+        fetchNotifications();
+      }
     } catch (error) {
       console.error('Error marking notification as read:', error);
+    }
+  }
+  
+  // Mark all notifications as read
+  async function markAllAsRead() {
+    try {
+      const response = await fetch('/notifications/read-all', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        fetchNotifications();
+      }
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
     }
   }
   
