@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
+@section('title','Create Broadcast')
+@section('page-title','Create Broadcast Message')
 
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-2xl">

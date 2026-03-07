@@ -287,41 +287,11 @@ body{font-family:'Inter',sans-serif;color:#0f172a}
     closeDonateModal();
   });
 
-  // Load notification count
-@auth
-  fetch('/notifications/unread')
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById('notification-count').textContent = data.count || 0;
-    })
-    .catch(() => {});
-  @endauth
+  // Notification count will be loaded on dashboard only
 </script>
 
 <script>
-  // Load notifications on dashboard
-  function loadNotifications() {
-    fetch('/notifications/unread')
-      .then(r => r.json())
-      .then(data => {
-        const badge = document.getElementById('notif-badge');
-        if (badge && data.count > 0) {
-          badge.textContent = data.count;
-          badge.style.display = 'flex';
-        }
-      })
-      .catch(() => {});
-  }
-
-  // Load on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadNotifications);
-  } else {
-    loadNotifications();
-  }
-
-  // Refresh every 30 seconds
-  setInterval(loadNotifications, 30000);
+  // Notifications handled in dashboard layout
 </script>
 
   <div style="margin-bottom:8px">
