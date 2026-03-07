@@ -1,15 +1,15 @@
 @extends('layouts.dashboard')
-@section('title','Admin Dashboard')
-@section('page-title','Overview')
+@section('title', __('app.admin_dashboard'))
+@section('page-title', __('app.admin_overview'))
 @section('topbar-actions')
 <a href="{{ route('admin.vouchers.index') }}" class="btn btn-primary btn-sm">
-  <i class="fas fa-plus"></i> Issue Voucher
+  <i class="fas fa-plus"></i> {{ __('app.issue_voucher') }}
 </a>
 @endsection
 @section('content')
 <div class="page-hd">
-  <h1>Platform Overview</h1>
-  <p>Northamptonshire Pilot — Real-time statistics and activity</p>
+  <h1>{{ __('app.platform_overview') }}</h1>
+  <p>{{ __('app.home_pilot_badge') }} — {{ __('app.loading') }}</p>
 </div>
 
 <!-- Stats Grid -->
@@ -19,31 +19,31 @@
       <div class="stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-users"></i></div>
       <span class="badge badge-green">+{{ $stats['new_users_this_month'] ?? 0 }} this month</span>
     </div>
-    <div class="stat-label">Total Users</div>
+    <div class="stat-label">{{ __('app.total_users') }}</div>
     <div class="stat-value">{{ $stats['total_users'] ?? 0 }}</div>
   </div>
   <div class="stat-card">
     <div class="flex items-start justify-between mb-3">
       <div class="stat-icon" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-ticket"></i></div>
-      <span class="badge badge-blue">Active</span>
+      <span class="badge badge-blue">{{ __('app.active') }}</span>
     </div>
-    <div class="stat-label">Active Vouchers</div>
+    <div class="stat-label">{{ __('app.active_vouchers') }}</div>
     <div class="stat-value">{{ $stats['active_vouchers'] ?? 0 }}</div>
   </div>
   <div class="stat-card">
     <div class="flex items-start justify-between mb-3">
       <div class="stat-icon" style="background:#fef9c3;color:#ca8a04"><i class="fas fa-basket-shopping"></i></div>
-      <span class="badge badge-yellow">Available</span>
+      <span class="badge badge-yellow">{{ __('app.available') }}</span>
     </div>
-    <div class="stat-label">Food Listings</div>
+    <div class="stat-label">{{ __('app.food_listings') }}</div>
     <div class="stat-value">{{ $stats['total_food_listings'] ?? 0 }}</div>
   </div>
   <div class="stat-card">
     <div class="flex items-start justify-between mb-3">
       <div class="stat-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-sterling-sign"></i></div>
-      <span class="badge badge-green">Donations</span>
+      <span class="badge badge-green">{{ __('app.donations') }}</span>
     </div>
-    <div class="stat-label">Total Donated</div>
+    <div class="stat-label">{{ __('app.total_donated') }}</div>
     <div class="stat-value">£{{ number_format($stats['total_donated'] ?? 0, 2) }}</div>
   </div>
 </div>
