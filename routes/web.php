@@ -17,6 +17,7 @@ use App\Http\Controllers\Organisation\DashboardController as OrgDashboard;
 use App\Http\Controllers\Organisation\DonationController;
 use App\Http\Controllers\Recipient\DashboardController as RecipientDashboard;
 use App\Http\Controllers\Recipient\VoucherController as RecipientVoucher;
+use App\Http\Controllers\Recipient\ReportController as RecipientReport;
 use App\Http\Controllers\Shop\DashboardController as ShopDashboard;
 use App\Http\Controllers\Shop\FoodListingController as ShopListing;
 use App\Http\Controllers\Shop\PayoutController as ShopPayout;
@@ -137,6 +138,9 @@ Route::prefix('recipient')->name('recipient.')->middleware(['auth', 'role:recipi
     Route::get('/history', [RecipientDashboard::class, 'history'])->name('history');
     Route::get('/profile', [RecipientDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [RecipientDashboard::class, 'updateProfile'])->name('profile.update');
+    // Reports
+    Route::get('/reports/export-pdf', [RecipientReport::class, 'exportPDF'])->name('reports.export-pdf');
+    Route::get('/reports/export-excel', [RecipientReport::class, 'exportExcel'])->name('reports.export-excel');
 });
 
 // VCFSE
