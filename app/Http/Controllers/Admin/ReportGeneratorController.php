@@ -14,7 +14,22 @@ class ReportGeneratorController extends Controller
 {
     public function index()
     {
-        return view('admin.reports.index');
+        $data = [
+            'total_donations' => DB::table('donations')->sum('amount') ?? 0,
+            'total_vouchers_issued' => Voucher::count(),
+            'total_redemptions' => Redemption::count(),
+            'food_redeemed' => Redemption::distinct('food_listing_id')->count('food_listing_id'),
+            'total_recipients' => User::where('role', 'recipient')->count(),
+            'total_shops' => User::where('role', 'local_shop')->count(),
+            'total_donors' => User::whereIn('role', ['vcfse', 'school'])->count(),
+            'total_food_listed' => FoodListing::count(),
+            'total_funds_loaded' => 0,
+            'total_bank_deposits' => 0,
+        ];
+
+        $monthly_donations = [];
+
+        return view('admin.reports.index', compact('data', 'monthly_donations'));
     }
 
     public function vouchersReport(Request $request)

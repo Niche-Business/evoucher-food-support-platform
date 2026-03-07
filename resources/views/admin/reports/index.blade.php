@@ -7,9 +7,17 @@
         <h1 class="text-2xl font-bold text-gray-900">Reports</h1>
         <p class="text-gray-500 text-sm mt-1">Pilot performance &mdash; Northamptonshire</p>
     </div>
-    <a href="{{ route('admin.reports.export') }}" class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
-        <i class="fas fa-download mr-1"></i> Export CSV
-    </a>
+    <div class="flex gap-2">
+        <a href="{{ route('admin.reports.export', ['format' => 'csv']) }}" class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
+            <i class="fas fa-download mr-1"></i> Export CSV
+        </a>
+        <a href="{{ route('admin.reports.export', ['format' => 'excel']) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
+            <i class="fas fa-file-excel mr-1"></i> Export Excel
+        </a>
+        <a href="{{ route('admin.reports.export', ['format' => 'pdf']) }}" class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
+            <i class="fas fa-file-pdf mr-1"></i> Export PDF
+        </a>
+    </div>
 </div>
 
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
@@ -44,6 +52,14 @@
     <div class="stat-card text-center">
         <div class="text-3xl font-bold text-gray-600 mb-1">{{ $data['total_food_listed'] }}</div>
         <div class="text-xs text-gray-500">Food Items Listed</div>
+    </div>
+    <div class="stat-card text-center">
+        <div class="text-3xl font-bold text-cyan-600 mb-1">£{{ number_format($data['total_funds_loaded'] ?? 0, 2) }}</div>
+        <div class="text-xs text-gray-500">Funds Loaded</div>
+    </div>
+    <div class="stat-card text-center">
+        <div class="text-3xl font-bold text-amber-600 mb-1">{{ $data['total_bank_deposits'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500">Bank Deposits</div>
     </div>
 </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @section('title','Load Funds to Organisations')
-@section('page-title','Load Funds')
+@section('page-title','Load Funds to Organisations')
 @section('content')
 <div class="page-hd">
   <h1>Load Funds to Organisations</h1>
