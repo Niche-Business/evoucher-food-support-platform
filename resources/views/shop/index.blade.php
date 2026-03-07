@@ -88,8 +88,12 @@
     @endif
 </div>
 
+</div>
+
+@endsection
+
 <!-- Footer -->
-<footer style="background:linear-gradient(135deg,#0f4c81 0%,#1a5fa0 100%);color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,.1);width:100%;margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%)">
+<footer style="background:linear-gradient(135deg,#0f4c81 0%,#1a5fa0 100%);color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,.1);width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw">
     <div style="max-width:1200px;margin:0 auto;padding:0 24px">
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:30px">
             <div>
@@ -142,5 +146,3 @@
     background: #059669 !important;
 }
 </style>
-
-@endsection
