@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>eVoucher Food Support Platform — Northamptonshire</title>
+<title>{{ __('app.platform_title') }}</title>
 <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -114,8 +114,8 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
     </div>
   </a>
   <div class="nav-links">
-    <a href="{{ url('/food') }}" class="nav-link"><i class="fas fa-basket-shopping mr-1"></i> Browse Food</a>
-    <a href="{{ url('/shops') }}" class="nav-link"><i class="fas fa-store mr-1"></i> Shops</a>
+    <a href="{{ url('/food') }}" class="nav-link"><i class="fas fa-basket-shopping mr-1"></i> {{ __('app.browse_food') }}</a>
+    <a href="{{ url('/shops') }}" class="nav-link"><i class="fas fa-store mr-1"></i> {{ __('app.shops') }}</a>
 
     <!-- Language Switcher -->
     <div style="position:relative;display:inline-block" x-data="{ open: false }">
@@ -141,21 +141,21 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       </button>
       <div x-show="open" @click.away="open = false" x-transition style="position:absolute;right:0;top:110%;width:320px;background:#fff;border:1px solid var(--gray-border);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.08);z-index:999;overflow:hidden">
         <div style="padding:16px;border-bottom:1px solid var(--gray-border)">
-          <div style="font-size:14px;font-weight:700;color:#0f172a">Notifications</div>
-          <div style="font-size:12px;color:#94a3b8;margin-top:2px">You have 0 new notifications</div>
+          <div style="font-size:14px;font-weight:700;color:#0f172a">{{ __('app.notifications') }}</div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:2px">{{ __('app.no_new_notifications') }}</div>
         </div>
         <div style="padding:24px;text-align:center;color:#94a3b8;font-size:13px">
           <i class="fas fa-bell-slash" style="font-size:24px;margin-bottom:8px;display:block;color:#cbd5e1"></i>
-          No notifications yet
+          {{ __('app.no_notifications_yet') }}
         </div>
       </div>
     </div>
     <a href="{{ route(auth()->user()->getDashboardRoute()) }}" class="nav-link nav-link-primary">
-      <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+      <i class="fas fa-tachometer-alt mr-1"></i> {{ __('app.dashboard') }}
     </a>
     @else
-    <a href="{{ route('login') }}" class="nav-link">Sign In</a>
-    <a href="{{ route('register') }}" class="nav-link nav-link-primary">Get Started Free</a>
+    <a href="{{ route('login') }}" class="nav-link">{{ __('app.sign_in') }}</a>
+    <a href="{{ route('register') }}" class="nav-link nav-link-primary">{{ __('app.get_started_free') }}</a>
     @endauth
   </div>
 </nav>
@@ -163,13 +163,13 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 <!-- HERO -->
 <div class="hero">
   <div class="hero-content">
-    <div class="hero-badge"><i class="fas fa-map-marker-alt"></i> Northamptonshire Pilot Programme</div>
-    <h1 class="hero-title">Connecting <span>Food</span><br>with People in Need</h1>
-    <p class="hero-desc">Local shops list near-expiry food. Recipients use vouchers to collect it. Organisations fund the vouchers. Together we reduce food waste and food poverty.</p>
+    <div class="hero-badge"><i class="fas fa-map-marker-alt"></i> {{ __('app.northamptonshire_pilot') }}</div>
+    <h1 class="hero-title">{{ __('app.connecting') }} <span>{{ __('app.food') }}</span><br>{{ __('app.with_people_in_need') }}</h1>
+    <p class="hero-desc">{{ __('app.hero_description') }}</p>
     <div class="hero-btns">
-      <a href="{{ route('register') }}" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
-      <a href="{{ url('/food') }}" class="btn btn-secondary"><i class="fas fa-basket-shopping"></i> Browse Food</a>
-      <button onclick="openDonateModal()" class="btn btn-secondary"><i class="fas fa-heart"></i> Donate</button>
+      <a href="{{ route('register') }}" class="btn btn-primary"><i class="fas fa-rocket"></i> {{ __('app.get_started_free') }}</a>
+      <a href="{{ url('/food') }}" class="btn btn-secondary"><i class="fas fa-basket-shopping"></i> {{ __('app.browse_food') }}</a>
+      <button onclick="openDonateModal()" class="btn btn-secondary"><i class="fas fa-heart"></i> {{ __('app.donate') }}</button>
     </div>
   </div>
 </div>
@@ -177,92 +177,88 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 <!-- STATS -->
 <div class="section">
   <div class="stats-grid">
-    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">Free to Use</div></div>
-    <div class="stat-item"><div class="stat-num">0</div><div class="stat-lbl">Food Wasted</div></div>
-    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">User Roles</div></div>
-    <div class="stat-item"><div class="stat-num">NHS</div><div class="stat-lbl">Community Backed</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">{{ __('app.free_to_use') }}</div></div>
+    <div class="stat-item"><div class="stat-num">0</div><div class="stat-lbl">{{ __('app.food_wasted') }}</div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">{{ __('app.user_roles') }}</div></div>
+    <div class="stat-item"><div class="stat-num">NHS</div><div class="stat-lbl">{{ __('app.community_backed') }}</div></div>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
 <div class="section section-alt">
-  <div class="section-title">How It Works</div>
-  <div class="section-sub">A simple three-step process that connects local shops, recipients, and organisations</div>
+  <div class="section-title">{{ __('app.how_it_works') }}</div>
+  <div class="section-sub">{{ __('app.how_it_works_description') }}</div>
   <div class="cards-grid">
     <div class="card">
       <div class="card-icon">🏪</div>
       <div class="card-body">
         <div class="card-num">1</div>
-        <div class="card-title">Shops List Food</div>
-        <div class="card-desc">Local shops and retailers list food items that are close to their expiry date, including photos, collection details, and availability.</div>
+        <div class="card-title">{{ __('app.shops_list_food') }}</div>
+        <div class="card-desc">{{ __('app.shops_list_food_description') }}</div>
       </div>
     </div>
     <div class="card">
       <div class="card-icon">🎫</div>
       <div class="card-body">
         <div class="card-num">2</div>
-        <div class="card-title">Recipients Get Vouchers</div>
-        <div class="card-desc">Approved recipients receive digital vouchers by email and through the platform, which they can use to redeem food items.</div>
+        <div class="card-title">{{ __('app.recipients_get_vouchers') }}</div>
+        <div class="card-desc">{{ __('app.recipients_get_vouchers_description') }}</div>
       </div>
     </div>
     <div class="card">
       <div class="card-icon">🤝</div>
       <div class="card-body">
         <div class="card-num">3</div>
-        <div class="card-title">Organisations Fund It</div>
-        <div class="card-desc">VCFSE organisations, schools, and care organisations donate funds through Stripe to keep the voucher programme running.</div>
+        <div class="card-title">{{ __('app.organisations_fund_it') }}</div>
+        <div class="card-desc">{{ __('app.organisations_fund_it_description') }}</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- USER ROLES -->
+<!-- WHO USES EVOUCHER -->
 <div class="section">
-  <div class="section-title">Who Uses eVoucher?</div>
-  <div class="section-sub">The platform serves six distinct user types, each with their own dedicated dashboard</div>
+  <div class="section-title">{{ __('app.who_uses_evoucher') }}</div>
+  <div class="section-sub">{{ __('app.who_uses_evoucher_description') }}</div>
   <div class="roles-grid">
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(239,68,68,.2);color:#fca5a5"><i class="fas fa-shield-halved"></i></div>
-      <div class="role-name">Super Admin</div>
-      <div class="role-desc">Full platform control, user management, and system configuration</div>
+      <div class="role-icon" style="background:#fee2e2;color:#dc2626">👑</div>
+      <div class="role-name">{{ __('app.super_admin') }}</div>
+      <div class="role-desc">{{ __('app.super_admin_description') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(59,130,246,.2);color:#93c5fd"><i class="fas fa-user-shield"></i></div>
-      <div class="role-name">Admin</div>
-      <div class="role-desc">Manage users, issue vouchers, track donations, and view reports</div>
+      <div class="role-icon" style="background:#fef3c7;color:#f59e0b">🔐</div>
+      <div class="role-name">{{ __('app.admin') }}</div>
+      <div class="role-desc">{{ __('app.admin_description') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(249,115,22,.2);color:#fed7aa"><i class="fas fa-store"></i></div>
-      <div class="role-name">Local Shops</div>
-      <div class="role-desc">List near-expiry food items and manage redemptions from recipients</div>
+      <div class="role-icon" style="background:#dbeafe;color:#0284c7">🏪</div>
+      <div class="role-name">{{ __('app.local_shops') }}</div>
+      <div class="role-desc">{{ __('app.local_shops_description') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(22,163,74,.2);color:#86efac"><i class="fas fa-user-heart"></i></div>
-      <div class="role-name">Recipients</div>
-      <div class="role-desc">Browse food listings and redeem vouchers for near-expiry food items</div>
+      <div class="role-icon" style="background:#dcfce7;color:#16a34a">👤</div>
+      <div class="role-name">{{ __('app.recipients') }}</div>
+      <div class="role-desc">{{ __('app.recipients_description') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(168,85,247,.2);color:#d8b4fe"><i class="fas fa-building-columns"></i></div>
-      <div class="role-name">VCFSE</div>
-      <div class="role-desc">Voluntary and community organisations that fund the voucher programme</div>
+      <div class="role-icon" style="background:#f3e8ff;color:#a855f7">🤲</div>
+      <div class="role-name">{{ __('app.vcfse') }}</div>
+      <div class="role-desc">{{ __('app.vcfse_description') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:rgba(202,138,4,.2);color:#fcd34d"><i class="fas fa-school"></i></div>
-      <div class="role-name">Schools & Care</div>
-      <div class="role-desc">Educational and care organisations supporting community food security</div>
+      <div class="role-icon" style="background:#fce7f3;color:#ec4899">🎓</div>
+      <div class="role-name">{{ __('app.schools_care') }}</div>
+      <div class="role-desc">{{ __('app.schools_care_description') }}</div>
     </div>
   </div>
 </div>
 
 <!-- CTA SECTION -->
 <div class="cta-section">
-  <h2>Ready to Get Started?</h2>
-  <p>Join the Northamptonshire eVoucher pilot and help us reduce food waste while supporting families in need.</p>
-  <div class="hero-btns">
-    <a href="{{ route('register') }}" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
-    <a href="{{ url('/food') }}" class="btn btn-secondary"><i class="fas fa-basket-shopping"></i> Browse Food</a>
-    <button onclick="openDonateModal()" class="btn btn-secondary"><i class="fas fa-heart"></i> Donate</button>
-  </div>
+  <h2>{{ __('app.ready_to_get_started') }}</h2>
+  <p>{{ __('app.ready_to_get_started_description') }}</p>
+  <a href="{{ route('register') }}" class="btn btn-primary" style="background:#fff;color:var(--primary)"><i class="fas fa-arrow-right"></i> {{ __('app.get_started_free') }}</a>
 </div>
 
 <!-- FOOTER -->
@@ -273,214 +269,35 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
         <img src="{{ asset('images/logo.png') }}" alt="eVoucher Logo" class="footer-logo-img">
         <div class="footer-logo-text">eVoucher</div>
       </div>
-      <p class="footer-tagline">Connecting near-expiry food with families in need across Northamptonshire. Free to use, community powered, and backed by the NHS.</p>
+      <p class="footer-tagline">{{ __('app.footer_tagline') }}</p>
     </div>
     <div>
-      <div class="footer-col-title">Platform</div>
-      <a href="{{ url('/food') }}" class="footer-link">Browse Food</a>
-      <a href="{{ url('/shops') }}" class="footer-link">Browse Shops</a>
-      <a href="{{ route('register') }}" class="footer-link">Get Started</a>
-      <a href="{{ route('login') }}" class="footer-link">Sign In</a>
+      <div class="footer-col-title">{{ __('app.platform') }}</div>
+      <a href="{{ url('/food') }}" class="footer-link">{{ __('app.browse_food') }}</a>
+      <a href="{{ url('/shops') }}" class="footer-link">{{ __('app.browse_shops') }}</a>
+      <a href="{{ route('register') }}" class="footer-link">{{ __('app.get_started') }}</a>
     </div>
     <div>
-      <div class="footer-col-title">Support</div>
-      <a href="#" class="footer-link">About Us</a>
-      <a href="#" class="footer-link">Contact</a>
-      <a href="#" class="footer-link">Privacy Policy</a>
-      <a href="#" class="footer-link">Terms of Use</a>
+      <div class="footer-col-title">{{ __('app.company') }}</div>
+      <a href="#" class="footer-link">{{ __('app.about_us') }}</a>
+      <a href="#" class="footer-link">{{ __('app.contact') }}</a>
+      <a href="#" class="footer-link">{{ __('app.volunteer') }}</a>
     </div>
     <div>
-      <div class="footer-col-title">Community</div>
-      <a href="#" class="footer-link">BAKUP CIC</a>
-      <a href="#" class="footer-link">NHS Partnership</a>
-      <a href="#" class="footer-link">Volunteer</a>
-      <a href="#" class="footer-link">Donate</a>
+      <div class="footer-col-title">{{ __('app.legal') }}</div>
+      <a href="#" class="footer-link">{{ __('app.privacy_policy') }}</a>
+      <a href="#" class="footer-link">{{ __('app.terms_of_use') }}</a>
+      <a href="#" class="footer-link">{{ __('app.donate') }}</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© {{ date('Y') }} eVoucher Food Support Platform — Built for BAKUP CIC · Northamptonshire Pilot</div>
+    <div class="footer-copy">© 2026 BAKUP CIC. {{ __('app.all_rights_reserved') }}</div>
     <div class="footer-badges">
-      <span class="footer-badge">NHS Backed</span>
-      <span class="footer-badge">BAKUP CIC</span>
-      <span class="footer-badge">Zero Waste</span>
+      <span class="footer-badge">{{ __('app.nhs_partnership') }}</span>
+      <span class="footer-badge">{{ __('app.community_backed') }}</span>
     </div>
   </div>
 </footer>
 
-<!-- Donate Modal -->
-<div id="donateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:9999">
-  <div style="background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:32px;max-width:420px;width:90%;border:1px solid var(--gray-border)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <h2 style="font-size:22px;font-weight:800;color:#0f172a">Make a Donation</h2>
-      <button onclick="closeDonateModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b;line-height:1">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <form id="donate-form" style="display:flex;flex-direction:column;gap:16px">
-      <div>
-        <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#0f172a">Donation Amount (£)</label>
-        <div style="display:flex;gap:8px;margin-bottom:12px">
-          <button type="button" style="flex:1;padding:10px;border:1px solid var(--gray-border);background:var(--gray-light);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .15s;color:#0f172a" onclick="setAmount(5)">£5</button>
-          <button type="button" style="flex:1;padding:10px;border:1px solid var(--gray-border);background:var(--gray-light);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;color:#0f172a" onclick="setAmount(10)">£10</button>
-          <button type="button" style="flex:1;padding:10px;border:1px solid var(--gray-border);background:var(--gray-light);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;color:#0f172a" onclick="setAmount(20)">£20</button>
-          <button type="button" style="flex:1;padding:10px;border:1px solid var(--gray-border);background:var(--gray-light);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;color:#0f172a" onclick="setAmount(50)">£50</button>
-        </div>
-        <input type="number" id="donateAmount" name="amount" min="1" step="0.01" required style="width:100%;padding:10px 14px;border:1px solid var(--gray-border);background:#fff;border-radius:8px;font-size:14px;color:#0f172a" placeholder="Or enter custom amount">
-      </div>
-      <div>
-        <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#0f172a">Email</label>
-        <input type="email" name="email" required style="width:100%;padding:10px 14px;border:1px solid var(--gray-border);background:#fff;border-radius:8px;font-size:14px;color:#0f172a" placeholder="your@email.com">
-      </div>
-      <div>
-        <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#0f172a">Card Details</label>
-        <div id="card-element" style="padding:12px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;min-height:50px;font-family:Inter,sans-serif"></div>
-      </div>
-      <div id="card-errors" style="color:#dc2626;font-size:13px;margin-top:8px;display:none"></div>
-      <button type="submit" style="width:100%;background:var(--accent);color:#fff;padding:13px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:15px">
-        <i class="fas fa-lock mr-2"></i>Donate Securely
-      </button>
-    </form>
-    <p style="font-size:12px;color:#94a3b8;margin-top:16px;text-align:center">
-      <i class="fas fa-shield-alt mr-1"></i>Your donation is secure and encrypted with Stripe
-    </p>
-  </div>
-</div>
-
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-  let stripe, elements, cardElement;
-
-  function openDonateModal() {
-    const modal = document.getElementById('donateModal');
-    modal.style.display = 'flex';
-    
-    // Initialize Stripe on first open
-    if (!stripe) {
-      setTimeout(() => {
-        try {
-          const publicKey = '{{ config("services.stripe.public") }}';
-          if (!publicKey || publicKey.includes('config')) {
-            console.warn('Stripe public key not configured. Using test key.');
-            stripe = Stripe('pk_test_51234567890');
-          } else {
-            stripe = Stripe(publicKey);
-          }
-          
-          elements = stripe.elements({
-            fonts: [{
-              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
-            }]
-          });
-          
-          const style = {
-            base: {
-              fontSize: '14px',
-              color: '#0f172a',
-              fontFamily: 'Inter, sans-serif',
-              '::placeholder': {
-                color: '#cbd5e1'
-              }
-            },
-            invalid: {
-              color: '#dc2626',
-              iconColor: '#dc2626'
-            }
-          };
-          
-          cardElement = elements.create('card', { style: style });
-          cardElement.mount('#card-element');
-          
-          cardElement.addEventListener('change', (event) => {
-            const errorDiv = document.getElementById('card-errors');
-            if (event.error) {
-              errorDiv.textContent = event.error.message;
-              errorDiv.style.display = 'block';
-            } else {
-              errorDiv.textContent = '';
-              errorDiv.style.display = 'none';
-            }
-          });
-        } catch (err) {
-          console.error('Stripe initialization error:', err);
-          document.getElementById('card-errors').textContent = 'Payment system not available';
-        }
-      }, 100);
-    }
-  }
-
-  function closeDonateModal() {
-    document.getElementById('donateModal').style.display = 'none';
-  }
-
-  function setAmount(amount) {
-    document.getElementById('donateAmount').value = amount;
-  }
-
-  // Handle form submission
-  const donateForm = document.getElementById('donate-form');
-  if (donateForm) {
-    donateForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const amount = document.getElementById('donateAmount').value;
-      const email = document.querySelector('input[type="email"]').value;
-      
-      if (!amount || amount <= 0) {
-        alert('Please enter a valid donation amount');
-        return;
-      }
-      
-      if (!email) {
-        alert('Please enter your email address');
-        return;
-      }
-      
-      if (!cardElement) {
-        alert('Payment method not loaded. Please try again.');
-        return;
-      }
-      
-      try {
-        // Create payment method from card element
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-          type: 'card',
-          card: cardElement,
-          billing_details: {
-            email: email
-          }
-        });
-
-        if (error) {
-          alert('Card error: ' + error.message);
-          return;
-        }
-
-        // Send to backend
-        const response = await fetch('/api/donations/process', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-          },
-          body: JSON.stringify({
-            amount: amount,
-            email: email,
-            payment_method_id: paymentMethod.id
-          })
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alert('Thank you for your donation of £' + amount + '!');
-          closeDonateModal();
-        } else {
-          alert('Error: ' + result.message);
-        }
-      } catch (err) {
-        console.error('Donation error:', err);
-        alert('An error occurred. Please try again.');
-      }
-    });
-  }
-</script>
 </body>
 </html>
