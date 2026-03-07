@@ -48,8 +48,7 @@ class SurplusClaimController extends Controller
         // Create redemption record
         $redemption = Redemption::create([
             'food_listing_id' => $foodListingId,
-            'user_id' => $user->id,
-            'quantity' => 1,
+            'recipient_user_id' => $user->id,
             'redeemed_at' => now(),
             'status' => 'confirmed',
         ]);
