@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ShopBankDetail extends Model
+class BankDetailChangeRequest extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'shop_user_id',
+        'bank_detail_id',
         'account_holder_name',
         'bank_name',
         'sort_code',
@@ -21,25 +25,25 @@ class ShopBankDetail extends Model
     protected $casts = [
         'approved_at' => 'datetime',
     ];
-
+    
     public function shop()
     {
         return $this->belongsTo(User::class, 'shop_user_id');
     }
     
-    public function changeRequests()
+    public function bankDetail()
     {
-        return $this->hasMany(BankDetailChangeRequest::class, 'bank_detail_id');
+        return $this->belongsTo(ShopBankDetail::class, 'bank_detail_id');
     }
     
-    public function isLocked()
+    public function isPending()
     {
-        return $this->status === 'active';
+        return $this->status === 'pending';
     }
     
-    public function isPendingApproval()
+    public function isApproved()
     {
-        return $this->status === 'pending_approval';
+        return $this->status === 'approved';
     }
     
     public function isRejected()

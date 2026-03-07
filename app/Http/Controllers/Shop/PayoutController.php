@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\ShopBankDetail;
 use App\Models\ShopPayoutRequest;
 use App\Models\Redemption;
+use App\Models\Notification;
+use App\Models\User;
+use App\Models\BankDetailChangeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -66,14 +69,47 @@ class PayoutController extends Controller
             'account_number.regex' => 'Account number must be exactly 8 digits.',
         ]);
 
+        $user = Auth::user();
+        $existingBankDetail = ShopBankDetail::where('shop_user_id', $user->id)->first();
+
+        // If bank details already exist and are locked, create a change request instead
+        if ($existingBankDetail && $existingBankDetail->isLocked()) {
+            // Check if there's already a pending change request
+            $pendingRequest = BankDetailChangeRequest::where('bank_detail_id', $existingBankDetail->id)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($pendingRequest) {
+                return redirect()->route('shop.payouts.index')
+                    ->with('error', 'You already have a pending bank detail change request. Please wait for admin approval.');
+            }
+
+            // Create a new change request
+            BankDetailChangeRequest::create([
+                'shop_user_id' => $user->id,
+                'bank_detail_id' => $existingBankDetail->id,
+                'account_holder_name' => $request->account_holder_name,
+                'bank_name' => $request->bank_name,
+                'sort_code' => $request->sort_code,
+                'account_number' => $request->account_number,
+                'bank_reference' => $request->bank_reference,
+                'status' => 'pending',
+            ]);
+
+            return redirect()->route('shop.payouts.index')
+                ->with('success', 'Bank detail change request submitted. Admin will review and approve your changes.');
+        }
+
+        // If no existing bank details, create new ones with active status
         ShopBankDetail::updateOrCreate(
-            ['shop_user_id' => Auth::id()],
+            ['shop_user_id' => $user->id],
             [
                 'account_holder_name' => $request->account_holder_name,
                 'bank_name'           => $request->bank_name,
                 'sort_code'           => $request->sort_code,
                 'account_number'      => $request->account_number,
                 'bank_reference'      => $request->bank_reference,
+                'status'              => 'active',
             ]
         );
 
@@ -88,8 +124,10 @@ class PayoutController extends Controller
     {
         $user = Auth::user();
 
-        // Must have bank details on file
-        $bankDetails = ShopBankDetail::where('shop_user_id', $user->id)->first();
+        // Must have approved bank details on file
+        $bankDetails = ShopBankDetail::where('shop_user_id', $user->id)
+            ->where('status', 'active')
+            ->first();
         if (!$bankDetails) {
             return redirect()->route('shop.payouts.index')
                 ->with('error', 'Please save your bank details before requesting a payout.');
@@ -127,6 +165,19 @@ class PayoutController extends Controller
             // Link each redemption to this payout request
             Redemption::whereIn('id', $unpaidRedemptions->pluck('id'))
                 ->update(['payout_request_id' => $payout->id]);
+
+            // Create notifications for all admin and superadmin users
+            $admins = User::whereIn('role', ['admin', 'superadmin'])->get();
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'title' => 'New Payout Request',
+                    'message' => $user->name . ' submitted a payout request for £' . number_format($totalAmount, 2),
+                    'type' => 'payout_request',
+                    'icon' => 'fa-money-bill',
+                    'read_at' => null,
+                ]);
+            }
         });
 
         return redirect()->route('shop.payouts.index')

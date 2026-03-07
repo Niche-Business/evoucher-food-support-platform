@@ -443,7 +443,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     @if(session('error'))
     <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> {{ session('error') }}</div>
     @endif
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
     <div class="alert alert-error">
       <i class="fas fa-exclamation-circle"></i>
       <div>@foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>

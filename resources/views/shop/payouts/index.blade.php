@@ -41,16 +41,73 @@
       <div class="card-title"><i class="fas fa-university text-blue-600"></i> Bank Details</div>
     </div>
     <div class="card-body">
-      @if($bankDetails)
+      @if($bankDetails && $bankDetails->isLocked())
+      <div class="alert-success mb-4" style="font-size:13px">
+        <i class="fas fa-lock mr-1"></i> Bank details are locked. To change them, submit a change request below.
+      </div>
+      
+      {{-- Display Current Bank Details --}}
+      <div style="background:#f8f9fa;padding:12px;border-radius:4px;margin-bottom:16px;font-size:13px">
+        <div style="margin-bottom:8px"><strong>Current Bank Details:</strong></div>
+        <div>Account Holder: <strong>{{ $bankDetails->account_holder_name }}</strong></div>
+        <div>Bank: <strong>{{ $bankDetails->bank_name }}</strong></div>
+        <div>Sort Code: <strong>{{ $bankDetails->sort_code }}</strong></div>
+        <div>Account Number: <strong>{{ str_repeat('*', 4) }}{{ substr($bankDetails->account_number, -4) }}</strong></div>
+      </div>
+      
+      {{-- Check for pending change request --}}
+      @php
+        $pendingChangeRequest = $bankDetails->changeRequests()->where('status', 'pending')->first();
+      @endphp
+      
+      @if($pendingChangeRequest)
+      <div class="alert-warning mb-4" style="font-size:13px">
+        <i class="fas fa-hourglass-half mr-1"></i> You have a pending bank detail change request awaiting admin approval.
+      </div>
+      @else
+      <form method="POST" action="{{ route('shop.payouts.bank-details') }}">
+        @csrf
+        <div class="form-group">
+          <label class="form-label">New Account Holder Name *</label>
+          <input type="text" name="account_holder_name" class="form-control @error('account_holder_name') is-invalid @enderror"
+            value="{{ old('account_holder_name') }}" required placeholder="Full name on bank account">
+          @error('account_holder_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Bank Name *</label>
+          <input type="text" name="bank_name" class="form-control @error('bank_name') is-invalid @enderror"
+            value="{{ old('bank_name') }}" required placeholder="e.g. Barclays, HSBC, Lloyds">
+          @error('bank_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">New Sort Code * <small class="text-muted">(12-34-56)</small></label>
+            <input type="text" name="sort_code" class="form-control @error('sort_code') is-invalid @enderror"
+              value="{{ old('sort_code') }}" required placeholder="12-34-56" maxlength="8">
+            @error('sort_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Account Number * <small class="text-muted">(8 digits)</small></label>
+            <input type="text" name="account_number" class="form-control @error('account_number') is-invalid @enderror"
+              value="{{ old('account_number') }}" required placeholder="12345678" maxlength="8">
+            @error('account_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Payment Reference <small class="text-muted">(optional)</small></label>
+          <input type="text" name="bank_reference" class="form-control"
+            value="{{ old('bank_reference') }}" placeholder="e.g. your shop name or invoice ref">
+        </div>
+        <button type="submit" class="btn btn-primary w-full">
+          <i class="fas fa-edit mr-2"></i>Request Bank Detail Change
+        </button>
+      </form>
+      @endif
+      @elseif($bankDetails)
       <div class="alert-success mb-4" style="font-size:13px">
         <i class="fas fa-check-circle mr-1"></i> Bank details saved. You can update them below.
       </div>
-      @else
-      <div class="alert-error mb-4" style="font-size:13px">
-        <i class="fas fa-exclamation-triangle mr-1"></i> Please save your bank details before requesting a payout.
-      </div>
-      @endif
-
+      
       <form method="POST" action="{{ route('shop.payouts.bank-details') }}">
         @csrf
         <div class="form-group">
@@ -85,9 +142,52 @@
             value="{{ old('bank_reference', $bankDetails->bank_reference ?? '') }}" placeholder="e.g. your shop name or invoice ref">
         </div>
         <button type="submit" class="btn btn-primary w-full">
-          <i class="fas fa-save mr-2"></i>{{ $bankDetails ? 'Update Bank Details' : 'Save Bank Details' }}
+          <i class="fas fa-save mr-2"></i>Update Bank Details
         </button>
       </form>
+      @else
+      <div class="alert-error mb-4" style="font-size:13px">
+        <i class="fas fa-exclamation-triangle mr-1"></i> Please save your bank details before requesting a payout.
+      </div>
+      
+      <form method="POST" action="{{ route('shop.payouts.bank-details') }}">
+        @csrf
+        <div class="form-group">
+          <label class="form-label">Account Holder Name *</label>
+          <input type="text" name="account_holder_name" class="form-control @error('account_holder_name') is-invalid @enderror"
+            value="{{ old('account_holder_name') }}" required placeholder="Full name on bank account">
+          @error('account_holder_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bank Name *</label>
+          <input type="text" name="bank_name" class="form-control @error('bank_name') is-invalid @enderror"
+            value="{{ old('bank_name') }}" required placeholder="e.g. Barclays, HSBC, Lloyds">
+          @error('bank_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Sort Code * <small class="text-muted">(12-34-56)</small></label>
+            <input type="text" name="sort_code" class="form-control @error('sort_code') is-invalid @enderror"
+              value="{{ old('sort_code') }}" required placeholder="12-34-56" maxlength="8">
+            @error('sort_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Number * <small class="text-muted">(8 digits)</small></label>
+            <input type="text" name="account_number" class="form-control @error('account_number') is-invalid @enderror"
+              value="{{ old('account_number') }}" required placeholder="12345678" maxlength="8">
+            @error('account_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Reference <small class="text-muted">(optional)</small></label>
+          <input type="text" name="bank_reference" class="form-control"
+            value="{{ old('bank_reference') }}" placeholder="e.g. your shop name or invoice ref">
+        </div>
+        <button type="submit" class="btn btn-primary w-full">
+          <i class="fas fa-save mr-2"></i>Save Bank Details
+        </button>
+      </form>
+      @endif
     </div>
   </div>
 
