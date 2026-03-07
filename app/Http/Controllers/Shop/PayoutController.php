@@ -21,10 +21,10 @@ class PayoutController extends Controller
 
         $bankDetails = ShopBankDetail::where('shop_user_id', $user->id)->first();
 
-        // Collected redemptions not yet linked to a payout request
+        // Confirmed/Collected redemptions not yet linked to a payout request
         $unpaidRedemptions = Redemption::with('foodListing')
             ->where('shop_user_id', $user->id)
-            ->where('status', 'collected')
+            ->whereIn('status', ['confirmed', 'collected'])
             ->whereNull('payout_request_id')
             ->get();
 
@@ -95,10 +95,10 @@ class PayoutController extends Controller
                 ->with('error', 'Please save your bank details before requesting a payout.');
         }
 
-        // Get unpaid collected redemptions
+        // Get unpaid confirmed/collected redemptions
         $unpaidRedemptions = Redemption::with('foodListing')
             ->where('shop_user_id', $user->id)
-            ->where('status', 'collected')
+            ->whereIn('status', ['confirmed', 'collected'])
             ->whereNull('payout_request_id')
             ->get();
 

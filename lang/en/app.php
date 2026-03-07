@@ -154,7 +154,6 @@ return [
     'previous'              => 'Previous',
     'language'              => 'Language',
     'select_language'       => 'Select Language',
-];
 
     // Shop Dashboard
     'shop_dashboard'        => 'Shop Dashboard',
@@ -175,3 +174,4 @@ return [
     'minutes_ago'           => 'minutes ago',
     'hours_ago'             => 'hours ago',
     'days_ago'              => 'days ago',
+];
