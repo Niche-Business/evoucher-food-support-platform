@@ -1,10 +1,10 @@
 @extends('layouts.dashboard')
-@section('title','Browse Surplus Food')
-@section('page-title','Browse Surplus Food')
+@section('title','Browse Food')
+@section('page-title','Browse Food')
 @section('content')
 <div class="page-hd">
-  <h1>Browse Surplus Food</h1>
-  <p>View free and surplus food listings available for School/Care collection in Northamptonshire.</p>
+  <h1>Browse Food</h1>
+  <p>View free, discounted and surplus food listings available for School/Care collection in Northamptonshire.</p>
 </div>
 
 <!-- Filter Bar -->
@@ -20,7 +20,8 @@
         <select name="type" class="form-select">
           <option value="">All Types</option>
           <option value="free" {{ request('type') === 'free' ? 'selected' : '' }}>Free Items</option>
-          <option value="surplus" {{ request('type') === 'surplus' ? 'selected' : '' }}>Free Surplus</option>
+          <option value="discounted" {{ request('type') === 'discounted' ? 'selected' : '' }}>Discounted Items</option>
+          <option value="surplus" {{ request('type') === 'surplus' ? 'selected' : '' }}>Surplus Food</option>
         </select>
       </div>
       <div>
@@ -42,7 +43,11 @@
     <span>Free items available to all</span>
   </div>
   <div class="flex items-center gap-2" style="font-size:12.5px;color:#64748b">
-    <span class="badge badge-purple"><i class="fas fa-boxes-stacked"></i> Free Surplus</span>
+    <span class="badge badge-blue"><i class="fas fa-tag"></i> Discounted</span>
+    <span>Discounted food items</span>
+  </div>
+  <div class="flex items-center gap-2" style="font-size:12.5px;color:#64748b">
+    <span class="badge badge-purple"><i class="fas fa-boxes-stacked"></i> Surplus</span>
     <span>Surplus food for School/Care collection only</span>
   </div>
 </div>
