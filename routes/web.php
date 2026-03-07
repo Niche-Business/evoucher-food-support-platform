@@ -13,7 +13,8 @@ use App\Http\Controllers\Admin\ReportGeneratorController as AdminReportGenerator
 use App\Http\Controllers\Organisation\FundLoadController as OrgFundLoad;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FoodListingController;
-use App\Http\Controllers\Organisation\DashboardController as OrgDashboause App\Http\Controllers\Organisation\DonationController;
+use App\Http\Controllers\Organisation\DashboardController as OrgDashboard;
+use App\Http\Controllers\Organisation\DonationController;
 use App\Http\Controllers\DonationController as PublicDonationController;
 use App\Http\Controllers\Recipient\DashboardController as RecipientDashboard;
 use App\Http\Controllers\Recipient\VoucherController as RecipientVoucher;
