@@ -22,6 +22,7 @@ class DashboardController extends Controller
         $availableFood      = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
             ->where('listing_type', 'discounted')
+            ->where('quantity', '>', 0)
             ->latest()->take(6)->get();
         $total_voucher_value= $active_vouchers->sum('remaining_value');
         $totalVouchers = Voucher::where('recipient_user_id', $user->id)->count();
@@ -29,6 +30,7 @@ class DashboardController extends Controller
         $availableItems = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
             ->where('listing_type', 'discounted')
+            ->where('quantity', '>', 0)
             ->count();
         return view('recipient.dashboard', compact('active_vouchers','recent_redemptions','availableFood','total_voucher_value','totalVouchers','totalRedemptions','availableItems'));
     }
@@ -39,6 +41,7 @@ class DashboardController extends Controller
         $query = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
             ->where('listing_type', 'discounted')
+            ->where('quantity', '>', 0)
             ->with('shop.shopProfile');
         
         // Filter by shop if specified
@@ -79,6 +82,7 @@ class DashboardController extends Controller
         $shops = FoodListing::where('status','available')
             ->where('expiry_date','>=',now()->toDateString())
             ->where('listing_type', 'discounted')
+            ->where('quantity', '>', 0)
             ->select('shop_user_id')
             ->distinct()
             ->get()
@@ -92,6 +96,7 @@ class DashboardController extends Controller
                         ->where('status','available')
                         ->where('expiry_date','>=',now()->toDateString())
                         ->where('listing_type', 'discounted')
+                        ->where('quantity', '>', 0)
                         ->count()
                 ];
             })
