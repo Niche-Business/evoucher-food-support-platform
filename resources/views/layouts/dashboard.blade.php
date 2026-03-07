@@ -455,7 +455,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   // Fetch unread notifications and update badge
   async function fetchNotifications() {
     try {
-      const response = await fetch('/api/notifications/unread', {
+      const response = await fetch('/notifications/unread', {
         headers: {
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankDeposit;
+use App\Models\Notification;
 use App\Models\SystemLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,6 +71,21 @@ class BankDepositController extends Controller
             // Update organisation profile wallet balance
             $organisationProfile->wallet_balance = ($organisationProfile->wallet_balance ?? 0) + $deposit->amount;
             $organisationProfile->save();
+
+            // Create notification for the organisation user
+            Notification::create([
+                'user_id' => $organisationUser->id,
+                'type' => 'fund_loaded',
+                'title' => 'Funds Loaded Successfully',
+                'message' => 'Your bank deposit of £' . number_format($deposit->amount, 2) . ' has been verified and funds have been loaded to your wallet.',
+                'data' => json_encode([
+                    'bank_deposit_id' => $deposit->id,
+                    'amount' => $deposit->amount,
+                    'reference' => $deposit->reference,
+                    'new_balance' => $organisationProfile->wallet_balance,
+                ]),
+                'is_read' => false,
+            ]);
 
             SystemLog::log('bank_deposit_verified', 'bank_deposit', $deposit->id, "Bank deposit of £{$deposit->amount} from {$organisationProfile->name} verified and funds loaded");
             return back()->with('success', 'Bank deposit verified and funds auto-loaded successfully.');

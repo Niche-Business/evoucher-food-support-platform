@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
-    Route::get('/unread', 'Api\\NotificationController@unread');
-    Route::post('/{id}/read', 'Api\\NotificationController@markAsRead');
+    Route::get('/unread', [\App\Http\Controllers\Api\NotificationController::class, 'unread']);
+    Route::get('/unread-count', [\App\Http\Controllers\Api\NotificationController::class, 'unread']);
+    Route::post('/{id}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);
 });

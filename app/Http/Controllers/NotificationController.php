@@ -19,11 +19,25 @@ class NotificationController extends Controller
 
     public function getUnread()
     {
-        $count = Notification::where('user_id', Auth::id())
+        $notifications = Notification::where('user_id', Auth::id())
             ->whereNull('read_at')
-            ->count();
+            ->latest()
+            ->take(10)
+            ->get();
 
-        return response()->json(['count' => $count]);
+        return response()->json([
+            'count' => $notifications->count(),
+            'notifications' => $notifications->map(function ($notif) {
+                return [
+                    'id' => $notif->id,
+                    'title' => $notif->title,
+                    'message' => $notif->message,
+                    'type' => $notif->type,
+                    'read_at' => $notif->read_at,
+                    'created_at' => $notif->created_at,
+                ];
+            }),
+        ]);
     }
 
     public function markAsRead(Notification $notification)
