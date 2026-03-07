@@ -245,7 +245,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('shop.dashboard') }}" class="nav-item {{ request()->routeIs('shop.dashboard') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-store"></i></span> Dashboard
   </a>
-  <a href="{{ route('shop.listings.index') }}" class="nav-item {{ request()->routeIs('shop.listings.*') ? 'active' : '' }}">
+  <a href="{{ route('shop.listings.index') }}" class="nav-item {{ request()->routeIs('shop.listings.index') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-list"></i></span> My Listings
   </a>
   <a href="{{ route('shop.listings.create') }}" class="nav-item {{ request()->routeIs('shop.listings.create') ? 'active' : '' }}">
@@ -257,8 +257,12 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('shop.verify') }}" class="nav-item {{ request()->routeIs('shop.verify') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-qrcode"></i></span> Verify Voucher
   </a>
+  <div class="sb-section">Reports & Finance</div>
   <a href="{{ route('shop.payouts.index') }}" class="nav-item {{ request()->routeIs('shop.payouts.*') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-money-bill-transfer"></i></span> My Payouts
+  </a>
+  <a href="{{ route('shop.reports.index') }}" class="nav-item {{ request()->routeIs('shop.reports.*') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-chart-bar"></i></span> All Reports
   </a>
   @endif
 
@@ -270,11 +274,18 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('recipient.vouchers') }}" class="nav-item {{ request()->routeIs('recipient.vouchers') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-ticket"></i></span> My Vouchers
   </a>
-  <a href="{{ route('recipient.food.browse') }}" class="nav-item {{ request()->routeIs('recipient.food.*') ? 'active' : '' }}">
+  <a href="{{ route('recipient.food.browse') }}" class="nav-item {{ request()->routeIs('recipient.food.browse') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-basket-shopping"></i></span> Browse Food
   </a>
+  <div class="sb-section">Reports</div>
   <a href="{{ route('recipient.history') }}" class="nav-item {{ request()->routeIs('recipient.history') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-history"></i></span> Redemption History
+  </a>
+  <a href="{{ route('recipient.reports.export-pdf') }}" class="nav-item">
+    <span class="ni"><i class="fas fa-file-pdf"></i></span> Export PDF
+  </a>
+  <a href="{{ route('recipient.reports.export-excel') }}" class="nav-item">
+    <span class="ni"><i class="fas fa-file-excel"></i></span> Export Excel
   </a>
   @endif
 

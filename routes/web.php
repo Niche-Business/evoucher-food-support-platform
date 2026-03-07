@@ -21,6 +21,7 @@ use App\Http\Controllers\Recipient\ReportController as RecipientReport;
 use App\Http\Controllers\Shop\DashboardController as ShopDashboard;
 use App\Http\Controllers\Shop\FoodListingController as ShopListing;
 use App\Http\Controllers\Shop\PayoutController as ShopPayout;
+use App\Http\Controllers\Shop\ReportController as ShopReport;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -125,6 +126,8 @@ Route::prefix('shop')->name('shop.')->middleware(['auth', 'approved', 'role:loca
     Route::post('/payouts/bank-details', [ShopPayout::class, 'saveBankDetails'])->name('payouts.bank-details');
     Route::post('/payouts/request', [ShopPayout::class, 'requestPayout'])->name('payouts.request');
     Route::get('/payouts/{id}', [ShopPayout::class, 'show'])->name('payouts.show');
+    // Reports
+    Route::get('/reports', [ShopReport::class, 'index'])->name('reports.index');
 });
 
 // Recipient
