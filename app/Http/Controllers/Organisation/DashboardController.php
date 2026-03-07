@@ -51,6 +51,7 @@ class DashboardController extends Controller
         // VCFSE and School/Care see Free, Discounted, and Surplus listings
         $query = FoodListing::where('status', 'available')
             ->where('expiry_date', '>=', now()->toDateString())
+            ->where('quantity', '>', 0) // Hide out-of-stock items
             ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
             ->with('shop.shopProfile');
         
@@ -93,6 +94,7 @@ class DashboardController extends Controller
         // Get list of shops with available items for filtering
         $shops = FoodListing::where('status', 'available')
             ->where('expiry_date', '>=', now()->toDateString())
+            ->where('quantity', '>', 0) // Hide out-of-stock items
             ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
             ->select('shop_user_id')
             ->distinct()
@@ -106,6 +108,7 @@ class DashboardController extends Controller
                     'count' => FoodListing::where('shop_user_id', $listing->shop_user_id)
                         ->where('status', 'available')
                         ->where('expiry_date', '>=', now()->toDateString())
+                        ->where('quantity', '>', 0) // Hide out-of-stock items
                         ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
                         ->count()
                 ];
