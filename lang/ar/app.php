@@ -181,12 +181,12 @@ return [
 
     // Recipient Dashboard
     'recipient_dashboard'   => 'My Dashboard',
-    'recipient_welcome'     => 'Welcome, {{name}}',
+    'recipient_welcome'     => 'Welcome, :name',
     'recipient_subtitle'    => 'Your eVoucher account — browse food and redeem your vouchers',
     'recipient_partial_voucher' => 'Partial Voucher',
     'recipient_active_voucher' => 'Active Voucher',
     'recipient_total_balance' => 'Total Available Balance',
-    'recipient_expires'     => 'Expires {{date}}',
+    'recipient_expires'     => 'Expires :date',
     'recipient_no_active_voucher' => 'No Active Voucher',
     'recipient_contact_support' => 'Contact your support worker or admin to receive a voucher',
     'recipient_total_vouchers' => 'Total Vouchers',
@@ -199,7 +199,7 @@ return [
     'recipient_my_vouchers' => 'My Vouchers',
     'recipient_all_vouchers' => 'All vouchers issued to your account',
     'recipient_partially_used' => 'Partially Used',
-    'recipient_of_value'    => 'of £{{amount}} original value',
+    'recipient_of_value'    => 'of £:amount original value',
     'recipient_no_vouchers_yet' => 'No vouchers yet',
     'recipient_vouchers_appear' => 'Your vouchers will appear here once they are issued by the admin',
     'recipient_redemption_history' => 'Redemption History',
