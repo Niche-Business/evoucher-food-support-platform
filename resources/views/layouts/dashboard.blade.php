@@ -228,6 +228,16 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('admin.reports.index') }}" class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-chart-bar"></i></span> Reports
   </a>
+  <div class="sb-section">Management</div>
+  <a href="{{ route('admin.broadcasts.index') }}" class="nav-item {{ request()->routeIs('admin.broadcasts.*') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-bullhorn"></i></span> Broadcasts
+  </a>
+  <a href="{{ route('admin.logs.index') }}" class="nav-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-list"></i></span> System Logs
+  </a>
+  <a href="{{ route('admin.bank-deposits.index') }}" class="nav-item {{ request()->routeIs('admin.bank-deposits.*') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-bank"></i></span> Bank Deposits
+  </a>
   @endif
 
   @if($role === 'local_shop')
@@ -418,33 +428,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
 </div><!-- x-data -->
 
 <script>
-  // Load notifications on dashboard
-  function loadDashboardNotifications() {
-    fetch('/notifications/unread')
-      .then(r => r.json())
-      .then(data => {
-        const badge = document.getElementById('notif-badge');
-        if (badge) {
-          if (data.count > 0) {
-            badge.textContent = data.count;
-            badge.style.display = 'flex';
-          } else {
-            badge.style.display = 'none';
-          }
-        }
-      })
-      .catch(() => {});
-  }
-
-  // Load on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadDashboardNotifications);
-  } else {
-    loadDashboardNotifications();
-  }
-
-  // Refresh every 30 seconds
-  setInterval(loadDashboardNotifications, 30000);
+  // Notification badge will be updated via inline script in each view
 </script>
 
 @yield('scripts')

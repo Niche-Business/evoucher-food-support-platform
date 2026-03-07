@@ -46,16 +46,15 @@ class DashboardController extends Controller
 
     public function browseFood(Request $request)
     {
-        // VCFSE and School/Care see Free listings AND Free Surplus listings
-        // They do NOT see Discounted/Food-to-Go listings (those are Recipients only)
+        // VCFSE and School/Care see Free, Discounted, and Surplus listings
         $query = FoodListing::where('status', 'available')
             ->where('expiry_date', '>=', now()->toDateString())
-            ->whereIn('listing_type', ['free', 'surplus'])
+            ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
             ->with('shop.shopProfile');
         if ($request->search) {
             $query->where('item_name', 'like', '%' . $request->search . '%');
         }
-        if ($request->type && in_array($request->type, ['free', 'surplus'])) {
+        if ($request->type && in_array($request->type, ['free', 'discounted', 'surplus'])) {
             $query->where('listing_type', $request->type);
         }
         $listings = $query->latest()->paginate(12);
