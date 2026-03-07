@@ -147,6 +147,11 @@ Route::prefix('vcfse')->name('vcfse.')->middleware(['auth', 'approved', 'role:vc
     Route::post('/fund-load/create-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.create-intent');
     Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
     Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
+    Route::get('/reports', [\App\Http\Controllers\Organisation\ReportsController::class, 'index'])->name('reports');
+    Route::get('/reports/fund-loads/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportFundLoadsExcel'])->name('reports.fund-loads-excel');
+    Route::get('/reports/fund-loads/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportFundLoadsPdf'])->name('reports.fund-loads-pdf');
+    Route::get('/reports/bank-deposits/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportBankDepositsExcel'])->name('reports.bank-deposits-excel');
+    Route::get('/reports/bank-deposits/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportBankDepositsPdf'])->name('reports.bank-deposits-pdf');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [OrgDashboard::class, 'updateProfile'])->name('profile.update');
 });
@@ -162,6 +167,11 @@ Route::prefix('school')->name('school.')->middleware(['auth', 'approved', 'role:
     Route::post('/fund-load/create-intent', [OrgFundLoad::class, 'createPaymentIntent'])->name('fund-load.create-intent');
     Route::post('/fund-load/confirm', [OrgFundLoad::class, 'confirmPayment'])->name('fund-load.confirm');
     Route::get('/fund-load/history', [OrgFundLoad::class, 'loadHistory'])->name('fund-load.history');
+    Route::get('/reports', [\App\Http\Controllers\Organisation\ReportsController::class, 'index'])->name('reports');
+    Route::get('/reports/fund-loads/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportFundLoadsExcel'])->name('reports.fund-loads-excel');
+    Route::get('/reports/fund-loads/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportFundLoadsPdf'])->name('reports.fund-loads-pdf');
+    Route::get('/reports/bank-deposits/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportBankDepositsExcel'])->name('reports.bank-deposits-excel');
+    Route::get('/reports/bank-deposits/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportBankDepositsPdf'])->name('reports.bank-deposits-pdf');
     Route::get('/profile', [OrgDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [OrgDashboard::class, 'updateProfile'])->name('profile.update');
 });

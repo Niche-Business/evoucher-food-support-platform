@@ -289,6 +289,9 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('vcfse.food') }}" class="nav-item {{ request()->routeIs('vcfse.food') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-box-open"></i></span> Browse Food
   </a>
+  <a href="{{ route('vcfse.reports') }}" class="nav-item {{ request()->routeIs('vcfse.reports') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-chart-bar"></i></span> Reports
+  </a>
   @endif
 
   @if($role === 'school_care')
@@ -301,6 +304,9 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   </a>
   <a href="{{ route('school.food') }}" class="nav-item {{ request()->routeIs('school.food') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-box-open"></i></span> Browse Food
+  </a>
+  <a href="{{ route('school.reports') }}" class="nav-item {{ request()->routeIs('school.reports') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-chart-bar"></i></span> Reports
   </a>
   @endif
 
