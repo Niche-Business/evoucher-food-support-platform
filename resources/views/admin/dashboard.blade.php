@@ -189,10 +189,10 @@
       <tbody>
         @forelse($recentDonations ?? [] as $donation)
         <tr>
-          <td style="font-size:12px;color:#64748b">{{ $donation->email }}</td>
+          <td style="font-size:12px;color:#64748b">{{ $donation->donor_email }}</td>
           <td style="font-weight:600">£{{ number_format($donation->amount, 2) }}</td>
           <td>
-            @if($donation->status === 'succeeded')<span class="badge badge-green">Succeeded</span>
+            @if($donation->status === 'completed')<span class="badge badge-green">Completed</span>
             @elseif($donation->status === 'pending')<span class="badge badge-yellow">Pending</span>
             @elseif($donation->status === 'failed')<span class="badge badge-red">Failed</span>
             @else<span class="badge badge-gray">{{ ucfirst($donation->status) }}</span>@endif

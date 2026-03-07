@@ -48,11 +48,11 @@ class DonationController extends Controller
                 // Save donation to database
                 Donation::create([
                     'amount' => $validated['amount'],
-                    'email' => $validated['email'],
-                    'payment_intent_id' => $paymentIntent->id,
-                    'payment_method_id' => $validated['payment_method_id'],
-                    'status' => 'succeeded',
-                    'metadata' => json_encode($paymentIntent->metadata)
+                    'donor_email' => $validated['email'],
+                    'stripe_payment_id' => $paymentIntent->id,
+                    'status' => 'completed',
+                    'currency' => 'GBP',
+                    'notes' => json_encode($paymentIntent->metadata)
                 ]);
 
                 return response()->json([
@@ -65,11 +65,11 @@ class DonationController extends Controller
                 // Save failed donation
                 Donation::create([
                     'amount' => $validated['amount'],
-                    'email' => $validated['email'],
-                    'payment_intent_id' => $paymentIntent->id,
-                    'payment_method_id' => $validated['payment_method_id'],
+                    'donor_email' => $validated['email'],
+                    'stripe_payment_id' => $paymentIntent->id,
                     'status' => 'failed',
-                    'metadata' => json_encode($paymentIntent->metadata)
+                    'currency' => 'GBP',
+                    'notes' => json_encode($paymentIntent->metadata)
                 ]);
 
                 return response()->json([
@@ -82,9 +82,10 @@ class DonationController extends Controller
             try {
                 Donation::create([
                     'amount' => $validated['amount'] ?? 0,
-                    'email' => $validated['email'] ?? 'unknown',
+                    'donor_email' => $validated['email'] ?? 'unknown',
                     'status' => 'failed',
-                    'metadata' => json_encode(['error' => $e->getMessage()])
+                    'currency' => 'GBP',
+                    'notes' => json_encode(['error' => $e->getMessage()])
                 ]);
             } catch (\Exception $dbError) {
                 // Log if database save fails
