@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Check for expired surplus allocations every 5 minutes
+        $schedule->job(\App\Jobs\ReassignExpiredSurplusItems::class)->everyFiveMinutes();
+        
+        // Allocate new surplus items every hour
+        $schedule->command('app:allocate-surplus-items')->hourly();
     }
 
     /**
