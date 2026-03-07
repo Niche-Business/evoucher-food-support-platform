@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\FoodListing;
 use App\Models\SurplusAllocation;
-use App\Services\NotificationService;
+use App\Models\Notification;
 
 class AllocateSurplusItems extends Command
 {
@@ -56,14 +56,13 @@ class AllocateSurplusItems extends Command
                     ]);
 
                     // Send notification
-                    NotificationService::create([
+                    Notification::create([
                         'user_id' => $vcfseUser->id,
                         'type' => 'surplus_allocated',
                         'title' => 'Surplus Food Available',
                         'message' => 'A surplus item has been allocated to you for 2 hours: ' . $item->item_name,
                         'icon' => 'fas fa-hourglass-end',
-                        'related_id' => $item->id,
-                        'related_type' => 'FoodListing',
+                        'read_at' => null,
                     ]);
 
                     $this->info("Allocated {$item->item_name} to {$vcfseUser->name}");

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SurplusAllocation;
 use App\Models\FoodListing;
 use App\Models\Redemption;
-use App\Services\NotificationService;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,14 +90,13 @@ class SurplusAllocationController extends Controller
         }
 
         // Send notification
-        NotificationService::create([
+        Notification::create([
             'user_id' => $user->id,
             'type' => 'surplus_redeemed',
             'title' => 'Surplus Item Redeemed',
             'message' => 'You have successfully redeemed: ' . $foodListing->item_name,
             'icon' => 'fas fa-check-circle',
-            'related_id' => $foodListingId,
-            'related_type' => 'FoodListing',
+            'read_at' => null,
         ]);
 
         return response()->json([

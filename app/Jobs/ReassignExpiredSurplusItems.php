@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\SurplusAllocation;
-use App\Services\NotificationService;
+use App\Models\Notification;
 
 class ReassignExpiredSurplusItems implements ShouldQueue
 {
@@ -51,14 +51,13 @@ class ReassignExpiredSurplusItems implements ShouldQueue
                 ]);
 
                 // Send notification to new user
-                NotificationService::create([
+                Notification::create([
                     'user_id' => $nextUser->id,
                     'type' => 'surplus_allocated',
                     'title' => 'Surplus Food Available',
                     'message' => 'A surplus item has been allocated to you for 2 hours',
                     'icon' => 'fas fa-hourglass-end',
-                    'related_id' => $allocation->food_listing_id,
-                    'related_type' => 'FoodListing',
+                    'read_at' => null,
                 ]);
             }
         }
