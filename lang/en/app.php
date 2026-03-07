@@ -155,3 +155,23 @@ return [
     'language'              => 'Language',
     'select_language'       => 'Select Language',
 ];
+
+    // Shop Dashboard
+    'shop_dashboard'        => 'Shop Dashboard',
+    'welcome_shop'          => 'Welcome',
+    'manage_listings'       => 'Manage your food listings and track voucher redemptions',
+    'total_listings'        => 'Total Listings',
+    'amount_owed'           => 'Amount Owed to You',
+    'collected_not_requested' => 'Collected, not yet requested',
+    'request_payout'        => 'Request Payout',
+    'pending_payout_requests' => 'Pending Payout Requests',
+    'awaiting_admin_payment' => 'Awaiting admin payment',
+    'total_paid_out'        => 'Total Paid Out',
+    'all_time'              => 'All time',
+    'my_listings'           => 'My Listings',
+    'recent_redemptions'    => 'Recent Redemptions',
+    'no_listings_yet'       => 'No listings yet',
+    'add_first_listing'     => 'Add your first food listing',
+    'minutes_ago'           => 'minutes ago',
+    'hours_ago'             => 'hours ago',
+    'days_ago'              => 'days ago',

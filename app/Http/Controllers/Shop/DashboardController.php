@@ -31,13 +31,17 @@ class DashboardController extends Controller
         $pendingRedemptionsCount = Redemption::where('shop_user_id', $user->id)
                               ->where('status', 'pending')->count();
 
-        // Payout summary
+        // Payout summary - sum of amount_used from confirmed/collected redemptions
         $unpaidAmount = Redemption::where('shop_user_id', $user->id)
-                          ->where('status', 'collected')
+                          ->whereIn('status', ['confirmed', 'collected'])
                           ->whereNull('payout_request_id')
-                          ->with('foodListing')
-                          ->get()
-                          ->sum(fn($r) => $r->amount_used > 0 ? $r->amount_used : ($r->foodListing->voucher_value ?? 0));
+                          ->sum('amount_used');
+        
+        // Add any amount owed at shop (from partial vouchers)
+        $unpaidAmount += Redemption::where('shop_user_id', $user->id)
+                          ->whereIn('status', ['confirmed', 'collected'])
+                          ->whereNull('payout_request_id')
+                          ->sum('amount_owed_at_shop');
         $pendingPayouts = ShopPayoutRequest::where('shop_user_id', $user->id)
                           ->whereIn('status', ['pending', 'approved'])->count();
         $totalPaidOut   = ShopPayoutRequest::where('shop_user_id', $user->id)
