@@ -18,14 +18,8 @@
           Active Voucher
         @endif
       </div>
-      <div style="font-size:36px;font-weight:900;line-height:1">£{{ number_format($active_vouchers->first()->remaining_value ?? $active_vouchers->first()->amount, 2) }}</div>
-      <div style="font-size:13px;opacity:.8;margin-top:4px">
-        @if($active_vouchers->first()->status === 'partially_used')
-          Remaining Balance
-        @else
-          Available Balance
-        @endif
-      </div>
+      <div style="font-size:36px;font-weight:900;line-height:1">£{{ number_format($total_voucher_value, 2) }}</div>
+      <div style="font-size:13px;opacity:.8;margin-top:4px">Total Available Balance</div>
     </div>
     <div style="text-align:right">
       <code style="background:rgba(255,255,255,.15);padding:6px 14px;border-radius:8px;font-size:14px;font-weight:800;letter-spacing:.1em;display:block;margin-bottom:8px">{{ $active_vouchers->first()->code }}</code>
