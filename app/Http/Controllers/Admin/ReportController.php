@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\BankDeposit;
 use App\Models\Donation;
 use App\Models\FoodListing;
+use App\Models\FundLoad;
 use App\Models\Redemption;
 use App\Models\User;
 use App\Models\Voucher;
@@ -24,6 +26,8 @@ class ReportController extends Controller
             'total_recipients'      => User::where('role','recipient')->count(),
             'total_shops'           => User::where('role','local_shop')->count(),
             'total_donors'          => User::whereIn('role',['vcfse','school_care'])->count(),
+            'total_funds_loaded'    => FundLoad::sum('amount'),
+            'total_bank_deposits'   => BankDeposit::where('status','verified')->count(),
         ];
         $monthly_donations = Donation::where('status','completed')
             ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(amount) as total')

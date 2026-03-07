@@ -76,6 +76,46 @@ class NotificationService
     }
 
     /**
+     * Notify shop about a voucher redemption
+     */
+    public static function notifyShopVoucherRedemption($redemption)
+    {
+        $shop = $redemption->shop;
+        
+        Notification::create([
+            'user_id' => $shop->id,
+            'title' => 'Voucher Redeemed',
+            'message' => 'A voucher has been redeemed at your shop for ' . $redemption->foodListing->item_name . '. Amount: £' . number_format($redemption->amount_used, 2),
+            'type' => 'voucher_redeemed',
+            'icon' => 'fas fa-check-circle',
+            'link' => route('shop.redemptions'),
+            'read_at' => null,
+        ]);
+        
+        Log::info("Voucher redemption notification sent to shop: {$shop->name}");
+    }
+
+    /**
+     * Notify recipient about a new voucher
+     */
+    public static function notifyRecipientNewVoucher($voucher)
+    {
+        $recipient = $voucher->recipient;
+        
+        Notification::create([
+            'user_id' => $recipient->id,
+            'title' => 'New Voucher Issued',
+            'message' => 'You have received a new voucher worth £' . number_format($voucher->remaining_value, 2) . '. Expires on ' . $voucher->expiry_date->format('d M Y'),
+            'type' => 'new_voucher',
+            'icon' => 'fas fa-ticket',
+            'link' => route('recipient.browse'),
+            'read_at' => null,
+        ]);
+        
+        Log::info("New voucher notification sent to recipient: {$recipient->name}");
+    }
+
+    /**
      * Get unread notification count for a user
      */
     public static function getUnreadCount($userId)

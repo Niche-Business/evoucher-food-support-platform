@@ -6,6 +6,7 @@ use App\Models\FoodListing;
 use App\Models\Redemption;
 use App\Models\ShopPayoutRequest;
 use App\Models\Voucher;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -203,6 +204,9 @@ class DashboardController extends Controller
 
         // Mark food listing as redeemed (quantity management could be added later)
         $foodListing->update(['status' => 'redeemed']);
+
+        // Notify shop about the voucher redemption
+        NotificationService::notifyShopVoucherRedemption($redemption);
 
         $msg = 'Voucher accepted! Food item marked as collected.';
         if ($amountOwedAtShop > 0) {

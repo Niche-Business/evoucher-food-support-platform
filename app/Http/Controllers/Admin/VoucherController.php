@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Voucher;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,7 +33,7 @@ class VoucherController extends Controller
             'notes'             => 'nullable|string|max:500',
         ]);
 
-        Voucher::create([
+        $voucher = Voucher::create([
             'code'              => Voucher::generateCode(),
             'recipient_user_id' => $request->recipient_user_id,
             'issued_by'         => Auth::id(),
@@ -42,6 +43,9 @@ class VoucherController extends Controller
             'expiry_date'       => $request->expiry_date ?? now()->addDays(30)->format('Y-m-d'),
             'notes'             => $request->notes,
         ]);
+
+        // Notify recipient about the new voucher
+        NotificationService::notifyRecipientNewVoucher($voucher);
 
         return redirect()->route('admin.vouchers.index')->with('success', 'Voucher issued successfully.');
     }
