@@ -78,7 +78,7 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
       <div class="role-tab" :class="role === 'vcfse' ? 'active' : ''" @click="setRole('vcfse')">
         <div class="role-tab-icon">🏛️</div>
         <div class="role-tab-name">VCFSE Organisation</div>
-        <div class="role-tab-desc">We want to donate</div>
+        <div class="role-tab-desc">We want to support</div>
       </div>
       <div class="role-tab" :class="role === 'school_care' ? 'active' : ''" @click="setRole('school_care')">
         <div class="role-tab-icon">🏫</div>
