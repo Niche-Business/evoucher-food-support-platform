@@ -35,8 +35,11 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;display:
   <div class="auth-left">
     <div>
       <div class="logo">
-        <div class="logo-icon"><i class="fas fa-leaf"></i></div>
-        <div class="logo-text">eVoucher Platform</div>
+        <img src="{{ asset('images/logo.png') }}" alt="eVoucher" style="width:42px;height:42px;object-fit:contain">
+        <div style="display:flex;flex-direction:column;line-height:1.2">
+          <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.04em">BAKUP CIC</div>
+          <div class="logo-text">eVoucher</div>
+        </div>
       </div>
       <div class="auth-tagline">Welcome Back to eVoucher</div>
       <div class="auth-sub">Sign in to access your dashboard and manage your account on the Northamptonshire Food Support Platform.</div>

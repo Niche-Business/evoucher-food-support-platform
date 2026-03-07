@@ -43,9 +43,12 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
   }
 }" x-init="document.getElementById('role_input').value = role">
   <div class="reg-header">
-    <a href="/" class="reg-logo">
-      <div class="reg-logo-icon"><i class="fas fa-leaf"></i></div>
-      <div class="reg-logo-text">eVoucher Platform</div>
+    <a href="/" class="reg-logo" style="text-decoration:none">
+      <img src="{{ asset('images/logo.png') }}" alt="eVoucher" style="width:44px;height:44px;object-fit:contain">
+      <div style="display:flex;flex-direction:column;line-height:1.2">
+        <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.04em">BAKUP CIC</div>
+        <div class="reg-logo-text">eVoucher</div>
+      </div>
     </a>
     <h1 style="font-size:26px;font-weight:900;color:#0f172a;margin-bottom:6px">Create Your Account</h1>
     <p style="font-size:14px;color:#94a3b8">Join the Northamptonshire eVoucher Food Support Programme</p>
