@@ -59,7 +59,7 @@ class ShopController extends Controller
         $listings = $query->paginate(12);
 
         // Get shop profile
-        $shopProfile = $shop->organisation_profile;
+        $shopProfile = $shop->shopProfile;
 
         // Get statistics
         $totalItems = FoodListing::where('shop_user_id', $shop->id)
@@ -104,12 +104,12 @@ class ShopController extends Controller
 
         $query = User::where('role', 'local_shop')
             ->where('is_approved', true)
-            ->with('organisation_profile');
+            ->with('shopProfile');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhereHas('organisation_profile', function ($q) use ($search) {
+                    ->orWhereHas('shopProfile', function ($q) use ($search) {
                         $q->where('shop_name', 'like', "%{$search}%");
                     });
             });

@@ -26,21 +26,21 @@
             <div class="shop-card" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);transition:all .3s ease;background:#fff">
                 <div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:30px;text-align:center;color:#fff">
                     <div style="font-size:48px;margin-bottom:12px">🏪</div>
-                    <h3 style="margin:0;font-size:18px;font-weight:700">{{ $shop->organisation_profile->shop_name ?? $shop->name }}</h3>
+                    <h3 style="margin:0;font-size:18px;font-weight:700">{{ $shop->shopProfile->shop_name ?? $shop->name }}</h3>
                 </div>
                 
                 <div style="padding:16px">
-                    @if($shop->organisation_profile && $shop->organisation_profile->address)
+                    @if($shop->shopProfile && $shop->shopProfile->address)
                     <p style="font-size:12px;color:#64748b;margin:0 0 12px 0">
                         <i class="fas fa-map-marker-alt" style="color:#10b981;margin-right:6px"></i>
-                        {{ $shop->organisation_profile->address }}
+                        {{ $shop->shopProfile->address }}
                     </p>
                     @endif
                     
-                    @if($shop->organisation_profile && $shop->organisation_profile->phone)
+                    @if($shop->shopProfile && $shop->shopProfile->phone)
                     <p style="font-size:12px;color:#64748b;margin:0 0 12px 0">
                         <i class="fas fa-phone" style="color:#10b981;margin-right:6px"></i>
-                        {{ $shop->organisation_profile->phone }}
+                        {{ $shop->shopProfile->phone }}
                     </p>
                     @endif
                     

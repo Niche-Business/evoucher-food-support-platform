@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $shopProfile->shop_name ?? $shop->name)
+@section('title', ($shopProfile ? $shopProfile->shop_name : null) ?? $shop->name)
 @section('content')
 
 <div style="background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;padding:40px 20px;margin-bottom:30px;border-radius:12px">
@@ -7,7 +7,7 @@
         <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
             <div style="font-size:48px">🏪</div>
             <div>
-                <h1 style="margin:0;font-size:32px;font-weight:900">{{ $shopProfile->shop_name ?? $shop->name }}</h1>
+                <h1 style="margin:0;font-size:32px;font-weight:900">{{ ($shopProfile ? $shopProfile->shop_name : null) ?? $shop->name }}</h1>
                 <p style="margin:8px 0 0 0;opacity:.9">Browse all food items from this shop</p>
             </div>
         </div>
