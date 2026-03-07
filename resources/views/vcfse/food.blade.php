@@ -99,98 +99,100 @@
             <i class="fas fa-cubes" style="width:14px"></i>
             Qty: {{ $item->quantity }}
           </div>
-          @if($item->collection_address)
-          <div class="flex items-center gap-1">
-            <i class="fas fa-map-marker-alt" style="width:14px"></i>
-            {{ Str::limit($item->collection_address, 50) }}
-          </div>
-          @endif
         </div>
-        @if($item->collection_instructions)
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;font-size:12px;color:#15803d;margin-bottom:10px">
-          <i class="fas fa-info-circle"></i> {{ $item->collection_instructions }}
+        @if($item->collection_address)
+        <div class="flex items-center gap-1">
+          <i class="fas fa-map-marker-alt" style="width:14px"></i>
+          {{ Str::limit($item->collection_address, 50) }}
         </div>
-        @endif
-        <!-- Surplus Allocation Timer -->
-        @if($item->listing_type === 'surplus')
-          @php
-            $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
-              ->where('status', 'pending')
-              ->first();
-            $timeRemaining = $allocation ? $allocation->getTimeRemainingMinutes() : null;
-            $isExpired = $allocation ? $allocation->isExpired() : false;
-          @endphp
-          @if($allocation && !$isExpired)
-            <div class="badge badge-orange w-full justify-center mb-2" style="display:flex;background:#fed7aa;color:#92400e;border:1px solid #fdba74">
-              <i class="fas fa-hourglass-end"></i> 
-              @if($timeRemaining > 0)
-                {{ $timeRemaining }} mins remaining
-              @else
-                Expires soon!
-              @endif
-            </div>
-          @elseif($isExpired)
-            <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
-              <i class="fas fa-times-circle"></i> Allocation Expired
-            </div>
-          @endif
-        @else
-          <!-- Expiry Warning -->
-          @php $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->expiry_date), false); @endphp
-          @if($daysLeft <= 2)
-            <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
-              <i class="fas fa-exclamation-triangle"></i> Expires in {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }}!
-            </div>
-          @elseif($daysLeft <= 5)
-            <div class="badge badge-yellow w-full justify-center mb-2" style="display:flex">
-              <i class="fas fa-clock"></i> Expires in {{ $daysLeft }} days
-            </div>
-          @endif
-        @endif
-        <!-- Collection Time -->
-        @if($item->collection_time)
-        <div style="font-size:12px;color:#64748b;margin-bottom:10px">
-          <i class="fas fa-clock"></i> Collection: {{ $item->collection_time }}
-        </div>
-        @endif
-        <div class="flex items-center justify-between gap-2">
-          <span style="font-size:18px;font-weight:800;color:#16a34a">FREE</span>
-          <span style="font-size:11px;color:#94a3b8">{{ $item->listing_type === 'surplus' ? 'VCFSE Collection' : 'Available to All' }}</span>
-        </div>
-        <!-- Claim Button Footer -->
-        @if($item->listing_type === 'surplus')
-          @php
-            $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
-              ->where('status', 'pending')
-              ->first();
-          @endphp
-          @if($allocation && !$allocation->isExpired())
-            <form method="POST" action="{{ route('vcfse.food.claim', $item->id) }}" style="margin-top:12px">
-              @csrf
-              <button type="submit" class="btn w-full" style="font-size:13px;padding:10px 16px;font-weight:600;border-radius:6px;background:#1f2937;color:#ffffff;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:all 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.5)';this.style.transform='translateY(-2px)';this.style.background='#111827'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';this.style.transform='translateY(0)';this.style.background='#1f2937'" onclick="return confirm('Are you sure you want to claim this item? This will reserve it for your organization.')">
-                <i class="fas fa-hand-holding-heart" style="margin-right:6px"></i> Claim Now
-              </button>
-            </form>
-          @elseif($allocation && $allocation->isExpired())
-            <div style="margin-top:12px;padding:10px;background:#fee2e2;border-radius:6px;text-align:center;color:#dc2626;font-weight:600;font-size:12px">
-              <i class="fas fa-times-circle"></i> Allocation Expired
-            </div>
-          @endif
         @endif
       </div>
+      @if($item->collection_instructions)
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;font-size:12px;color:#15803d;margin-bottom:10px">
+        <i class="fas fa-info-circle"></i> {{ $item->collection_instructions }}
+      </div>
+      @endif
+      <!-- Surplus Allocation Timer -->
+      @if($item->listing_type === 'surplus')
+        @php
+          $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
+            ->where('status', 'pending')
+            ->first();
+          $timeRemaining = $allocation ? $allocation->getTimeRemainingMinutes() : null;
+          $isExpired = $allocation ? $allocation->isExpired() : false;
+        @endphp
+        @if($allocation && !$isExpired)
+          <div class="badge badge-orange w-full justify-center mb-2" style="display:flex;background:#fed7aa;color:#92400e;border:1px solid #fdba74">
+            <i class="fas fa-hourglass-end"></i> 
+            @if($timeRemaining > 0)
+              {{ $timeRemaining }} mins remaining
+            @else
+              Expires soon!
+            @endif
+          </div>
+        @elseif($isExpired)
+          <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
+            <i class="fas fa-times-circle"></i> Allocation Expired
+          </div>
+        @endif
+      @else
+        <!-- Expiry Warning -->
+        @php $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->expiry_date), false); @endphp
+        @if($daysLeft <= 2)
+          <div class="badge badge-red w-full justify-center mb-2" style="display:flex">
+            <i class="fas fa-exclamation-triangle"></i> Expires in {{ $daysLeft }} day{{ $daysLeft !== 1 ? 's' : '' }}!
+          </div>
+        @elseif($daysLeft <= 5)
+          <div class="badge badge-yellow w-full justify-center mb-2" style="display:flex">
+            <i class="fas fa-clock"></i> Expires in {{ $daysLeft }} days
+          </div>
+        @endif
+      @endif
+      <!-- Collection Time -->
+      @if($item->collection_time)
+      <div style="font-size:12px;color:#64748b;margin-bottom:10px">
+        <i class="fas fa-clock"></i> Collection: {{ $item->collection_time }}
+      </div>
+      @endif
+      <div class="flex items-center justify-between gap-2">
+        <span style="font-size:18px;font-weight:800;color:#16a34a">FREE</span>
+        <span style="font-size:11px;color:#94a3b8">{{ $item->listing_type === 'surplus' ? 'VCFSE Collection' : 'Available to All' }}</span>
+      </div>
+      <!-- Claim Button Footer -->
+      @if($item->listing_type === 'surplus')
+        @php
+          $allocation = \App\Models\SurplusAllocation::where('food_listing_id', $item->id)
+            ->where('status', 'pending')
+            ->first();
+        @endphp
+        @if($allocation && !$allocation->isExpired())
+          <form method="POST" action="{{ route('vcfse.food.claim', $item->id) }}" style="margin-top:12px">
+            @csrf
+            <button type="submit" class="btn w-full" style="font-size:13px;padding:10px 16px;font-weight:600;border-radius:6px;background:#1f2937;color:#ffffff;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:all 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.5)';this.style.transform='translateY(-2px)';this.style.background='#111827'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';this.style.transform='translateY(0)';this.style.background='#1f2937'" onclick="return confirm('Are you sure you want to claim this item? This will reserve it for your organization.')">
+              <i class="fas fa-hand-holding-heart" style="margin-right:6px"></i> Claim Now
+            </button>
+          </form>
+        @elseif($allocation && $allocation->isExpired())
+          <div style="margin-top:12px;padding:10px;background:#fee2e2;border-radius:6px;text-align:center;color:#dc2626;font-weight:600;font-size:12px">
+            <i class="fas fa-times-circle"></i> Allocation Expired
+          </div>
+        @endif
+      @elseif($item->listing_type === 'free')
+        <!-- Free items can be claimed by any VCFSE member -->
+        <form method="POST" action="{{ route('vcfse.food.claim', $item->id) }}" style="margin-top:12px">
+          @csrf
+          <button type="submit" class="btn w-full" style="font-size:13px;padding:10px 16px;font-weight:600;border-radius:6px;background:#1f2937;color:#ffffff;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:all 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.5)';this.style.transform='translateY(-2px)';this.style.background='#111827'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';this.style.transform='translateY(0)';this.style.background='#1f2937'" onclick="return confirm('Are you sure you want to claim this item? This will reserve it for your organization.')">
+            <i class="fas fa-hand-holding-heart" style="margin-right:6px"></i> Claim Now
+          </button>
+        </form>
+      @endif
     </div>
     @endforeach
   </div>
 
   <!-- Pagination -->
-  @if($listings->hasPages())
   <div class="flex justify-center">
-    {{ $listings->appends(request()->query())->links() }}
+    {{ $listings->links() }}
   </div>
-  @endif
 @endif
 @endsection
-
-<script>
-// Claim button functionality is now handled by form submission
-</script>

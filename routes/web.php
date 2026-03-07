@@ -25,6 +25,7 @@ use App\Http\Controllers\Shop\PayoutController as ShopPayout;
 use App\Http\Controllers\Shop\ReportController as ShopReport;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SurplusClaimController;
 use Illuminate\Support\Facades\Route;
 
 // Language Switcher
