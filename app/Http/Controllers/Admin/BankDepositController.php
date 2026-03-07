@@ -61,9 +61,10 @@ class BankDepositController extends Controller
         if ($organisationProfile) {
             // Create FundLoad record
             \App\Models\FundLoad::create([
+                'organisation_user_id' => $organisationUser->id,
                 'amount' => $deposit->amount,
                 'reference' => $deposit->reference,
-                'description' => "Bank deposit from {$organisationProfile->name}",
+                'notes' => "Bank deposit from {$organisationProfile->name}",
             ]);
 
             // Update organisation profile wallet balance
