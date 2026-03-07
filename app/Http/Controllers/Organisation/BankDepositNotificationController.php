@@ -29,6 +29,7 @@ class BankDepositNotificationController extends Controller
         ]);
 
         $bankDeposit = BankDeposit::create([
+            'organisation_id' => auth()->user()->organisation_id,
             'organisation_user_id' => auth()->id(),
             'amount' => $validated['amount'],
             'reference' => $validated['reference'],
