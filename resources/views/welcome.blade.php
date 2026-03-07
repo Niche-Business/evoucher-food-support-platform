@@ -333,9 +333,9 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       </div>
       <div>
         <label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#0f172a">Card Details</label>
-        <div id="card-element" style="padding:12px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;min-height:40px"></div>
+        <div id="card-element" style="padding:12px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;min-height:50px;font-family:Inter,sans-serif"></div>
       </div>
-      <div id="card-errors" style="color:#dc2626;font-size:13px;margin-top:8px"></div>
+      <div id="card-errors" style="color:#dc2626;font-size:13px;margin-top:8px;display:none"></div>
       <button type="submit" style="width:100%;background:var(--accent);color:#fff;padding:13px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:15px">
         <i class="fas fa-lock mr-2"></i>Donate Securely
       </button>
@@ -351,15 +351,60 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
   let stripe, elements, cardElement;
 
   function openDonateModal() {
-    document.getElementById('donateModal').style.display = 'flex';
+    const modal = document.getElementById('donateModal');
+    modal.style.display = 'flex';
+    
+    // Initialize Stripe on first open
     if (!stripe) {
-      stripe = Stripe('{{ config("services.stripe.public") }}');
-      elements = stripe.elements();
-      cardElement = elements.create('card');
-      cardElement.mount('#card-element');
-      cardElement.addEventListener('change', (event) => {
-        document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
-      });
+      setTimeout(() => {
+        try {
+          const publicKey = '{{ config("services.stripe.public") }}';
+          if (!publicKey || publicKey.includes('config')) {
+            console.warn('Stripe public key not configured. Using test key.');
+            stripe = Stripe('pk_test_51234567890');
+          } else {
+            stripe = Stripe(publicKey);
+          }
+          
+          elements = stripe.elements({
+            fonts: [{
+              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+            }]
+          });
+          
+          const style = {
+            base: {
+              fontSize: '14px',
+              color: '#0f172a',
+              fontFamily: 'Inter, sans-serif',
+              '::placeholder': {
+                color: '#cbd5e1'
+              }
+            },
+            invalid: {
+              color: '#dc2626',
+              iconColor: '#dc2626'
+            }
+          };
+          
+          cardElement = elements.create('card', { style: style });
+          cardElement.mount('#card-element');
+          
+          cardElement.addEventListener('change', (event) => {
+            const errorDiv = document.getElementById('card-errors');
+            if (event.error) {
+              errorDiv.textContent = event.error.message;
+              errorDiv.style.display = 'block';
+            } else {
+              errorDiv.textContent = '';
+              errorDiv.style.display = 'none';
+            }
+          });
+        } catch (err) {
+          console.error('Stripe initialization error:', err);
+          document.getElementById('card-errors').textContent = 'Payment system not available';
+        }
+      }, 100);
     }
   }
 
@@ -371,12 +416,34 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
     document.getElementById('donateAmount').value = amount;
   }
 
-  document.getElementById('donate-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const amount = document.getElementById('donateAmount').value;
-    alert('Thank you for your donation of £' + amount + '! This feature will be fully integrated with Stripe.');
-    closeDonateModal();
-  });
+  // Handle form submission
+  const donateForm = document.getElementById('donate-form');
+  if (donateForm) {
+    donateForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const amount = document.getElementById('donateAmount').value;
+      const email = document.querySelector('input[type="email"]').value;
+      
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid donation amount');
+        return;
+      }
+      
+      if (!email) {
+        alert('Please enter your email address');
+        return;
+      }
+      
+      if (!cardElement) {
+        alert('Payment method not loaded. Please try again.');
+        return;
+      }
+      
+      // For now, show a thank you message
+      alert('Thank you for your donation of £' + amount + '! Stripe integration will be completed soon.');
+      closeDonateModal();
+    });
+  }
 </script>
 </body>
 </html>
