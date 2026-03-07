@@ -48,7 +48,7 @@
             </div>
             @else
             <div style="font-size:13px;font-weight:700;color:#16a34a;margin-bottom:8px">
-                <i class="fas fa-gift"></i> Free Item
+                <i class="fas fa-tag"></i> Discounted Item
             </div>
             @endif
             @if($listing->description)
