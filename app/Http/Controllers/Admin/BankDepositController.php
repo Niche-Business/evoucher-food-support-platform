@@ -54,23 +54,27 @@ class BankDepositController extends Controller
             'notes' => $request->notes,
         ]);
 
-        // Create FundLoad record
-        \App\Models\FundLoad::create([
-            'amount' => $deposit->amount,
-            'reference' => $deposit->reference,
-            'description' => "Bank deposit from {$deposit->organisation->name}",
-        ]);
+        // Get the organisation user and their profile
+        $organisationUser = $deposit->organisation;
+        $organisationProfile = $organisationUser->organisationProfile;
 
-        // Update organisation profile wallet balance
-        $organisation = $deposit->organisation;
-        if ($organisation) {
-            $organisation->wallet_balance = ($organisation->wallet_balance ?? 0) + $deposit->amount;
-            $organisation->save();
+        if ($organisationProfile) {
+            // Create FundLoad record
+            \App\Models\FundLoad::create([
+                'amount' => $deposit->amount,
+                'reference' => $deposit->reference,
+                'description' => "Bank deposit from {$organisationProfile->name}",
+            ]);
+
+            // Update organisation profile wallet balance
+            $organisationProfile->wallet_balance = ($organisationProfile->wallet_balance ?? 0) + $deposit->amount;
+            $organisationProfile->save();
+
+            SystemLog::log('bank_deposit_verified', 'bank_deposit', $deposit->id, "Bank deposit of £{$deposit->amount} from {$organisationProfile->name} verified and funds loaded");
+            return back()->with('success', 'Bank deposit verified and funds auto-loaded successfully.');
         }
 
-        SystemLog::log('bank_deposit_verified', 'bank_deposit', $deposit->id, "Bank deposit of £{$deposit->amount} from {$deposit->organisation->name} verified and funds loaded");
-
-        return back()->with('success', 'Bank deposit verified and funds auto-loaded successfully.');
+        return back()->with('error', 'Organisation profile not found.');
     }
 
     public function reject(Request $request, BankDeposit $deposit)
