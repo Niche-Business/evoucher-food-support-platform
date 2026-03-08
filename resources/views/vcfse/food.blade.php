@@ -97,22 +97,20 @@
               ->where('status', 'pending')
               ->first();
           @endphp
+          @if($allocation && $item->listing_type === 'surplus')
           <div class="flex items-center gap-1 mb-1">
             <i class="fas fa-calendar-alt" style="width:14px"></i>
-            @if($allocation && $item->listing_type === 'surplus')
-              @php
-                $hoursLeft = $allocation->expires_at->diffInHours(now());
-                $minutesLeft = $allocation->expires_at->diffInMinutes(now()) % 60;
-              @endphp
-              @if($hoursLeft > 0 || $minutesLeft > 0)
-                Claim expires in {{ $hoursLeft }}h {{ $minutesLeft }}m
-              @else
-                Allocation expired
-              @endif
+            @php
+              $hoursLeft = $allocation->expires_at->diffInHours(now());
+              $minutesLeft = $allocation->expires_at->diffInMinutes(now()) % 60;
+            @endphp
+            @if($hoursLeft > 0 || $minutesLeft > 0)
+              Claim expires in {{ $hoursLeft }}h {{ $minutesLeft }}m
             @else
-              Expires: {{ \Carbon\Carbon::parse($item->expiry_date)->format('d M Y') }}
+              Allocation expired
             @endif
           </div>
+          @endif
           <div class="flex items-center gap-1 mb-1">
             <i class="fas fa-cubes" style="width:14px"></i>
             Qty: {{ $item->quantity }}
