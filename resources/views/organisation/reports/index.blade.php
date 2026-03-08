@@ -19,14 +19,14 @@
     <div class="stat-change" style="color:#15803d">{{ $fundLoadsCount }} transactions</div>
   </a>
   
-  <div style="border:2px solid #e2e8f0;border-radius:8px;padding:16px;background:#fff">
+  <a href="#bank-deposits" style="text-decoration:none;display:block;border:2px dashed #1d4ed8;border-radius:8px;padding:16px;background:#fff;hover:shadow-lg;transition:all 0.3s ease;cursor:pointer" onmouseover="this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
     <div class="stat-icon" style="background:#dbeafe;color:#1d4ed8">
       <i class="fas fa-bank"></i>
     </div>
     <div class="stat-label">Bank Deposits Verified</div>
     <div class="stat-value">£{{ number_format($totalBankDeposits, 2) }}</div>
     <div class="stat-change" style="color:#1d4ed8">{{ $bankDepositsCount }} deposits</div>
-  </div>
+  </a>
   
   <a href="{{ route($role === 'vcfse' ? 'vcfse.reports.fund-loads-pdf' : 'school.reports.fund-loads-pdf') }}" style="text-decoration:none;display:block;border:2px dashed #7e22ce;border-radius:8px;padding:16px;background:#fff;hover:shadow-lg;transition:all 0.3s ease;cursor:pointer" onmouseover="this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
     <div class="stat-icon" style="background:#f3e8ff;color:#7e22ce">
@@ -99,7 +99,7 @@
 </div>
 
 <!-- Bank Deposits Report Section -->
-<div class="card">
+<div class="card" id="bank-deposits">
   <div class="card-hd">
     <div class="card-title">
       <i class="fas fa-bank"></i> Bank Deposits Report
