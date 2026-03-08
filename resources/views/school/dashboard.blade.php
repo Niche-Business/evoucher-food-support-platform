@@ -24,24 +24,24 @@
 @endif
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
   <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-sterling-sign"></i></div>
-    <div class="stat-label">Total Donated</div>
-    <div class="stat-value">£{{ number_format($totalDonated ?? 0, 2) }}</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-receipt"></i></div>
-    <div class="stat-label">Donations Made</div>
-    <div class="stat-value">{{ $donationCount ?? 0 }}</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#fdf4ff;color:#a855f7"><i class="fas fa-ticket"></i></div>
-    <div class="stat-label">Vouchers Funded</div>
+    <div class="stat-icon mb-3" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-ticket"></i></div>
+    <div class="stat-label">Vouchers Issued</div>
     <div class="stat-value">{{ $vouchersFunded ?? 0 }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#fef9c3;color:#ca8a04"><i class="fas fa-users"></i></div>
+    <div class="stat-icon mb-3" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-check-double"></i></div>
+    <div class="stat-label">Food Claims</div>
+    <div class="stat-value">{{ $foodClaimsCounted ?? 0 }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon mb-3" style="background:#fdf4ff;color:#a855f7"><i class="fas fa-users"></i></div>
     <div class="stat-label">People Helped</div>
     <div class="stat-value">{{ $peopleHelped ?? 0 }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon mb-3" style="background:#fef9c3;color:#ca8a04"><i class="fas fa-sterling-sign"></i></div>
+    <div class="stat-label">Total Allocated</div>
+    <div class="stat-value">£{{ number_format($totalDonated ?? 0, 2) }}</div>
   </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
