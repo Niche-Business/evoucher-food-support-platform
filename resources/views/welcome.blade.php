@@ -406,10 +406,11 @@ function setDonationAmount(amount) {
   event.target.style.background = 'rgba(22, 163, 74, 0.1)';
 }
 
-function handleDonation(event) {
+async function handleDonation(event) {
   event.preventDefault();
   const amount = document.getElementById('donationAmount').value;
   const email = document.querySelector('input[name="email"]').value;
+  const submitBtn = event.target;
   
   if (!amount || !email) {
     alert('Please enter both amount and email');
@@ -421,22 +422,65 @@ function handleDonation(event) {
     return;
   }
   
-  // Create payment method
-  stripe.createPaymentMethod({
-    type: 'card',
-    card: cardElement,
-    billing_details: {
-      email: email
-    }
-  }).then(function(result) {
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  
+  try {
+    const intentResponse = await fetch('/api/donations/create-payment-intent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+      },
+      body: JSON.stringify({ amount, email })
+    });
+    
+    const intentData = await intentResponse.json();
+    if (intentData.error) throw new Error(intentData.error);
+    
+    const result = await stripe.confirmCardPayment(intentData.clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: { email }
+      }
+    });
+    
     if (result.error) {
       document.getElementById('card-errors').textContent = result.error.message;
-    } else {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Proceed to Payment';
+      return;
+    }
+    
+    const saveResponse = await fetch('/api/donations/process', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+      },
+      body: JSON.stringify({
+        amount,
+        email,
+        payment_intent_id: result.paymentIntent.id
+      })
+    });
+    
+    const saveData = await saveResponse.json();
+    
+    if (saveData.success) {
       alert('Thank you for your donation of GBP' + amount + '! Your support helps us reduce food waste and support families in need.');
       closeDonateModal();
       document.getElementById('donateForm').reset();
+    } else {
+      alert('Error saving donation: ' + saveData.message);
     }
-  });
+  } catch (error) {
+    document.getElementById('card-errors').textContent = error.message;
+    console.error('Donation error:', error);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Proceed to Payment';
+  }
 }
 
 document.addEventListener('click', function(event) {
