@@ -67,19 +67,21 @@ class PublicDonationController extends Controller
             // Retrieve the payment intent from Stripe
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
 
-            if ($paymentIntent->status === 'succeeded') {
+            // Check if payment succeeded or is processing
+            if ($paymentIntent->status === 'succeeded' || $paymentIntent->status === 'processing') {
                 // Save donation to database
                 $donation = Donation::create([
                     'amount' => $validated['amount'],
                     'donor_email' => $validated['email'],
                     'stripe_payment_id' => $paymentIntent->id,
                     'payment_intent_id' => $validated['payment_intent_id'],
-                    'status' => 'completed',
+                    'status' => $paymentIntent->status === 'succeeded' ? 'completed' : 'processing',
                     'currency' => 'GBP',
                     'notes' => json_encode([
                         'email' => $validated['email'],
                         'type' => 'donation',
-                        'stripe_status' => $paymentIntent->status
+                        'stripe_status' => $paymentIntent->status,
+                        'payment_method' => $paymentIntent->payment_method
                     ])
                 ]);
 
@@ -95,10 +97,16 @@ class PublicDonationController extends Controller
                     'message' => 'Thank you for your donation of GBP' . $validated['amount'] . '!',
                     'amount' => $validated['amount'],
                     'email' => $validated['email'],
-                    'donation_id' => $donation->id
+                    'donation_id' => $donation->id,
+                    'status' => $paymentIntent->status
                 ]);
             } else {
                 // Save failed donation
+                $errorMessage = 'Payment not succeeded';
+                if ($paymentIntent->last_payment_error) {
+                    $errorMessage = $paymentIntent->last_payment_error->message;
+                }
+
                 Donation::create([
                     'amount' => $validated['amount'],
                     'donor_email' => $validated['email'],
@@ -108,7 +116,7 @@ class PublicDonationController extends Controller
                     'currency' => 'GBP',
                     'notes' => json_encode([
                         'stripe_status' => $paymentIntent->status,
-                        'error' => 'Payment not succeeded'
+                        'error' => $errorMessage
                     ])
                 ]);
 
