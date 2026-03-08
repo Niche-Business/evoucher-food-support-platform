@@ -188,30 +188,33 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add custom form validation
   form.addEventListener('submit', function(e) {
     let isValid = true;
-    let errorMsg = '';
+    let errors = [];
 
     // Check recipient
     const activeSelect = individualsSection.classList.contains('hidden') ? organisationsSelect : individualsSelect;
-    if (!activeSelect.value) {
+    console.log('Active select value:', activeSelect.value, 'ID:', activeSelect.id);
+    if (!activeSelect.value || activeSelect.value === '') {
       isValid = false;
-      errorMsg += 'Please select a recipient.\n';
+      errors.push('Please select a recipient.');
     }
 
     // Check voucher value
-    if (!voucherValue.value || parseFloat(voucherValue.value) <= 0) {
+    const voucherVal = parseFloat(voucherValue.value);
+    if (!voucherValue.value || isNaN(voucherVal) || voucherVal <= 0) {
       isValid = false;
-      errorMsg += 'Please enter a valid voucher value.\n';
+      errors.push('Please enter a valid voucher value.');
     }
 
     // Check expiry days
-    if (!expiryDays.value) {
+    if (!expiryDays.value || expiryDays.value === '') {
       isValid = false;
-      errorMsg += 'Please select an expiry period.\n';
+      errors.push('Please select an expiry period.');
     }
 
     if (!isValid) {
       e.preventDefault();
-      alert(errorMsg);
+      console.log('Validation errors:', errors);
+      alert(errors.join('\n'));
       return false;
     }
   });
