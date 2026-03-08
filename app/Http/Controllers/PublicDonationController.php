@@ -58,15 +58,11 @@ class PublicDonationController extends Controller
     public function store(Request $request)
     {
         try {
-            \Log::info('Donation store request:', $request->all());
-            
             $validated = $request->validate([
                 'amount' => 'required|numeric|min:1',
                 'email' => 'required|email',
                 'payment_intent_id' => 'required|string'
             ]);
-            
-            \Log::info('Donation validated:', $validated);
 
             // Retrieve the payment intent from Stripe
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
@@ -76,6 +72,7 @@ class PublicDonationController extends Controller
                 // Save donation to database
                 $donation = Donation::create([
                     'amount' => $validated['amount'],
+                    'email' => $validated['email'],
                     'donor_email' => $validated['email'],
                     'stripe_payment_id' => $paymentIntent->id,
                     'payment_intent_id' => $validated['payment_intent_id'],
@@ -93,7 +90,7 @@ class PublicDonationController extends Controller
                 try {
                     NotificationService::notifyNewDonation($validated['amount'], $validated['email']);
                 } catch (\Exception $notifyError) {
-                    \Log::error('Failed to send donation notification: ' . $notifyError->getMessage());
+                    // Log but don't fail the donation
                 }
 
                 return response()->json([
@@ -113,6 +110,7 @@ class PublicDonationController extends Controller
 
                 Donation::create([
                     'amount' => $validated['amount'],
+                    'email' => $validated['email'],
                     'donor_email' => $validated['email'],
                     'stripe_payment_id' => $paymentIntent->id,
                     'payment_intent_id' => $validated['payment_intent_id'],
@@ -129,20 +127,12 @@ class PublicDonationController extends Controller
                     'message' => 'Payment processing failed. Status: ' . $paymentIntent->status
                 ], 400);
             }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error: ' . implode(', ', array_merge(...array_values($e->errors())))
+            ], 422);
         } catch (\Exception $e) {
-            // Save error donation
-            try {
-                Donation::create([
-                    'amount' => $validated['amount'] ?? 0,
-                    'donor_email' => $validated['email'] ?? 'unknown',
-                    'status' => 'failed',
-                    'currency' => 'GBP',
-                    'notes' => json_encode(['error' => $e->getMessage()])
-                ]);
-            } catch (\Exception $dbError) {
-                \Log::error('Failed to save donation error: ' . $dbError->getMessage());
-            }
-
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
