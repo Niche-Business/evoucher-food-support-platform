@@ -452,26 +452,32 @@ async function handleDonation(event) {
       return;
     }
     
+    const payloadData = {
+      amount,
+      email,
+      payment_intent_id: result.paymentIntent.id
+    };
+    console.log('Sending donation payload:', payloadData);
+    
     const saveResponse = await fetch('/api/donations/process', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
       },
-      body: JSON.stringify({
-        amount,
-        email,
-        payment_intent_id: result.paymentIntent.id
-      })
+      body: JSON.stringify(payloadData)
     });
     
+    console.log('Response status:', saveResponse.status);
     const saveData = await saveResponse.json();
+    console.log('Response data:', saveData);
     
     if (saveData.success) {
       alert('Thank you for your donation of GBP' + amount + '! Your support helps us reduce food waste and support families in need.');
       closeDonateModal();
       document.getElementById('donateForm').reset();
     } else {
+      console.error('Error response:', saveData);
       alert('Error saving donation: ' + saveData.message);
     }
   } catch (error) {
