@@ -186,37 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const voucherValue = document.getElementById('voucher-value');
   const expiryDays = document.getElementById('expiry-days');
 
-  // Add custom form validation
+  // Form submission - ensure correct dropdown is submitted
   form.addEventListener('submit', function(e) {
-    let isValid = true;
-    let errors = [];
-
-    // Check recipient
-    const activeSelect = individualsSection.classList.contains('hidden') ? organisationsSelect : individualsSelect;
-    console.log('Active select value:', activeSelect.value, 'ID:', activeSelect.id);
-    if (!activeSelect.value || activeSelect.value === '') {
-      isValid = false;
-      errors.push('Please select a recipient.');
-    }
-
-    // Check voucher value
-    const voucherVal = parseFloat(voucherValue.value);
-    if (!voucherValue.value || isNaN(voucherVal) || voucherVal <= 0) {
-      isValid = false;
-      errors.push('Please enter a valid voucher value.');
-    }
-
-    // Check expiry days
-    if (!expiryDays.value || expiryDays.value === '') {
-      isValid = false;
-      errors.push('Please select an expiry period.');
-    }
-
-    if (!isValid) {
-      e.preventDefault();
-      console.log('Validation errors:', errors);
-      alert(errors.join('\n'));
-      return false;
+    // Clear the hidden dropdown's value to prevent conflicts
+    if (individualsSection.classList.contains('hidden')) {
+      individualsSelect.value = '';
+    } else {
+      organisationsSelect.value = '';
     }
   });
 
