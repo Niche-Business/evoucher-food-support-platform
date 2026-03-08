@@ -8,14 +8,15 @@ use App\Models\SystemLog;
 use App\Models\OrganisationProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Stripe\StripeClient;
 
 class FundLoadController extends Controller
 {
+    private $stripe;
+
     public function __construct()
     {
-        Stripe::setApiKey(config('services.stripe.secret'));
+        $this->stripe = new StripeClient(config('services.stripe.secret'));
     }
 
     public function showLoadForm()
@@ -43,7 +44,7 @@ class FundLoadController extends Controller
         $amountInCents = (int)($request->amount * 100);
 
         try {
-            $paymentIntent = PaymentIntent::create([
+            $paymentIntent = $this->stripe->paymentIntents->create([
                 'amount' => $amountInCents,
                 'currency' => 'gbp',
                 'metadata' => [
@@ -81,7 +82,7 @@ class FundLoadController extends Controller
         $user = Auth::user();
 
         try {
-            $paymentIntent = PaymentIntent::retrieve($request->payment_intent_id);
+            $paymentIntent = $this->stripe->paymentIntents->retrieve($request->payment_intent_id);
 
             if ($paymentIntent->status === 'succeeded') {
                 // Update wallet balance
