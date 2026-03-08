@@ -4,9 +4,9 @@
 @section('content')
 
 <div class="page-content">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="flex flex-col lg:flex-row gap-6">
     <!-- Main Form -->
-    <div>
+    <div class="flex-1 min-w-0">
       <div class="card">
         <div class="card-hd">
           <div class="card-title"><i class="fas fa-ticket text-blue-600"></i> Issue New Voucher</div>
@@ -86,6 +86,7 @@
               <label class="form-label">Voucher Value (£) <span class="text-red-600">*</span></label>
               <div class="relative">
                 <input type="number" name="value" id="voucher-value" class="form-input @error('value') border-red-500 @enderror" placeholder="0.00" min="0.01" step="0.01" value="{{ old('value') }}">
+              </div>
               @error('value')
                 <p class="text-red-600 text-sm mt-1"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>
               @enderror
@@ -134,7 +135,7 @@
     </div>
 
     <!-- Info Card -->
-    <div>
+    <div class="flex-1 min-w-0">
       <div class="card">
         <div class="card-hd">
           <div class="card-title"><i class="fas fa-info-circle text-blue-600"></i> How It Works</div>
