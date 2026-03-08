@@ -52,13 +52,13 @@ class SurplusClaimController extends Controller
             }
 
             // Check if voucher belongs to the VCFSE user
-            if ($voucher->user_id !== $user->id) {
+            if ($voucher->recipient_user_id !== $user->id) {
                 return redirect()->back()->with('error', 'This voucher does not belong to you');
             }
 
             // Check if voucher has sufficient balance
-            if ($voucher->balance < $foodListing->discounted_price) {
-                return redirect()->back()->with('error', 'Insufficient voucher balance. Required: £' . $foodListing->discounted_price . ', Available: £' . $voucher->balance);
+            if ($voucher->remaining_value < $foodListing->discounted_price) {
+                return redirect()->back()->with('error', 'Insufficient voucher balance. Required: £' . $foodListing->discounted_price . ', Available: £' . $voucher->remaining_value);
             }
 
             // Check if voucher is active
@@ -67,7 +67,7 @@ class SurplusClaimController extends Controller
             }
 
             // Deduct from voucher balance
-            $voucher->decrement('balance', $foodListing->discounted_price);
+            $voucher->decrement('remaining_value', $foodListing->discounted_price);
         }
 
         // For surplus items, check allocation
@@ -93,12 +93,25 @@ class SurplusClaimController extends Controller
         }
 
         // Create redemption record
-        $redemption = Redemption::create([
+        $redemptionData = [
             'food_listing_id' => $foodListingId,
             'recipient_user_id' => $user->id,
             'redeemed_at' => now(),
             'status' => 'confirmed',
-        ]);
+            'amount_used' => 0, // Default amount for free/surplus items
+        ];
+        
+        // For discounted items, add voucher_id and amount_used
+        if ($foodListing->listing_type === 'discounted') {
+            $redemptionData['voucher_id'] = $request->input('voucher_id');
+            $redemptionData['amount_used'] = $foodListing->discounted_price;
+        } else {
+            // For free and surplus items, voucher_id is null
+            $redemptionData['voucher_id'] = null;
+            $redemptionData['amount_used'] = 0;
+        }
+        
+        $redemption = Redemption::create($redemptionData);
 
         // Update food listing quantity
         $foodListing->decrement('quantity');
@@ -108,7 +121,7 @@ class SurplusClaimController extends Controller
             if ($allocation) {
                 $allocation->update(['status' => 'redeemed']);
             }
-            $foodListing->update(['status' => 'collected']);
+            $foodListing->update(['status' => 'redeemed']);
         }
 
         // Send notification

@@ -11,6 +11,7 @@
   <h1>{{ $profile->org_name ?? auth()->user()->name }}</h1>
   <p>VCFSE Organisation — Support the eVoucher Food Support Programme</p>
 </div>
+
 <!-- Wallet Balance Banner -->
 @if(isset($walletBalance) && $walletBalance > 0)
 <div style="background:linear-gradient(135deg,#16a34a,#15803d);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;color:#fff">
@@ -22,57 +23,93 @@
   <div style="font-size:48px;opacity:.3"><i class="fas fa-wallet"></i></div>
 </div>
 @endif
-<!-- Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-sterling-sign"></i></div>
-    <div class="stat-label">Total Loaded</div>
-    <div class="stat-value">£{{ number_format($totalLoaded ?? 0, 2) }}</div>
+
+<!-- Fund Load Stats -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px">
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#f0fdf4;color:#16a34a;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-sterling-sign"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Total Loaded</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">£{{ number_format($totalLoaded ?? 0, 2) }}</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-receipt"></i></div>
-    <div class="stat-label">Fund Loads</div>
-    <div class="stat-value">{{ $fundLoadCount ?? 0 }}</div>
+  
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#eff6ff;color:#3b82f6;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-receipt"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Fund Loads</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">{{ $fundLoadCount ?? 0 }}</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#fdf4ff;color:#a855f7"><i class="fas fa-ticket"></i></div>
-    <div class="stat-label">Vouchers Funded</div>
-    <div class="stat-value">{{ $vouchersFunded ?? 0 }}</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon mb-3" style="background:#fef9c3;color:#ca8a04"><i class="fas fa-users"></i></div>
-    <div class="stat-label">People Helped</div>
-    <div class="stat-value">{{ $peopleHelped ?? 0 }}</div>
+  
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#fef3c7;color:#d97706;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-credit-card"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Amount Paid</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">£{{ number_format($foodClaimsPaid ?? 0, 2) }}</div>
   </div>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  <!-- Fund Load Card -->
-  <div class="card" style="background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);border:none;color:#fff">
-    <div class="card-body" style="padding:28px">
+
+<!-- Food Claims Stats -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px">
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#fdf4ff;color:#a855f7;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-shopping-bag"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Food Claims</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">{{ $foodClaimsCounted ?? 0 }}</div>
+  </div>
+  
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#dcfce7;color:#16a34a;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-check-circle"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Redeemed</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">{{ $foodClaimsRedeemed ?? 0 }}</div>
+  </div>
+  
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div style="background:#fef2f2;color:#dc2626;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fas fa-hourglass-half"></i></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Pending</div>
+    <div style="font-size:24px;font-weight:700;color:#0f172a">{{ ($foodClaimsCounted - $foodClaimsRedeemed) ?? 0 }}</div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:24px">
+  <!-- Load Funds Card -->
+  <div style="background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);border:none;color:#fff;border-radius:8px;overflow:hidden">
+    <div style="padding:28px">
       <div style="font-size:32px;margin-bottom:12px">💰</div>
       <div style="font-size:18px;font-weight:800;margin-bottom:8px">Load Funds</div>
       <div style="font-size:13.5px;opacity:.75;line-height:1.7;margin-bottom:20px">
         Load funds to your wallet using Stripe. Your funds will be used to allocate food vouchers to recipients in Northamptonshire.
       </div>
-      <a href="{{ route('vcfse.fund-load') }}" class="btn" style="background:#fff;color:#16a34a;width:100%;justify-content:center;font-weight:600">
+      <a href="{{ route('vcfse.fund-load') }}" class="btn" style="background:#fff;color:#16a34a;width:100%;justify-content:center;font-weight:600;display:flex;align-items:center;text-decoration:none;padding:10px 16px;border-radius:6px;border:none;cursor:pointer">
         <i class="fas fa-wallet"></i> Load Funds Now
       </a>
     </div>
   </div>
+  
   <!-- Organisation Profile -->
-  <div class="card">
-    <div class="card-hd"><div class="card-title"><i class="fas fa-building text-blue-500"></i> Organisation Profile</div></div>
-    <div class="card-body">
-      <div class="mb-3">
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid #f8fafc">
+      <div style="font-size:14px;font-weight:700;color:#0f172a"><i class="fas fa-building text-blue-500"></i> Organisation Profile</div>
+    </div>
+    <div style="padding:20px">
+      <div style="margin-bottom:16px">
         <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Organisation Name</div>
         <div style="font-size:14px;font-weight:600;color:#0f172a">{{ $profile->org_name ?? auth()->user()->name }}</div>
       </div>
-      <div class="mb-3">
+      <div style="margin-bottom:16px">
         <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Type</div>
         <div style="font-size:14px;font-weight:600;color:#0f172a">VCFSE Organisation</div>
       </div>
       @if($profile && $profile->charity_number)
-      <div class="mb-3">
+      <div style="margin-bottom:16px">
         <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Charity Number</div>
         <div style="font-size:14px;font-weight:600;color:#0f172a">{{ $profile->charity_number }}</div>
       </div>
@@ -85,11 +122,12 @@
       @endif
     </div>
   </div>
-  <!-- Recent Donations -->
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-title"><i class="fas fa-exchange-alt text-green-600"></i> Recent Transactions</div>
-      <a href="{{ route('vcfse.reports') }}" class="btn btn-secondary btn-sm">All</a>
+  
+  <!-- Recent Fund Loads -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid #f8fafc;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:14px;font-weight:700;color:#0f172a"><i class="fas fa-wallet text-green-600"></i> Recent Fund Loads</div>
+      <a href="{{ route('vcfse.reports') }}" style="font-size:12px;padding:6px 12px;background:#f1f5f9;color:#0f172a;border-radius:4px;text-decoration:none;border:none;cursor:pointer">All</a>
     </div>
     <div>
       @forelse($recentTransactions ?? [] as $t)
@@ -98,12 +136,55 @@
           <div style="font-size:14px;font-weight:700;color:#16a34a">£{{ number_format($t->amount, 2) }}</div>
           <div style="font-size:11.5px;color:#94a3b8">{{ \Carbon\Carbon::parse($t->created_at)->format('d M Y H:i') }}</div>
         </div>
-        <span class="badge badge-green">Loaded</span>
+        <span style="background:#dcfce7;color:#16a34a;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600">Loaded</span>
       </div>
       @empty
-      <div class="empty-state" style="padding:32px 24px"><div class="empty-icon" style="font-size:28px"><i class="fas fa-exchange-alt"></i></div><h3 style="font-size:13px">No transactions yet</h3></div>
+      <div style="padding:32px 24px;text-align:center">
+        <div style="font-size:28px;margin-bottom:8px"><i class="fas fa-wallet"></i></div>
+        <div style="font-size:13px;color:#94a3b8">No fund loads yet</div>
+      </div>
       @endforelse
     </div>
   </div>
 </div>
+
+<!-- Recent Food Claims Section (Full Width) -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+  <div style="padding:16px 20px;border-bottom:1px solid #f8fafc;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:14px;font-weight:700;color:#0f172a"><i class="fas fa-shopping-bag text-blue-600"></i> Recent Food Claims</div>
+    <a href="{{ route('vcfse.reports') }}" style="font-size:12px;padding:6px 12px;background:#f1f5f9;color:#0f172a;border-radius:4px;text-decoration:none;border:none;cursor:pointer">All Claims</a>
+  </div>
+  <div>
+    @forelse($recentFoodClaims ?? [] as $claim)
+    <div style="padding:14px 20px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;justify-content:space-between">
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#3b82f6">{{ $claim->foodListing->item_name ?? 'Unknown Item' }}</div>
+        <div style="font-size:11.5px;color:#94a3b8">{{ \Carbon\Carbon::parse($claim->created_at)->format('d M Y H:i') }}</div>
+      </div>
+      <div style="margin-left:12px">
+        @if($claim->status === 'confirmed')
+          @if($claim->redeemed_at)
+            <span style="background:#dcfce7;color:#16a34a;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600">Redeemed</span>
+          @else
+            <span style="background:#fef3c7;color:#d97706;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600">Pending</span>
+          @endif
+        @else
+          <span style="background:#f3f4f6;color:#6b7280;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600">{{ ucfirst($claim->status) }}</span>
+        @endif
+      </div>
+      @if($claim->amount_used > 0)
+      <div style="margin-left:12px;text-align:right">
+        <div style="font-size:13px;font-weight:600;color:#059669">£{{ number_format($claim->amount_used, 2) }}</div>
+      </div>
+      @endif
+    </div>
+    @empty
+    <div style="padding:32px 24px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px"><i class="fas fa-shopping-bag"></i></div>
+      <div style="font-size:13px;color:#94a3b8">No food claims yet</div>
+    </div>
+    @endforelse
+  </div>
+</div>
+
 @endsection

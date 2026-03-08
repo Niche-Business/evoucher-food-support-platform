@@ -59,7 +59,7 @@
     <p>There are no free or surplus food listings available at the moment. Check back soon.</p>
   </div>
 @else
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
     @foreach($listings as $item)
     <div class="food-card">
       @if($item->image_url)
@@ -188,9 +188,9 @@
       @elseif($item->listing_type === 'discounted')
         <!-- Discounted items require voucher selection -->
         @php
-          $userVouchers = \App\Models\Voucher::where('user_id', Auth::id())
+          $userVouchers = \App\Models\Voucher::where('recipient_user_id', Auth::id())
             ->where('status', 'active')
-            ->where('balance', '>', 0)
+            ->where('remaining_value', '>', 0)
             ->get();
         @endphp
         @if($userVouchers->isEmpty())

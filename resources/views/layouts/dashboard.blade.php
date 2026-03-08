@@ -301,6 +301,14 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('vcfse.food') }}" class="nav-item {{ request()->routeIs('vcfse.food') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-box-open"></i></span> Browse Food
   </a>
+  <div class="sb-section">Vouchers</div>
+  <a href="{{ route('vcfse.vouchers.create') }}" class="nav-item {{ request()->routeIs('vcfse.vouchers.create') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-plus-circle"></i></span> Issue Voucher
+  </a>
+  <a href="{{ route('vcfse.vouchers.index') }}" class="nav-item {{ request()->routeIs('vcfse.vouchers.index', 'vcfse.vouchers.show') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-ticket"></i></span> My Vouchers
+  </a>
+  <div class="sb-section">Reports</div>
   <a href="{{ route('vcfse.reports') }}" class="nav-item {{ request()->routeIs('vcfse.reports') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-chart-bar"></i></span> Reports
   </a>
@@ -320,6 +328,14 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('school.food') }}" class="nav-item {{ request()->routeIs('school.food') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-box-open"></i></span> Browse Food
   </a>
+  <div class="sb-section">Vouchers</div>
+  <a href="{{ route('school.vouchers.create') }}" class="nav-item {{ request()->routeIs('school.vouchers.create') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-plus-circle"></i></span> Issue Voucher
+  </a>
+  <a href="{{ route('school.vouchers.index') }}" class="nav-item {{ request()->routeIs('school.vouchers.index', 'school.vouchers.show') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-ticket"></i></span> My Vouchers
+  </a>
+  <div class="sb-section">Reports</div>
   <a href="{{ route('school.reports') }}" class="nav-item {{ request()->routeIs('school.reports') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-chart-bar"></i></span> Reports
   </a>

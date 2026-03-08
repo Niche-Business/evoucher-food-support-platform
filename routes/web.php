@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FoodListingController;
 use App\Http\Controllers\Organisation\DashboardController as OrgDashboard;
 use App\Http\Controllers\Organisation\DonationController;
+use App\Http\Controllers\Organisation\VoucherController as OrgVoucher;
 use App\Http\Controllers\DonationController as PublicDonationController;
 use App\Http\Controllers\Recipient\DashboardController as RecipientDashboard;
 use App\Http\Controllers\Recipient\VoucherController as RecipientVoucher;
@@ -176,6 +177,14 @@ Route::prefix('vcfse')->name('vcfse.')->middleware(['auth', 'approved', 'role:vc
     Route::post('/bank-deposit-notification', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'store'])->name('bank-deposit-notification.store');
     Route::get('/bank-deposit-notification/list', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'index'])->name('bank-deposit-notification.index');
     Route::get('/bank-deposit-notification/{bankDeposit}', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'show'])->name('bank-deposit-notification.show');
+    // Vouchers
+    Route::get('/vouchers/create', [OrgVoucher::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers', [OrgVoucher::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers', [OrgVoucher::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/{voucher}', [OrgVoucher::class, 'show'])->name('vouchers.show');
+    Route::patch('/vouchers/{voucher}/cancel', [OrgVoucher::class, 'cancel'])->name('vouchers.cancel');
+    Route::get('/reports/vouchers/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportVouchersExcel'])->name('reports.vouchers-excel');
+    Route::get('/reports/vouchers/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportVouchersPdf'])->name('reports.vouchers-pdf');
 });
 
 // School/Care
@@ -200,6 +209,14 @@ Route::prefix('school')->name('school.')->middleware(['auth', 'approved', 'role:
     Route::post('/bank-deposit-notification', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'store'])->name('bank-deposit-notification.store');
     Route::get('/bank-deposit-notification/list', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'index'])->name('bank-deposit-notification.index');
     Route::get('/bank-deposit-notification/{bankDeposit}', [\App\Http\Controllers\Organisation\BankDepositNotificationController::class, 'show'])->name('bank-deposit-notification.show');
+    // Vouchers
+    Route::get('/vouchers/create', [OrgVoucher::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers', [OrgVoucher::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers', [OrgVoucher::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/{voucher}', [OrgVoucher::class, 'show'])->name('vouchers.show');
+    Route::patch('/vouchers/{voucher}/cancel', [OrgVoucher::class, 'cancel'])->name('vouchers.cancel');
+    Route::get('/reports/vouchers/excel', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportVouchersExcel'])->name('reports.vouchers-excel');
+    Route::get('/reports/vouchers/pdf', [\App\Http\Controllers\Organisation\ReportsController::class, 'exportVouchersPdf'])->name('reports.vouchers-pdf');
 });
 
 // Notifications

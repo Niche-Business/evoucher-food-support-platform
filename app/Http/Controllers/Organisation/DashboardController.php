@@ -5,6 +5,7 @@ use App\Models\Donation;
 use App\Models\FoodListing;
 use App\Models\FundLoad;
 use App\Models\BankDeposit;
+use App\Models\Redemption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,8 +32,51 @@ class DashboardController extends Controller
         $walletBalance = $profile ? (float)$profile->wallet_balance : 0.0;
         $peopleHelped  = (int)$vouchersFunded; // 1 voucher = 1 person helped
         $recentDonations = $donations->take(5);
+        
+        // Fund Loads Data
+        $totalLoaded = FundLoad::where('organisation_user_id', $user->id)
+            ->sum('amount');
+        
+        $fundLoadCount = FundLoad::where('organisation_user_id', $user->id)
+            ->count();
+        
+        $recentTransactions = FundLoad::where('organisation_user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+        
+        // Food Claims Data (for VCFSE only)
+        $foodClaimsCounted = 0;
+        $foodClaimsRedeemed = 0;
+        $foodClaimsPaid = 0.0;
+        $recentFoodClaims = [];
+        
+        if ($type === 'vcfse') {
+            // Count food claims by this VCFSE user
+            $foodClaimsCounted = Redemption::where('recipient_user_id', $user->id)
+                ->where('status', 'confirmed')
+                ->count();
+            
+            $foodClaimsRedeemed = Redemption::where('recipient_user_id', $user->id)
+                ->where('status', 'confirmed')
+                ->whereNotNull('redeemed_at')
+                ->count();
+            
+            // Get total amount paid through vouchers
+            $foodClaimsPaid = (float)Redemption::where('recipient_user_id', $user->id)
+                ->where('status', 'confirmed')
+                ->sum('amount_used');
+            
+            // Get recent food claims
+            $recentFoodClaims = Redemption::where('recipient_user_id', $user->id)
+                ->with('foodListing')
+                ->latest()
+                ->take(5)
+                ->get();
+        }
+        
         $view = $type === 'vcfse' ? 'vcfse.dashboard' : 'school.dashboard';
-        return view($view, compact('donations','totalDonated','donationCount','vouchersFunded','profile','walletBalance','peopleHelped','recentDonations'));
+        return view($view, compact('donations','totalDonated','donationCount','vouchersFunded','profile','walletBalance','peopleHelped','recentDonations','foodClaimsCounted','foodClaimsRedeemed','foodClaimsPaid','recentFoodClaims','totalLoaded','fundLoadCount','recentTransactions'));
     }
 
     public function donations()
@@ -64,7 +108,7 @@ class DashboardController extends Controller
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('item_name', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%');
+                    ->orWhere('description', 'like', '%' . $request->description . '%');
             });
         }
         
@@ -98,47 +142,18 @@ class DashboardController extends Controller
             ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
             ->select('shop_user_id')
             ->distinct()
+            ->with('shop.shopProfile')
             ->get()
-            ->map(function ($listing) {
-                $user = \App\Models\User::find($listing->shop_user_id);
-                if (!$user) return null;
-                return [
-                    'id' => $listing->shop_user_id,
-                    'name' => $user->organisation_profile->shop_name ?? $user->name,
-                    'count' => FoodListing::where('shop_user_id', $listing->shop_user_id)
-                        ->where('status', 'available')
-                        ->where('expiry_date', '>=', now()->toDateString())
-                        ->where('quantity', '>', 0) // Hide out-of-stock items
-                        ->whereIn('listing_type', ['free', 'discounted', 'surplus'])
-                        ->count()
-                ];
-            })
-            ->filter()
-            ->sortBy('name')
-            ->values();
+            ->pluck('shop');
         
+        $view = Auth::user()->role === 'vcfse' ? 'vcfse.food' : 'school.food';
+        return view($view, compact('listings', 'shops'));
+    }
+
+    public function reports()
+    {
         $user = Auth::user();
-        $view = $user->role === 'vcfse' ? 'vcfse.food' : 'school.food';
-        return view($view, compact('listings', 'shops', 'sortBy'));
-    }
-
-    public function profile()
-    {
-        $profile = Auth::user()->organisationProfile;
-        return view('organisation.profile', compact('profile'));
-    }
-
-    public function updateProfile(\Illuminate\Http\Request $request)
-    {
-        $request->validate([
-            'org_name'       => 'required|string|max:200',
-            'contact_person' => 'nullable|string|max:150',
-            'phone'          => 'nullable|string|max:20',
-            'address'        => 'nullable|string',
-            'postcode'       => 'nullable|string|max:10',
-            'website'        => 'nullable|url|max:300',
-        ]);
-        Auth::user()->organisationProfile->update($request->only(['org_name','contact_person','phone','address','postcode','website']));
-        return back()->with('success', 'Profile updated.');
+        $view = $user->role === 'vcfse' ? 'vcfse.reports' : 'school.reports';
+        return view($view);
     }
 }
