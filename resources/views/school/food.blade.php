@@ -62,8 +62,9 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" style="grid-auto-rows: 1fr;">
     @foreach($listings as $item)
     <div class="food-card" style="display: flex; flex-direction: column; height: 100%;">
-      @if($item->image_url)
-        <img src="{{ $item->image_url }}" alt="{{ $item->item_name }}" class="food-card-img">
+      @if($item->image_url && filter_var($item->image_url, FILTER_VALIDATE_URL))
+        <img src="{{ $item->image_url }}" alt="{{ $item->item_name }}" class="food-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="food-card-img-placeholder" style="display:none">🥦</div>
       @else
         <div class="food-card-img-placeholder">🥦</div>
       @endif
