@@ -326,7 +326,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
         <div id="card-element" style="border:1px solid var(--gray-border);border-radius:8px;padding:12px;background:#fff;min-height:40px"></div>
       </div>
       <div id="card-errors" style="color:#ef4444;font-size:13px;margin-bottom:12px"></div>
-      <button type="submit" onclick="handleDonation(event)" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s">Proceed to Payment</button>
+      <button type="button" onclick="handleDonation(event)" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s">Proceed to Payment</button>
     </form>
   </div>
 </div>
