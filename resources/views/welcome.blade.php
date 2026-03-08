@@ -299,5 +299,73 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
   </div>
 </footer>
 
+<!-- DONATION MODAL -->
+<div id="donateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:40px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h2 style="font-size:24px;font-weight:900;color:#0f172a">{{ __('app.donate') }}</h2>
+      <button onclick="closeDonateModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8">&times;</button>
+    </div>
+    <p style="color:#64748b;margin-bottom:24px;line-height:1.6">{{ __('app.donate_description') ?? 'Your donation helps us continue providing food support to families in need. Every contribution makes a difference.' }}</p>
+    <form id="donateForm" action="{{ route('login') }}" method="POST">
+      @csrf
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">{{ __('app.donation_amount') }}</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+          <button type="button" onclick="setDonationAmount(25)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£25</button>
+          <button type="button" onclick="setDonationAmount(50)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£50</button>
+          <button type="button" onclick="setDonationAmount(100)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£100</button>
+        </div>
+        <input type="number" name="amount" id="donationAmount" placeholder="{{ __('app.enter_custom_amount') }}" min="1" step="0.01" style="width:100%;padding:12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px" required>
+      </div>
+      <div style="margin-bottom:24px">
+        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">{{ __('app.email') }}</label>
+        <input type="email" name="email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px" required>
+      </div>
+      <button type="submit" onclick="handleDonation(event)" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s">{{ __('app.proceed_to_payment') }}</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openDonateModal() {
+  document.getElementById('donateModal').style.display = 'flex';
+}
+
+function closeDonateModal() {
+  document.getElementById('donateModal').style.display = 'none';
+}
+
+function setDonationAmount(amount) {
+  document.getElementById('donationAmount').value = amount;
+  document.querySelectorAll('#donateModal button[type="button"]').forEach(btn => {
+    btn.style.borderColor = 'var(--gray-border)';
+    btn.style.background = '#fff';
+  });
+  event.target.style.borderColor = 'var(--accent)';
+  event.target.style.background = 'rgba(22, 163, 74, 0.1)';
+}
+
+function handleDonation(event) {
+  event.preventDefault();
+  const amount = document.getElementById('donationAmount').value;
+  const email = document.querySelector('input[name="email"]').value;
+  if (!amount || !email) {
+    alert('Please enter both amount and email');
+    return;
+  }
+  alert('Thank you for your donation of GBP' + amount + '! Your support helps us reduce food waste and support families in need.');
+  closeDonateModal();
+  document.getElementById('donateForm').reset();
+}
+
+document.addEventListener('click', function(event) {
+  const modal = document.getElementById('donateModal');
+  if (event.target === modal) {
+    closeDonateModal();
+  }
+});
+</script>
+
 </body>
 </html>
