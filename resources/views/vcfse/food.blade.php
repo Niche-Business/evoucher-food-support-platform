@@ -164,6 +164,10 @@
           <div class="badge badge-yellow w-full justify-center mb-2" style="display:flex">
             <i class="fas fa-clock"></i> Expires in {{ $daysLeft }} days
           </div>
+        @else
+          <div class="badge badge-green w-full justify-center mb-2" style="display:flex">
+            <i class="fas fa-check-circle"></i> Expires in {{ $daysLeft }} days
+          </div>
         @endif
       @endif
       <!-- Collection Time -->
