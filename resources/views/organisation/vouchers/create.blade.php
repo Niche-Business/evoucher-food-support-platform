@@ -176,7 +176,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded fired');
   const form = document.querySelector('form');
+  console.log('Form found:', !!form);
   const submitBtn = document.getElementById('submit-btn');
   const filterButtons = document.querySelectorAll('.recipient-filter-btn');
   const individualsSection = document.getElementById('individuals-section');
@@ -185,6 +187,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const organisationsSelect = document.getElementById('organisations-select');
   const voucherValue = document.getElementById('voucher-value');
   const expiryDays = document.getElementById('expiry-days');
+  console.log('All elements loaded');
+  if (!form) {
+    console.error('Form not found!');
+    return;
+  }
 
   // Form submission - ensure correct dropdown is submitted
   form.addEventListener('submit', function(e) {
