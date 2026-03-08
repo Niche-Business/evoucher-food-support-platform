@@ -100,8 +100,8 @@
             <i class="fas fa-calendar-alt" style="width:14px"></i>
             @if($allocation && $item->listing_type === 'surplus')
               @php
-                $hoursLeft = $allocation->expires_at->diffInHours(now(), false);
-                $minutesLeft = $allocation->expires_at->diffInMinutes(now(), false) % 60;
+                $hoursLeft = $allocation->expires_at->diffInHours(now());
+                $minutesLeft = $allocation->expires_at->diffInMinutes(now()) % 60;
               @endphp
               @if($hoursLeft > 0 || $minutesLeft > 0)
                 Claim expires in {{ $hoursLeft }}h {{ $minutesLeft }}m
@@ -132,8 +132,8 @@
         @php $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->expiry_date), false); @endphp
         @if($item->listing_type === 'surplus' && $allocation)
           @php
-            $hoursLeft = $allocation->expires_at->diffInHours(now(), false);
-            $minutesLeft = $allocation->expires_at->diffInMinutes(now(), false) % 60;
+            $hoursLeft = $allocation->expires_at->diffInHours(now());
+            $minutesLeft = $allocation->expires_at->diffInMinutes(now()) % 60;
           @endphp
           @if($hoursLeft > 0 || $minutesLeft > 0)
             @if($hoursLeft < 1)
