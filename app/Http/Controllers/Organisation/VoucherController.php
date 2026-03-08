@@ -138,8 +138,13 @@ class VoucherController extends Controller
             $newBalance = $walletBalance - $validated['value'];
             $profile->update(['wallet_balance' => $newBalance]);
 
-            // Create notification for recipient
-            $recipient->notify(new \App\Notifications\VoucherIssuedNotification($voucher));
+            // Create notification for recipient (wrapped in try-catch to prevent email errors from blocking voucher creation)
+            try {
+                $recipient->notify(new \App\Notifications\VoucherIssuedNotification($voucher));
+            } catch (\Exception $notificationError) {
+                // Log the notification error but don't fail the voucher creation
+                \Log::warning('Failed to send voucher notification: ' . $notificationError->getMessage());
+            }
 
             DB::commit();
 
