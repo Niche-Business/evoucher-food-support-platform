@@ -300,7 +300,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 </footer>
 
 <!-- DONATION MODAL -->
-<div id="donateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center">
+<div id="donateModal" style="display:none !important;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:40px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <h2 style="font-size:24px;font-weight:900;color:#0f172a">Donate</h2>
@@ -321,7 +321,10 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
         <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">Email Address</label>
         <input type="email" name="email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px" required>
       </div>
-      <div id="card-element" style="border:1px solid var(--gray-border);border-radius:8px;padding:12px;margin-bottom:24px;background:#f8fafc"></div>
+      <div style="margin-bottom:24px">
+        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">Card Details</label>
+        <div id="card-element" style="border:1px solid var(--gray-border);border-radius:8px;padding:12px;background:#fff;min-height:40px"></div>
+      </div>
       <div id="card-errors" style="color:#ef4444;font-size:13px;margin-bottom:12px"></div>
       <button type="submit" onclick="handleDonation(event)" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s">Proceed to Payment</button>
     </form>
@@ -336,26 +339,56 @@ let stripe, elements, cardElement;
 
 // Initialize Stripe
 function initStripe() {
-  stripe = Stripe('pk_test_51234567890abcdefghijklmnop'); // Replace with your test key
-  elements = stripe.elements();
-  cardElement = elements.create('card');
-  cardElement.mount('#card-element');
-  
-  cardElement.on('change', function(event) {
-    const displayError = document.getElementById('card-errors');
-    if (event.error) {
-      displayError.textContent = event.error.message;
-    } else {
-      displayError.textContent = '';
+  try {
+    if (stripe) return; // Already initialized
+    
+    stripe = Stripe('pk_test_51234567890abcdefghijklmnop'); // Replace with your test key
+    elements = stripe.elements();
+    
+    // Destroy existing card element if it exists
+    if (cardElement) {
+      cardElement.destroy();
     }
-  });
+    
+    cardElement = elements.create('card', {
+      style: {
+        base: {
+          fontSize: '14px',
+          color: '#0f172a',
+          fontFamily: 'Inter, sans-serif'
+        },
+        invalid: {
+          color: '#ef4444'
+        }
+      }
+    });
+    
+    const cardElementDiv = document.getElementById('card-element');
+    if (cardElementDiv) {
+      cardElement.mount('#card-element');
+      
+      cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Stripe initialization error:', error);
+  }
 }
 
 function openDonateModal() {
-  document.getElementById('donateModal').style.display = 'flex';
+  const modal = document.getElementById('donateModal');
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
   // Initialize Stripe when modal opens
   if (!stripe) {
-    setTimeout(initStripe, 100);
+    setTimeout(initStripe, 200);
   }
 }
 
