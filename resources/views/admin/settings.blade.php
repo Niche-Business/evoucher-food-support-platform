@@ -62,20 +62,81 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="fas fa-envelope text-blue-500"></i>
-            <h2 class="text-sm font-semibold text-gray-900">Email Settings</h2>
+            <h2 class="text-sm font-semibold text-gray-900">Email &amp; SMTP Settings</h2>
         </div>
         <div class="px-6 py-5 space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Support Email</label>
-                <input type="email" name="support_email"
-                    value="{{ $settings['support_email']->value ?? 'support@evoucher.org' }}"
-                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-blue-800">
+                <i class="fas fa-info-circle mr-1"></i>
+                Configure your SMTP settings to enable email notifications (voucher emails, welcome emails, password change alerts, donation receipts). Use a service like <strong>Gmail</strong>, <strong>Mailgun</strong>, or <strong>SendGrid</strong>.
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Support Email <span class="text-gray-400 font-normal">(shown in emails)</span></label>
+                    <input type="email" name="support_email"
+                        value="{{ $settings['support_email']->value ?? 'support@evoucher.org' }}"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Admin Notification Email <span class="text-gray-400 font-normal">(receives alerts)</span></label>
+                    <input type="email" name="admin_email"
+                        value="{{ $settings['admin_email']->value ?? 'admin@evoucher.org' }}"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Host</label>
+                    <input type="text" name="mail_host"
+                        value="{{ $settings['mail_host']->value ?? '' }}"
+                        placeholder="e.g. smtp.gmail.com"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Port</label>
+                    <input type="number" name="mail_port"
+                        value="{{ $settings['mail_port']->value ?? '587' }}"
+                        placeholder="587"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Username</label>
+                    <input type="text" name="mail_username"
+                        value="{{ $settings['mail_username']->value ?? '' }}"
+                        placeholder="your@email.com"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Password</label>
+                    <input type="password" name="mail_password"
+                        value="{{ $settings['mail_password']->value ?? '' }}"
+                        placeholder="App password or SMTP password"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">From Name <span class="text-gray-400 font-normal">(sender display name)</span></label>
+                    <input type="text" name="mail_from_name"
+                        value="{{ $settings['mail_from_name']->value ?? 'eVoucher Food Support' }}"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">From Email Address</label>
+                    <input type="email" name="mail_from_address"
+                        value="{{ $settings['mail_from_address']->value ?? '' }}"
+                        placeholder="noreply@evoucher.org"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Admin Notification Email</label>
-                <input type="email" name="admin_email"
-                    value="{{ $settings['admin_email']->value ?? 'admin@evoucher.org' }}"
-                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Encryption</label>
+                <select name="mail_encryption" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
+                    <option value="tls" {{ ($settings['mail_encryption']->value ?? 'tls') === 'tls' ? 'selected' : '' }}>TLS (recommended)</option>
+                    <option value="ssl" {{ ($settings['mail_encryption']->value ?? '') === 'ssl' ? 'selected' : '' }}>SSL</option>
+                    <option value="" {{ ($settings['mail_encryption']->value ?? '') === '' ? 'selected' : '' }}>None</option>
+                </select>
             </div>
         </div>
     </div>

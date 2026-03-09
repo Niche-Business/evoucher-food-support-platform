@@ -1,26 +1,30 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
+use App\Mail\VoucherIssuedMail;
 use App\Models\User;
 use App\Models\Voucher;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class VoucherController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Voucher::with(['recipient','issuedBy']);
+        $query = Voucher::with(['recipient', 'issuedBy']);
         if ($request->status) $query->where('status', $request->status);
-        if ($request->search) $query->where('code','like','%'.$request->search.'%');
+        if ($request->search) $query->where('code', 'like', '%' . $request->search . '%');
         $vouchers = $query->latest()->paginate(20);
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
     public function create()
     {
-        $recipients = User::where('role','recipient')->where('is_approved',true)->orderBy('name')->get();
+        $recipients = User::where('role', 'recipient')->where('is_approved', true)->orderBy('name')->get();
         return view('admin.vouchers.create', compact('recipients'));
     }
 
@@ -44,15 +48,29 @@ class VoucherController extends Controller
             'notes'             => $request->notes,
         ]);
 
-        // Notify recipient about the new voucher
-        NotificationService::notifyRecipientNewVoucher($voucher);
+        // In-app notification
+        try {
+            NotificationService::notifyRecipientNewVoucher($voucher);
+        } catch (\Exception $e) {
+            \Log::warning('Voucher in-app notification failed: ' . $e->getMessage());
+        }
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher issued successfully.');
+        // Email notification to recipient
+        try {
+            $recipient = $voucher->recipient;
+            if ($recipient && $recipient->email) {
+                Mail::to($recipient->email)->send(new VoucherIssuedMail($voucher));
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Voucher email failed: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher issued successfully. An email has been sent to the recipient.');
     }
 
     public function show(Voucher $voucher)
     {
-        $voucher->load(['recipient','issuedBy','redemptions.foodListing']);
+        $voucher->load(['recipient', 'issuedBy', 'redemptions.foodListing']);
         return view('admin.vouchers.show', compact('voucher'));
     }
 

@@ -124,6 +124,32 @@ class DashboardController extends Controller
         }
         // Clear cache when settings are updated
         cache()->forget('app_settings');
-        return back()->with('success', 'Settings saved successfully.');
+
+        // If SMTP settings were submitted, update the .env file so they persist across requests
+        $smtpFields = [
+            'mail_host'         => 'MAIL_HOST',
+            'mail_port'         => 'MAIL_PORT',
+            'mail_username'     => 'MAIL_USERNAME',
+            'mail_password'     => 'MAIL_PASSWORD',
+            'mail_encryption'   => 'MAIL_ENCRYPTION',
+            'mail_from_address' => 'MAIL_FROM_ADDRESS',
+            'mail_from_name'    => 'MAIL_FROM_NAME',
+        ];
+        $envPath = base_path('.env');
+        $envContents = file_get_contents($envPath);
+        foreach ($smtpFields as $settingKey => $envKey) {
+            $value = $request->input($settingKey);
+            if ($value !== null) {
+                $escaped = str_contains($value, ' ') ? '"' . $value . '"' : $value;
+                if (preg_match('/^' . $envKey . '=/m', $envContents)) {
+                    $envContents = preg_replace('/^' . $envKey . '=.*/m', $envKey . '=' . $escaped, $envContents);
+                } else {
+                    $envContents .= PHP_EOL . $envKey . '=' . $escaped;
+                }
+            }
+        }
+        file_put_contents($envPath, $envContents);
+
+        return back()->with('success', 'Settings saved successfully. SMTP configuration has been updated.');
     }
 }

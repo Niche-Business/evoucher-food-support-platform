@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminNewRegistrationMail;
+use App\Mail\WelcomeMail;
 use App\Models\OrganisationProfile;
 use App\Models\RecipientProfile;
+use App\Models\Setting;
 use App\Models\ShopProfile;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
@@ -96,22 +100,22 @@ class RegisterController extends Controller
                 'postcode'   => $validated['postcode'] ?? null,
             ]);
         } elseif ($role === 'local_shop') {
-            // Combine address parts into a full address string
-            $fullAddress = $validated['shop_address'];
-
             ShopProfile::create([
                 'user_id'       => $user->id,
                 'shop_name'     => $validated['shop_name'],
                 'category'      => $validated['shop_category'],
-                'address'       => $fullAddress,
+                'address'       => $validated['shop_address'],
                 'town'          => $validated['shop_town'],
                 'postcode'      => $validated['shop_postcode'],
                 'phone'         => $validated['phone'] ?? null,
                 'opening_hours' => $validated['opening_hours'] ?? null,
                 'description'   => $validated['shop_description'] ?? null,
             ]);
-            // Notify admins about new shop registration
-            NotificationService::notifyNewShopRegistration($user);
+            try {
+                NotificationService::notifyNewShopRegistration($user);
+            } catch (\Exception $e) {
+                \Log::warning('Shop registration notification failed: ' . $e->getMessage());
+            }
         } elseif ($role === 'vcfse') {
             OrganisationProfile::create([
                 'user_id'        => $user->id,
@@ -138,6 +142,23 @@ class RegisterController extends Controller
             ]);
         }
 
+        // Send welcome email to new user
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Welcome email failed for ' . $user->email . ': ' . $e->getMessage());
+        }
+
+        // Send admin notification email for non-recipient registrations (need approval)
+        if (!in_array($role, ['recipient'])) {
+            $adminEmail = Setting::get('admin_email', config('mail.from.address', 'admin@evoucher.org'));
+            try {
+                Mail::to($adminEmail)->send(new AdminNewRegistrationMail($user));
+            } catch (\Exception $e) {
+                \Log::warning('Admin registration notification email failed: ' . $e->getMessage());
+            }
+        }
+
         if ($role === 'recipient') {
             Auth::login($user);
             return redirect()->route('recipient.dashboard')
@@ -145,6 +166,6 @@ class RegisterController extends Controller
         }
 
         return redirect()->route('login')
-            ->with('success', 'Your account has been submitted for approval. You will be notified once approved.');
+            ->with('success', 'Your account has been submitted for approval. You will be notified by email once approved.');
     }
 }

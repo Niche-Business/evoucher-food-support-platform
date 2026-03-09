@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Mail\AccountApprovedMail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -28,7 +30,15 @@ class UserController extends Controller
     public function approve(User $user)
     {
         $user->update(['is_approved' => true]);
-        return back()->with('success', $user->name . ' has been approved.');
+
+        // Send account approved email
+        try {
+            Mail::to($user->email)->send(new AccountApprovedMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Account approved email failed for ' . $user->email . ': ' . $e->getMessage());
+        }
+
+        return back()->with('success', $user->name . ' has been approved. An email notification has been sent.');
     }
 
     public function reject(User $user)

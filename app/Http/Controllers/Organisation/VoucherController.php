@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Organisation;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VoucherIssuedMail;
 use App\Models\Voucher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class VoucherController extends Controller
 {
@@ -138,11 +140,15 @@ class VoucherController extends Controller
             $newBalance = $walletBalance - $validated['value'];
             $profile->update(['wallet_balance' => $newBalance]);
 
-            // Create notification for recipient (wrapped in try-catch to prevent email errors from blocking voucher creation)
+            // Send email + in-app notification to recipient
+            try {
+                Mail::to($recipient->email)->send(new VoucherIssuedMail($voucher));
+            } catch (\Exception $mailError) {
+                \Log::warning('Failed to send voucher email: ' . $mailError->getMessage());
+            }
             try {
                 $recipient->notify(new \App\Notifications\VoucherIssuedNotification($voucher));
             } catch (\Exception $notificationError) {
-                // Log the notification error but don't fail the voucher creation
                 \Log::warning('Failed to send voucher notification: ' . $notificationError->getMessage());
             }
 

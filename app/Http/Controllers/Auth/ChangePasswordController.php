@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordChangedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class ChangePasswordController extends Controller
 {
@@ -38,6 +40,13 @@ class ChangePasswordController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return back()->with('success', 'Your password has been updated successfully.');
+        // Send security notification email
+        try {
+            Mail::to($user->email)->send(new PasswordChangedMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Password changed email failed for ' . $user->email . ': ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Your password has been updated successfully. A confirmation email has been sent to ' . $user->email . '.');
     }
 }

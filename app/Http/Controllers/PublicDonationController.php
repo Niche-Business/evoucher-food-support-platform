@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\StripeService;
+use App\Mail\AdminNewDonationMail;
+use App\Mail\DonationReceiptMail;
 use App\Models\Donation;
 use App\Models\Notification;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Services\StripeService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PublicDonationController extends Controller
 {
@@ -54,7 +58,7 @@ class PublicDonationController extends Controller
     }
 
     /**
-     * Confirm and store donation
+     * Confirm and store donation, then send emails.
      */
     public function confirm(Request $request)
     {
@@ -96,7 +100,7 @@ class PublicDonationController extends Controller
                     ])
                 ]);
 
-                // Notify all admins
+                // In-app notifications for admins
                 $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
                 foreach ($admins as $admin) {
                     Notification::create([
@@ -115,9 +119,12 @@ class PublicDonationController extends Controller
                     // Log but don't fail the donation
                 }
 
+                // Send receipt email to donor
+                $this->sendDonationEmails($donation);
+
                 return response()->json([
                     'success'     => true,
-                    'message'     => 'Thank you for your donation of £' . $validated['amount'] . '!',
+                    'message'     => 'Thank you for your donation of £' . $validated['amount'] . '! A receipt has been sent to ' . $validated['email'] . '.',
                     'amount'      => $validated['amount'],
                     'email'       => $validated['email'],
                     'donation_id' => $donation->id,
@@ -154,9 +161,11 @@ class PublicDonationController extends Controller
                             ]);
                         }
 
+                        $this->sendDonationEmails($donation);
+
                         return response()->json([
                             'success'     => true,
-                            'message'     => 'Thank you for your donation of £' . $validated['amount'] . '!',
+                            'message'     => 'Thank you for your donation of £' . $validated['amount'] . '! A receipt has been sent to ' . $validated['email'] . '.',
                             'amount'      => $validated['amount'],
                             'email'       => $validated['email'],
                             'donation_id' => $donation->id,
@@ -204,6 +213,27 @@ class PublicDonationController extends Controller
                 'success' => false,
                 'message' => 'Error saving donation: ' . $e->getMessage()
             ], 400);
+        }
+    }
+
+    /**
+     * Send donation receipt to donor and alert to admin email.
+     */
+    private function sendDonationEmails(Donation $donation): void
+    {
+        // Receipt to donor
+        try {
+            Mail::to($donation->donor_email)->send(new DonationReceiptMail($donation));
+        } catch (\Exception $e) {
+            \Log::warning('Donation receipt email failed: ' . $e->getMessage());
+        }
+
+        // Alert to admin email address
+        try {
+            $adminEmail = Setting::get('admin_email', config('mail.from.address', 'admin@evoucher.org'));
+            Mail::to($adminEmail)->send(new AdminNewDonationMail($donation));
+        } catch (\Exception $e) {
+            \Log::warning('Admin donation notification email failed: ' . $e->getMessage());
         }
     }
 }
