@@ -8,7 +8,7 @@ use App\Models\FundLoad;
 use App\Models\Redemption;
 use App\Models\User;
 use App\Models\Voucher;
-use App\Models\VoucherRedemption;
+
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -25,8 +25,8 @@ class ReportController extends Controller
         $totalReceived = $totalDonated + $totalFundsLoaded;
         
         // Calculate total spent (voucher redemptions)
-        $totalSpent = VoucherRedemption::sum('amount');
-        $totalRedemptions = VoucherRedemption::count();
+        $totalSpent = Redemption::sum('amount_used');
+        $totalRedemptions = Redemption::count();
         
         // Calculate balance
         $totalBalance = $totalReceived - $totalSpent;
@@ -59,7 +59,7 @@ class ReportController extends Controller
                 $monthEnd = \Carbon\Carbon::createFromFormat('Y-m', $row->month_key)->endOfMonth();
                 
                 $vouchers = Voucher::whereBetween('created_at', [$monthStart, $monthEnd])->count();
-                $redemptions = VoucherRedemption::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+                $redemptions = Redemption::whereBetween('created_at', [$monthStart, $monthEnd])->count();
                 
                 return [
                     'month' => $row->month,
@@ -72,7 +72,7 @@ class ReportController extends Controller
             ->toArray();
         
         // Get spending breakdown by food category
-        $spendingByCategory = VoucherRedemption::with('foodListing')
+        $spendingByCategory = Redemption::with('foodListing')
             ->get()
             ->groupBy(function($item) {
                 return $item->foodListing->category ?? 'Uncategorized';
@@ -80,7 +80,7 @@ class ReportController extends Controller
             ->map(function($items) {
                 return [
                     'count' => $items->count(),
-                    'amount' => $items->sum('amount')
+                    'amount' => $items->sum('amount_used')
                 ];
             });
         

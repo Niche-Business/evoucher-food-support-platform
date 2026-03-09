@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FundLoad;
 use App\Models\BankDeposit;
 use App\Models\Voucher;
-use App\Models\VoucherRedemption;
+use App\Models\Redemption;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -38,18 +38,18 @@ class ReportsController extends Controller
         $totalReceived = $totalFundsLoaded + $totalBankDeposits;
         
         // Calculate spending from voucher redemptions
-        $voucherRedemptions = VoucherRedemption::whereHas('voucher', function($q) use ($user) {
+        $voucherRedemptions = Redemption::whereHas('voucher', function($q) use ($user) {
             $q->where('organisation_user_id', $user->id);
         })->get();
         
-        $totalSpent = $voucherRedemptions->sum('amount');
+        $totalSpent = $voucherRedemptions->sum('amount_used');
         $redemptionCount = $voucherRedemptions->count();
         
         // Calculate balance
         $totalBalance = $totalReceived - $totalSpent;
         
         // Get spending breakdown by food category
-        $spendingByCategory = VoucherRedemption::whereHas('voucher', function($q) use ($user) {
+        $spendingByCategory = Redemption::whereHas('voucher', function($q) use ($user) {
             $q->where('organisation_user_id', $user->id);
         })
         ->with('foodListing')
@@ -60,7 +60,7 @@ class ReportsController extends Controller
         ->map(function($items) {
             return [
                 'count' => $items->count(),
-                'amount' => $items->sum('amount')
+                'amount' => $items->sum('amount_used')
             ];
         });
         
