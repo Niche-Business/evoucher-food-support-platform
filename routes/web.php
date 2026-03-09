@@ -46,8 +46,8 @@ Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
 Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shops.show');
 
 // Donations
-Route::post('/api/donations/create-payment-intent', [PublicDonationController::class, 'createPaymentIntent'])->name('donations.create-intent');
-Route::post('/api/donations/process', [PublicDonationController::class, 'store'])->name('donations.store');
+Route::post('/api/donations/create-payment-intent', [\App\Http\Controllers\PublicDonationController::class, 'createPaymentIntent'])->name('donations.create-intent');
+Route::post('/api/donations/process', [\App\Http\Controllers\PublicDonationController::class, 'confirm'])->name('donations.confirm');
 
 // Auth
 require __DIR__.'/auth.php';
