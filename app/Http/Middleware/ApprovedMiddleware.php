@@ -13,10 +13,12 @@ class ApprovedMiddleware
     {
         $user = Auth::user();
 
-        if ($user && !$user->is_approved && !$user->isAdmin()) {
+        // All users are auto-approved on registration.
+        // Only block accounts that have been explicitly deactivated by an admin.
+        if ($user && !$user->is_active) {
             Auth::logout();
             return redirect()->route('login')
-                ->with('warning', 'Your account is pending approval by an administrator. You will be notified once approved.');
+                ->with('warning', 'Your account has been deactivated. Please contact support for assistance.');
         }
 
         return $next($request);

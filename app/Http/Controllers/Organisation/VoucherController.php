@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Organisation;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VoucherIssuedConfirmationMail;
 use App\Mail\VoucherIssuedMail;
 use App\Models\Voucher;
 use App\Models\User;
@@ -152,10 +153,17 @@ class VoucherController extends Controller
                 \Log::warning('Failed to send voucher notification: ' . $notificationError->getMessage());
             }
 
+            // Send confirmation email to the issuing organisation
+            try {
+                Mail::to($user->email)->send(new VoucherIssuedConfirmationMail($voucher));
+            } catch (\Exception $confirmError) {
+                \Log::warning('Failed to send issuer confirmation email: ' . $confirmError->getMessage());
+            }
+
             DB::commit();
 
             return redirect()->route($user->role === 'vcfse' ? 'vcfse.dashboard' : 'school.dashboard')
-                ->with('success', 'Voucher issued successfully! Wallet balance updated.');
+                ->with('success', 'Voucher issued successfully! A confirmation has been sent to your email and the recipient has been notified.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Mail\AdminNewRegistrationMail;
 use App\Mail\WelcomeMail;
 use App\Models\OrganisationProfile;
 use App\Models\RecipientProfile;
-use App\Models\Setting;
 use App\Models\ShopProfile;
 use App\Models\User;
 use App\Services\NotificationService;
@@ -81,15 +79,17 @@ class RegisterController extends Controller
 
         $validated = $request->validate($rules);
 
+        // ALL roles are automatically approved and active on signup — no manual admin approval needed
         $user = User::create([
             'name'        => $validated['name'],
             'email'       => $validated['email'],
             'password'    => Hash::make($validated['password']),
             'role'        => $role,
-            'is_approved' => in_array($role, ['vcfse', 'school_care', 'local_shop']) ? false : true,
+            'is_approved' => true,
             'is_active'   => true,
         ]);
 
+        // Create role-specific profile
         if ($role === 'recipient') {
             RecipientProfile::create([
                 'user_id'    => $user->id,
@@ -149,23 +149,24 @@ class RegisterController extends Controller
             \Log::warning('Welcome email failed for ' . $user->email . ': ' . $e->getMessage());
         }
 
-        // Send admin notification email for non-recipient registrations (need approval)
-        if (!in_array($role, ['recipient'])) {
-            $adminEmail = Setting::get('admin_email', config('mail.from.address', 'admin@evoucher.org'));
-            try {
-                Mail::to($adminEmail)->send(new AdminNewRegistrationMail($user));
-            } catch (\Exception $e) {
-                \Log::warning('Admin registration notification email failed: ' . $e->getMessage());
-            }
-        }
+        // Log the user in immediately and redirect to their dashboard
+        Auth::login($user);
 
-        if ($role === 'recipient') {
-            Auth::login($user);
-            return redirect()->route('recipient.dashboard')
-                ->with('success', 'Welcome! Your account has been created.');
-        }
+        $dashboardRoutes = [
+            'recipient'   => 'recipient.dashboard',
+            'local_shop'  => 'shop.dashboard',
+            'vcfse'       => 'vcfse.dashboard',
+            'school_care' => 'school.dashboard',
+        ];
 
-        return redirect()->route('login')
-            ->with('success', 'Your account has been submitted for approval. You will be notified by email once approved.');
+        $roleLabels = [
+            'recipient'   => 'Recipient',
+            'local_shop'  => 'Local Food Shop',
+            'vcfse'       => 'VCFSE Organisation',
+            'school_care' => 'School / Care Organisation',
+        ];
+
+        return redirect()->route($dashboardRoutes[$role])
+            ->with('success', 'Welcome to eVoucher Food Support, ' . $user->name . '! Your ' . $roleLabels[$role] . ' account is now active.');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VoucherIssuedConfirmationMail;
 use App\Mail\VoucherIssuedMail;
 use App\Models\User;
 use App\Models\Voucher;
@@ -65,7 +66,17 @@ class VoucherController extends Controller
             \Log::warning('Voucher email failed: ' . $e->getMessage());
         }
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher issued successfully. An email has been sent to the recipient.');
+        // Confirmation email to the admin who issued the voucher
+        try {
+            $admin = Auth::user();
+            if ($admin && $admin->email) {
+                Mail::to($admin->email)->send(new VoucherIssuedConfirmationMail($voucher));
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Admin voucher confirmation email failed: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher issued successfully. The recipient has been notified and a confirmation has been sent to your email.');
     }
 
     public function show(Voucher $voucher)
