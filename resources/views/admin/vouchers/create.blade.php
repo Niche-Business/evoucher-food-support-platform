@@ -26,12 +26,12 @@
                             </option>
                             @endforeach
                         </select>
-                        @error('recipient_id') <div style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</div> @enderror
+                        @error('recipient_user_id') <div style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</div> @enderror
                     </div>
                     <div>
                         <label class="form-label">Voucher Amount (&pound;) <span style="color:#ef4444;">*</span></label>
                         <input type="number" name="value" value="{{ old('value', '10.00') }}" step="0.01" min="1" max="500" class="form-input" required>
-                        @error('amount') <div style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</div> @enderror
+                        @error('value') <div style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</div> @enderror
                     </div>
                     <div>
                         <label class="form-label">Expiry Date</label>

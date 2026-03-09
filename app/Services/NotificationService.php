@@ -108,7 +108,7 @@ class NotificationService
             'message' => 'You have received a new voucher worth £' . number_format($voucher->remaining_value, 2) . '. Expires on ' . $voucher->expiry_date->format('d M Y'),
             'type' => 'new_voucher',
             'icon' => 'fas fa-ticket',
-            'link' => route('recipient.browse'),
+            'link' => route('recipient.food.browse'),
             'read_at' => null,
         ]);
         
