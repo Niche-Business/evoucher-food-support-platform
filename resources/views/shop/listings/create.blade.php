@@ -30,9 +30,9 @@
               <div class="flex items-center gap-2">
                 <span class="text-xl">🎁</span>
                 <span style="font-size:13px;font-weight:700;color:#0f172a">Free</span>
-                <span class="badge badge-green ml-auto" style="font-size:10px">Schools/Care & VCFSE</span>
+                <span class="badge badge-green ml-auto" style="font-size:10px">Free</span>
               </div>
-              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to Schools/Care and VCFSE groups only. Recipients cannot see this.</p>
+              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to both <strong>Recipients</strong> and <strong>VCFSE groups</strong>. Redeemed with a voucher at no cost.</p>
             </label>
 
             {{-- Food to Go (Discounted) --}}
@@ -44,7 +44,7 @@
                 <span style="font-size:13px;font-weight:700;color:#0f172a">Food to Go</span>
                 <span class="badge badge-orange ml-auto" style="font-size:10px">Discounted</span>
               </div>
-              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to Recipients, Schools/Care, and VCFSE groups. They pay the discounted price at your shop (voucher covers part or all).</p>
+              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to <strong>Recipients only</strong>. They pay the discounted price at your shop (voucher covers part or all).</p>
             </label>
 
             {{-- Free Surplus --}}
@@ -54,9 +54,9 @@
               <div class="flex items-center gap-2">
                 <span class="text-xl">📦</span>
                 <span style="font-size:13px;font-weight:700;color:#0f172a">Free Surplus</span>
-                <span class="badge badge-purple ml-auto" style="font-size:10px">Schools/Care & VCFSE</span>
+                <span class="badge badge-purple ml-auto" style="font-size:10px">VCFSE Only</span>
               </div>
-              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to Schools/Care and VCFSE groups only. Recipients cannot see this.</p>
+              <p style="font-size:11.5px;color:#64748b;line-height:1.5">Visible to <strong>VCFSE groups only</strong>. For bulk surplus food collections by charities and community groups.</p>
             </label>
 
           </div>
