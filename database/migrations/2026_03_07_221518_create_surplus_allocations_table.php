@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->enum('status', ['pending', 'claimed', 'redeemed', 'expired'])->default('pending');
             $table->integer('allocation_sequence')->default(0);
+            $table->timestamp('claimed_at')->nullable();
             $table->timestamps();
             $table->index('food_listing_id');
             $table->index('vcfse_user_id');

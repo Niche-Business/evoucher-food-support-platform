@@ -16,6 +16,7 @@ class SurplusAllocation extends Model
         'school_care_user_id',
         'allocated_at',
         'expires_at',
+        'claimed_at',
         'status',
         'allocation_sequence',
     ];
@@ -23,6 +24,7 @@ class SurplusAllocation extends Model
     protected $casts = [
         'allocated_at' => 'datetime',
         'expires_at' => 'datetime',
+        'claimed_at' => 'datetime',
     ];
 
     /**
