@@ -359,6 +359,9 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     <span class="ni"><i class="fas fa-user-cog"></i></span> Profile Settings
   </a>
   @endif
+  <a href="{{ route('password.change') }}" class="nav-item {{ request()->routeIs('password.change') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-lock"></i></span> Change Password
+  </a>
   @if($role !== 'recipient')
   <a href="{{ url('/food') }}" class="nav-item">
     <span class="ni"><i class="fas fa-globe"></i></span> Public Listings
@@ -440,6 +443,9 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
           <i class="fas fa-user-cog w-4 text-slate-400"></i> Profile Settings
         </a>
         @endif
+        <a href="{{ route('password.change') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+          <i class="fas fa-lock w-4 text-slate-400"></i> Change Password
+        </a>
         <div class="border-t border-slate-100 my-1"></div>
         <form method="POST" action="{{ route('logout') }}">
           @csrf

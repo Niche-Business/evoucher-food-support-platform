@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BankDepositController as AdminBankDeposit;
 use App\Http\Controllers\Admin\ReportGeneratorController as AdminReportGenerator;
 use App\Http\Controllers\Organisation\FundLoadController as OrgFundLoad;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\FoodListingController;
 use App\Http\Controllers\Organisation\DashboardController as OrgDashboard;
 use App\Http\Controllers\Organisation\DonationController;
@@ -53,6 +54,12 @@ Route::post('/api/donations/process', [\App\Http\Controllers\PublicDonationContr
 require __DIR__.'/auth.php';
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
+// Change Password (all authenticated users)
+Route::middleware('auth')->group(function () {
+    Route::get('/password/change', [ChangePasswordController::class, 'show'])->name('password.change');
+    Route::put('/password/change', [ChangePasswordController::class, 'update'])->name('password.change.update');
+});
 
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'approved', 'role:admin,super_admin'])->group(function () {
