@@ -33,6 +33,32 @@
         </div>
         
         <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;text-transform:uppercase">Town</label>
+            <select name="town" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px">
+                <option value="">All Towns</option>
+                <optgroup label="North Northamptonshire">
+                    <option value="Wellingborough" {{ request('town') === 'Wellingborough' ? 'selected' : '' }}>Wellingborough</option>
+                    <option value="Kettering" {{ request('town') === 'Kettering' ? 'selected' : '' }}>Kettering</option>
+                    <option value="Corby" {{ request('town') === 'Corby' ? 'selected' : '' }}>Corby</option>
+                </optgroup>
+                <optgroup label="East Northamptonshire">
+                    <option value="Rushden" {{ request('town') === 'Rushden' ? 'selected' : '' }}>Rushden</option>
+                    <option value="Higham Ferrers" {{ request('town') === 'Higham Ferrers' ? 'selected' : '' }}>Higham Ferrers</option>
+                    <option value="Raunds" {{ request('town') === 'Raunds' ? 'selected' : '' }}>Raunds</option>
+                    <option value="Irthlingborough" {{ request('town') === 'Irthlingborough' ? 'selected' : '' }}>Irthlingborough</option>
+                    <option value="Oundle" {{ request('town') === 'Oundle' ? 'selected' : '' }}>Oundle</option>
+                    <option value="Thrapston" {{ request('town') === 'Thrapston' ? 'selected' : '' }}>Thrapston</option>
+                </optgroup>
+                <optgroup label="West Northamptonshire">
+                    <option value="Northampton" {{ request('town') === 'Northampton' ? 'selected' : '' }}>Northampton</option>
+                    <option value="Daventry" {{ request('town') === 'Daventry' ? 'selected' : '' }}>Daventry</option>
+                    <option value="Brackley" {{ request('town') === 'Brackley' ? 'selected' : '' }}>Brackley</option>
+                    <option value="Towcester" {{ request('town') === 'Towcester' ? 'selected' : '' }}>Towcester</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div>
             <label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;text-transform:uppercase">Sort By</label>
             <select name="sort" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px">
                 <option value="newest" {{ $sortBy === 'newest' ? 'selected' : '' }}>Newest First</option>

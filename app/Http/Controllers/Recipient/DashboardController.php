@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Recipient;
 use App\Http\Controllers\Controller;
 use App\Models\FoodListing;
 use App\Models\Redemption;
+use App\Models\ShopProfile;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,12 @@ class DashboardController extends Controller
         // Filter by shop if specified
         if ($request->shop_id) {
             $query->where('shop_user_id', $request->shop_id);
+        }
+
+        // Filter by town via shop profile
+        if ($request->town) {
+            $shopUserIds = ShopProfile::where('town', $request->town)->pluck('user_id');
+            $query->whereIn('shop_user_id', $shopUserIds);
         }
         
         // Search
