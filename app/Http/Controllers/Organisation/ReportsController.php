@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Organisation;
 use App\Http\Controllers\Controller;
 use App\Models\FundLoad;
 use App\Models\BankDeposit;
+use App\Models\Voucher;
+use App\Models\VoucherRedemption;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -26,11 +28,41 @@ class ReportsController extends Controller
             ->latest()
             ->get();
         
-        // Calculate statistics
+        // Calculate fund load statistics
         $totalFundsLoaded = $fundLoads->sum('amount');
         $totalBankDeposits = $bankDeposits->where('status', 'verified')->sum('amount');
         $bankDepositsCount = $bankDeposits->count();
         $fundLoadsCount = $fundLoads->count();
+        
+        // Calculate total received (funds loaded + bank deposits)
+        $totalReceived = $totalFundsLoaded + $totalBankDeposits;
+        
+        // Calculate spending from voucher redemptions
+        $voucherRedemptions = VoucherRedemption::whereHas('voucher', function($q) use ($user) {
+            $q->where('organisation_user_id', $user->id);
+        })->get();
+        
+        $totalSpent = $voucherRedemptions->sum('amount');
+        $redemptionCount = $voucherRedemptions->count();
+        
+        // Calculate balance
+        $totalBalance = $totalReceived - $totalSpent;
+        
+        // Get spending breakdown by food category
+        $spendingByCategory = VoucherRedemption::whereHas('voucher', function($q) use ($user) {
+            $q->where('organisation_user_id', $user->id);
+        })
+        ->with('foodListing')
+        ->get()
+        ->groupBy(function($item) {
+            return $item->foodListing->category ?? 'Uncategorized';
+        })
+        ->map(function($items) {
+            return [
+                'count' => $items->count(),
+                'amount' => $items->sum('amount')
+            ];
+        });
         
         return view('organisation.reports.index', compact(
             'fundLoads',
@@ -39,6 +71,11 @@ class ReportsController extends Controller
             'totalBankDeposits',
             'bankDepositsCount',
             'fundLoadsCount',
+            'totalReceived',
+            'totalSpent',
+            'totalBalance',
+            'redemptionCount',
+            'spendingByCategory',
             'role'
         ));
     }

@@ -8,12 +8,82 @@ use App\Models\FundLoad;
 use App\Models\Redemption;
 use App\Models\User;
 use App\Models\Voucher;
+use App\Models\VoucherRedemption;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     public function index()
     {
+        // Calculate total donations (completed donations)
+        $totalDonated = Donation::where('status','completed')->sum('amount');
+        
+        // Calculate total funds loaded
+        $totalFundsLoaded = FundLoad::sum('amount');
+        
+        // Calculate total received (donations + funds loaded)
+        $totalReceived = $totalDonated + $totalFundsLoaded;
+        
+        // Calculate total spent (voucher redemptions)
+        $totalSpent = VoucherRedemption::sum('amount');
+        $totalRedemptions = VoucherRedemption::count();
+        
+        // Calculate balance
+        $totalBalance = $totalReceived - $totalSpent;
+        
+        // Get voucher statistics
+        $voucherStats = [
+            'active' => Voucher::where('status','active')->count(),
+            'redeemed' => Voucher::where('status','redeemed')->count(),
+            'expired' => Voucher::where('status','expired')->count(),
+            'cancelled' => Voucher::where('status','cancelled')->count(),
+        ];
+        
+        // Get platform participation metrics
+        $totalRecipients = User::where('role','recipient')->count();
+        $totalShops = User::where('role','local_shop')->count();
+        $totalDonors = User::whereIn('role',['vcfse','school_care'])->count();
+        $totalVouchers = Voucher::count();
+        $totalListings = FoodListing::count();
+        
+        // Get monthly data for the table
+        $monthlyData = Donation::where('status','completed')
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month_key, DATE_FORMAT(created_at, "%b %Y") as month, COUNT(*) as donations, SUM(amount) as amount')
+            ->groupBy('month_key', 'month')
+            ->orderBy('month_key', 'desc')
+            ->take(12)
+            ->get()
+            ->map(function($row) {
+                // Get vouchers issued in this month
+                $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $row->month_key)->startOfMonth();
+                $monthEnd = \Carbon\Carbon::createFromFormat('Y-m', $row->month_key)->endOfMonth();
+                
+                $vouchers = Voucher::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+                $redemptions = VoucherRedemption::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+                
+                return [
+                    'month' => $row->month,
+                    'donations' => $row->donations,
+                    'amount' => $row->amount,
+                    'vouchers' => $vouchers,
+                    'redemptions' => $redemptions,
+                ];
+            })
+            ->toArray();
+        
+        // Get spending breakdown by food category
+        $spendingByCategory = VoucherRedemption::with('foodListing')
+            ->get()
+            ->groupBy(function($item) {
+                return $item->foodListing->category ?? 'Uncategorized';
+            })
+            ->map(function($items) {
+                return [
+                    'count' => $items->count(),
+                    'amount' => $items->sum('amount')
+                ];
+            });
+        
         $data = [
             'total_donations'       => Donation::where('status','completed')->sum('amount'),
             'total_vouchers_issued' => Voucher::count(),
@@ -29,10 +99,29 @@ class ReportController extends Controller
             'total_funds_loaded'    => FundLoad::sum('amount'),
             'total_bank_deposits'   => BankDeposit::where('status','verified')->count(),
         ];
+        
         $monthly_donations = Donation::where('status','completed')
             ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(amount) as total')
             ->groupBy('year','month')->orderBy('year','desc')->orderBy('month','desc')->take(12)->get();
-        return view('admin.reports.index', compact('data','monthly_donations'));
+        
+        return view('admin.reports.index', compact(
+            'data',
+            'monthly_donations',
+            'totalDonated',
+            'totalFundsLoaded',
+            'totalReceived',
+            'totalSpent',
+            'totalRedemptions',
+            'totalBalance',
+            'voucherStats',
+            'totalRecipients',
+            'totalShops',
+            'totalDonors',
+            'totalVouchers',
+            'totalListings',
+            'monthlyData',
+            'spendingByCategory'
+        ));
     }
 
     public function export()

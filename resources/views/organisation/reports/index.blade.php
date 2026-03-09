@@ -8,25 +8,72 @@
   <p>View and export your fund loads and bank deposit reports.</p>
 </div>
 
+<!-- Financial Summary Section -->
+<div class="mb-8">
+  <h2 class="text-2xl font-bold mb-4">Financial Summary</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+    <!-- Total Received -->
+    <div class="stat-card border-l-4 border-green-500">
+      <div class="stat-icon mb-3" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-arrow-down"></i></div>
+      <div class="stat-label">Total Received</div>
+      <div class="stat-value">£{{ number_format($totalReceived ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Funds Loaded: £{{ number_format($totalFundsLoaded, 2) }}<br>
+        Bank Deposits: £{{ number_format($totalBankDeposits, 2) }}
+      </div>
+    </div>
+    
+    <!-- Total Spent -->
+    <div class="stat-card border-l-4 border-orange-500">
+      <div class="stat-icon mb-3" style="background:#fef3c7;color:#f97316"><i class="fas fa-arrow-up"></i></div>
+      <div class="stat-label">Total Spent</div>
+      <div class="stat-value">£{{ number_format($totalSpent ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        {{ $redemptionCount ?? 0 }} Voucher Redemptions
+      </div>
+    </div>
+    
+    <!-- Total Balance -->
+    <div class="stat-card border-l-4 border-blue-500">
+      <div class="stat-icon mb-3" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-wallet"></i></div>
+      <div class="stat-label">Total Balance</div>
+      <div class="stat-value">£{{ number_format($totalBalance ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Remaining Funds
+      </div>
+    </div>
+    
+    <!-- Utilization Rate -->
+    <div class="stat-card border-l-4 border-purple-500">
+      <div class="stat-icon mb-3" style="background:#fdf4ff;color:#a855f7"><i class="fas fa-percent"></i></div>
+      <div class="stat-label">Utilization Rate</div>
+      <div class="stat-value">{{ $totalReceived > 0 ? round(($totalSpent / $totalReceived) * 100) : 0 }}%</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Funds Utilized
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-  <a href="{{ route($role === 'vcfse' ? 'vcfse.fund-load' : 'school.fund-load') }}" style="text-decoration:none;display:block;border:2px dashed #16a34a;border-radius:8px;padding:16px;background:#fff;hover:shadow-lg;transition:all 0.3s ease;cursor:pointer" onmouseover="this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+  <div style="text-decoration:none;display:block;border:2px dashed #16a34a;border-radius:8px;padding:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
     <div class="stat-icon" style="background:#dcfce7;color:#15803d">
       <i class="fas fa-wallet"></i>
     </div>
     <div class="stat-label">Total Funds Loaded</div>
     <div class="stat-value">£{{ number_format($totalFundsLoaded, 2) }}</div>
     <div class="stat-change" style="color:#15803d">{{ $fundLoadsCount }} transactions</div>
-  </a>
+  </div>
   
-  <a href="#bank-deposits" style="text-decoration:none;display:block;border:2px dashed #1d4ed8;border-radius:8px;padding:16px;background:#fff;hover:shadow-lg;transition:all 0.3s ease;cursor:pointer" onmouseover="this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+  <div style="text-decoration:none;display:block;border:2px dashed #1d4ed8;border-radius:8px;padding:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
     <div class="stat-icon" style="background:#dbeafe;color:#1d4ed8">
       <i class="fas fa-bank"></i>
     </div>
     <div class="stat-label">Bank Deposits Verified</div>
     <div class="stat-value">£{{ number_format($totalBankDeposits, 2) }}</div>
     <div class="stat-change" style="color:#1d4ed8">{{ $bankDepositsCount }} deposits</div>
-  </a>
+  </div>
   
   <a href="{{ route($role === 'vcfse' ? 'vcfse.reports.fund-loads-pdf' : 'school.reports.fund-loads-pdf') }}" style="text-decoration:none;display:block;border:2px dashed #7e22ce;border-radius:8px;padding:16px;background:#fff;hover:shadow-lg;transition:all 0.3s ease;cursor:pointer" onmouseover="this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
     <div class="stat-icon" style="background:#f3e8ff;color:#7e22ce">

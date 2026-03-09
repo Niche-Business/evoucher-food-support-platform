@@ -6,6 +6,54 @@
   <h1>Pilot Reports</h1>
   <p>Northamptonshire eVoucher Food Support Platform — Performance Analytics</p>
 </div>
+
+<!-- Financial Summary Section -->
+<div class="mb-8">
+  <h2 class="text-2xl font-bold mb-4">Financial Summary</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+    <!-- Total Received -->
+    <div class="stat-card border-l-4 border-green-500">
+      <div class="stat-icon mb-3" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-arrow-down"></i></div>
+      <div class="stat-label">Total Received</div>
+      <div class="stat-value">£{{ number_format($totalReceived ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Donations: £{{ number_format($totalDonated ?? 0, 2) }}<br>
+        Funds Loaded: £{{ number_format($totalFundsLoaded ?? 0, 2) }}
+      </div>
+    </div>
+    
+    <!-- Total Spent -->
+    <div class="stat-card border-l-4 border-orange-500">
+      <div class="stat-icon mb-3" style="background:#fef3c7;color:#f97316"><i class="fas fa-arrow-up"></i></div>
+      <div class="stat-label">Total Spent</div>
+      <div class="stat-value">£{{ number_format($totalSpent ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        {{ $totalRedemptions ?? 0 }} Redemptions
+      </div>
+    </div>
+    
+    <!-- Total Balance -->
+    <div class="stat-card border-l-4 border-blue-500">
+      <div class="stat-icon mb-3" style="background:#eff6ff;color:#3b82f6"><i class="fas fa-wallet"></i></div>
+      <div class="stat-label">Total Balance</div>
+      <div class="stat-value">£{{ number_format($totalBalance ?? 0, 2) }}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Remaining Funds
+      </div>
+    </div>
+    
+    <!-- Utilization Rate -->
+    <div class="stat-card border-l-4 border-purple-500">
+      <div class="stat-icon mb-3" style="background:#fdf4ff;color:#a855f7"><i class="fas fa-percent"></i></div>
+      <div class="stat-label">Utilization Rate</div>
+      <div class="stat-value">{{ $totalReceived > 0 ? round(($totalSpent / $totalReceived) * 100) : 0 }}%</div>
+      <div style="font-size:12px;color:#64748b;margin-top:8px">
+        Funds Utilized
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- KPI Grid -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
   <div class="stat-card">
@@ -29,6 +77,7 @@
     <div class="stat-value">{{ $totalListings ?? 0 }}</div>
   </div>
 </div>
+
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
   <!-- Participation -->
   <div class="card">
@@ -76,6 +125,7 @@
     </div>
   </div>
 </div>
+
 <!-- Monthly Donations Table -->
 <div class="card">
   <div class="card-hd">
@@ -104,6 +154,7 @@
   </div>
 </div>
 @endsection
+
 @section('scripts')
 <script>
 const ctx2 = document.getElementById('statusChart');
