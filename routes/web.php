@@ -81,6 +81,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'approved', 'role:ad
     Route::patch('/listings/{listing}/status', [AdminDashboard::class, 'updateListingStatus'])->name('listings.status');
     Route::delete('/listings/{listing}', [AdminDashboard::class, 'destroyListing'])->name('listings.destroy');
     Route::get('/donations', [\App\Http\Controllers\Admin\DonationController::class, 'index'])->name('donations.index');
+    Route::post('/donations/sync-stripe', [\App\Http\Controllers\Admin\DonationController::class, 'syncFromStripe'])->name('donations.sync-stripe');
     Route::get('/donations/{donation}', [\App\Http\Controllers\Admin\DonationController::class, 'show'])->name('donations.show');
     Route::get('/reports', [AdminReport::class, 'index'])->name('reports.index');
     Route::get('/reports/export', [AdminReport::class, 'export'])->name('reports.export');

@@ -4,12 +4,31 @@
 @section('page-title', 'Donations Management')
 
 @section('topbar-actions')
-<a href="{{ route('admin.donations.index') }}" class="btn btn-primary btn-sm">
+<a href="{{ route('admin.donations.index') }}" class="btn btn-secondary btn-sm">
   <i class="fas fa-refresh"></i> Refresh
 </a>
+<form method="POST" action="{{ route('admin.donations.sync-stripe') }}" class="inline">
+  @csrf
+  <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Sync all completed Stripe payments to the database? This will not duplicate existing records.')">
+    <i class="fas fa-sync-alt"></i> Sync from Stripe
+  </button>
+</form>
 @endsection
 
 @section('content')
+
+@if(session('success'))
+  <div class="alert alert-success mb-4 p-4 bg-green-50 border border-green-300 text-green-800 rounded-lg">
+    <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
+  </div>
+@endif
+
+@if(session('error'))
+  <div class="alert alert-error mb-4 p-4 bg-red-50 border border-red-300 text-red-800 rounded-lg">
+    <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
+  </div>
+@endif
+
 <div class="page-hd">
   <h1>Donations Management</h1>
   <p>View and manage all donations received</p>

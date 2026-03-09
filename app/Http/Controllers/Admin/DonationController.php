@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Donation;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 
 class DonationController extends Controller
@@ -53,5 +54,78 @@ class DonationController extends Controller
     public function show(Donation $donation)
     {
         return view('admin.donations.show', compact('donation'));
+    }
+
+    /**
+     * Sync completed Stripe charges into the donations table.
+     */
+    public function syncFromStripe(Request $request)
+    {
+        $stripe = StripeService::client();
+
+        if (!$stripe) {
+            return redirect()->route('admin.donations.index')
+                ->with('error', 'Stripe is not configured. Please set your Stripe keys in Settings.');
+        }
+
+        $synced  = 0;
+        $skipped = 0;
+        $failed  = 0;
+
+        try {
+            $charges = $stripe->charges->all(['limit' => 100]);
+
+            foreach ($charges->data as $charge) {
+                try {
+                    if ($charge->status !== 'succeeded') {
+                        $skipped++;
+                        continue;
+                    }
+
+                    // Skip if already stored
+                    $piId = $charge->payment_intent ?? $charge->id;
+                    if (Donation::where('stripe_payment_id', $piId)->exists() ||
+                        Donation::where('stripe_payment_id', $charge->id)->exists()) {
+                        $skipped++;
+                        continue;
+                    }
+
+                    $email = $charge->billing_details->email
+                        ?? $charge->receipt_email
+                        ?? ($charge->metadata['email'] ?? null)
+                        ?? 'unknown@stripe.com';
+
+                    $amount = $charge->amount / 100;
+
+                    Donation::create([
+                        'amount'            => $amount,
+                        'donor_email'       => $email,
+                        'stripe_payment_id' => $piId,
+                        'status'            => 'completed',
+                        'currency'          => strtoupper($charge->currency),
+                        'notes'             => json_encode([
+                            'source'           => 'stripe_sync',
+                            'stripe_charge_id' => $charge->id,
+                            'description'      => $charge->description,
+                            'created'          => $charge->created,
+                        ]),
+                    ]);
+
+                    $synced++;
+                } catch (\Exception $e) {
+                    $failed++;
+                }
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('admin.donations.index')
+                ->with('error', 'Stripe API error: ' . $e->getMessage());
+        }
+
+        $message = "Stripe sync complete. Imported: {$synced}, Already existed: {$skipped}";
+        if ($failed > 0) {
+            $message .= ", Errors: {$failed}";
+        }
+
+        return redirect()->route('admin.donations.index')->with('success', $message);
     }
 }

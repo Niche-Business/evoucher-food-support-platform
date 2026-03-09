@@ -3,107 +3,87 @@
 namespace App\Console\Commands;
 
 use App\Models\Donation;
+use App\Services\StripeService;
 use Illuminate\Console\Command;
-use Stripe\StripeClient;
 
 class SyncStripeDonations extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:sync-stripe-donations {--limit=100}';
+    protected $signature = 'stripe:sync-donations {--limit=100 : Max number of charges to fetch from Stripe}';
+    protected $description = 'Sync completed Stripe charges/PaymentIntents to the donations table';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Sync all donations from Stripe to the database';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): int
     {
-        $this->info('Starting Stripe donations sync...');
+        $stripe = StripeService::client();
+
+        if (!$stripe) {
+            $this->error('Stripe is not configured. Please set your Stripe keys in Admin → Settings.');
+            return self::FAILURE;
+        }
+
+        $this->info('Fetching charges from Stripe...');
+
+        $limit   = min((int) $this->option('limit'), 100);
+        $synced  = 0;
+        $skipped = 0;
+        $failed  = 0;
 
         try {
-            // Initialize Stripe client
-            $stripe = new StripeClient(config('services.stripe.secret'));
-            
-            $limit = $this->option('limit');
-            $synced = 0;
-            $skipped = 0;
-            $failed = 0;
-
-            // Fetch all charges from Stripe
-            $charges = $stripe->charges->all([
-                'limit' => min($limit, 100),
-            ]);
+            $charges = $stripe->charges->all(['limit' => $limit]);
 
             foreach ($charges->data as $charge) {
                 try {
-                    // Skip if charge is not successful
+                    // Only import succeeded charges
                     if ($charge->status !== 'succeeded') {
                         $skipped++;
                         continue;
                     }
 
-                    // Check if donation already exists
-                    $existingDonation = Donation::where('stripe_payment_id', $charge->id)
-                        ->orWhere('payment_intent_id', $charge->payment_intent)
-                        ->first();
-
-                    if ($existingDonation) {
+                    // Skip if already in the database (by charge id or payment intent id)
+                    if (
+                        Donation::where('stripe_payment_id', $charge->id)->exists() ||
+                        ($charge->payment_intent && Donation::where('stripe_payment_id', $charge->payment_intent)->exists())
+                    ) {
                         $skipped++;
                         continue;
                     }
 
-                    // Get customer email
-                    $email = $charge->receipt_email ?? 'unknown@example.com';
-                    if ($charge->billing_details && $charge->billing_details->email) {
-                        $email = $charge->billing_details->email;
-                    }
+                    // Resolve donor email
+                    $email = $charge->billing_details->email
+                        ?? $charge->receipt_email
+                        ?? ($charge->metadata['email'] ?? null)
+                        ?? 'unknown@stripe.com';
 
-                    // Create donation record
-                    $donation = Donation::create([
-                        'donor_email' => $email,
-                        'email' => $email,
-                        'amount' => $charge->amount / 100, // Convert from cents to pounds
-                        'currency' => strtoupper($charge->currency),
-                        'stripe_payment_id' => $charge->id,
-                        'payment_intent_id' => $charge->payment_intent,
-                        'payment_method_id' => $charge->payment_method,
-                        'status' => 'completed',
-                        'notes' => json_encode([
+                    $amount = $charge->amount / 100; // pence → pounds
+
+                    Donation::create([
+                        'amount'            => $amount,
+                        'donor_email'       => $email,
+                        'stripe_payment_id' => $charge->payment_intent ?? $charge->id,
+                        'status'            => 'completed',
+                        'currency'          => strtoupper($charge->currency),
+                        'notes'             => json_encode([
+                            'source'           => 'stripe_sync',
                             'stripe_charge_id' => $charge->id,
-                            'stripe_payment_intent_id' => $charge->payment_intent,
-                            'created_at' => $charge->created,
-                            'description' => $charge->description,
+                            'stripe_pi_id'     => $charge->payment_intent,
+                            'description'      => $charge->description,
+                            'created'          => $charge->created,
                         ]),
                     ]);
 
                     $synced++;
-                    $this->line("✓ Synced donation #{$donation->id}: {$email} - £{$donation->amount}");
+                    $this->line("  ✓ Imported: {$charge->id} — £{$amount} from {$email}");
 
                 } catch (\Exception $e) {
                     $failed++;
-                    $this->error("✗ Failed to sync donation: {$e->getMessage()}");
+                    $this->error("  ✗ Failed to sync {$charge->id}: " . $e->getMessage());
                 }
             }
-
-            $this->info("\n=== Sync Complete ===");
-            $this->info("Synced: {$synced}");
-            $this->info("Skipped: {$skipped}");
-            $this->info("Failed: {$failed}");
-
         } catch (\Exception $e) {
-            $this->error("Error: {$e->getMessage()}");
-            return 1;
+            $this->error('Stripe API error: ' . $e->getMessage());
+            return self::FAILURE;
         }
 
-        return 0;
+        $this->info("Done. Synced: {$synced}, Skipped: {$skipped}, Failed: {$failed}");
+        return self::SUCCESS;
     }
 }
