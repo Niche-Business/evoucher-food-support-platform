@@ -78,7 +78,9 @@
 
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
     @forelse($listings as $listing)
-    <a href="{{ route('recipient.food.show', $listing) }}" class="food-card" style="text-decoration:none;display:block">
+    @php $inCart = in_array($listing->id, session('recipient_cart', [])); @endphp
+    <div class="food-card" style="display:flex;flex-direction:column">
+        <a href="{{ route('recipient.food.show', $listing) }}" style="text-decoration:none;display:block;flex:1">
         @if($listing->image_url)
         <img src="{{ $listing->image_url }}" alt="{{ $listing->item_name }}" class="food-card-img" loading="lazy">
         @else
@@ -118,10 +120,34 @@
                 <span><i class="fas fa-box mr-1"></i>Qty: {{ $listing->quantity }}</span>
             </div>
             @if($listing->shopProfile)
-            <p style="font-size:11.5px;color:#64748b;margin-top:8px"><i class="fas fa-store mr-1 text-green-400" style="color:#16a34a"></i>{{ $listing->shopProfile->shop_name ?? 'Local Shop' }}</p>
+            <p style="font-size:11.5px;color:#64748b;margin-top:8px"><i class="fas fa-store mr-1" style="color:#16a34a"></i>{{ $listing->shopProfile->shop_name ?? 'Local Shop' }}</p>
             @endif
         </div>
-    </a>
+        </a>
+        {{-- Add to Cart / In Cart button --}}
+        <div style="padding:0 12px 12px">
+            @if($inCart)
+            <div style="display:flex;gap:8px">
+                <a href="{{ route('recipient.cart') }}" class="btn btn-primary" style="flex:1;justify-content:center;font-size:12px;padding:7px 10px">
+                    <i class="fas fa-shopping-cart"></i> In Cart — View Cart
+                </a>
+                <form method="POST" action="{{ route('recipient.cart.remove', $listing) }}">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm" title="Remove" style="padding:7px 10px">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </form>
+            </div>
+            @else
+            <form method="POST" action="{{ route('recipient.cart.add', $listing) }}">
+                @csrf
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:12px;padding:7px 10px">
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
+            </form>
+            @endif
+        </div>
+    </div>
     @empty
     <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-icon"><i class="fas fa-store"></i></div>

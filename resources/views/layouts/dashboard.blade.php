@@ -278,6 +278,13 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <a href="{{ route('recipient.food.browse') }}" class="nav-item {{ request()->routeIs('recipient.food.browse') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-basket-shopping"></i></span> Browse Food
   </a>
+  <a href="{{ route('recipient.cart') }}" class="nav-item {{ request()->routeIs('recipient.cart') ? 'active' : '' }}">
+    <span class="ni"><i class="fas fa-shopping-cart"></i></span> My Cart
+    @php $cartCount = count(session('recipient_cart', [])); @endphp
+    @if($cartCount > 0)
+    <span class="nb" style="background:#dc2626;color:#fff">{{ $cartCount }}</span>
+    @endif
+  </a>
   <div class="sb-section">Reports</div>
   <a href="{{ route('recipient.history') }}" class="nav-item {{ request()->routeIs('recipient.history') ? 'active' : '' }}">
     <span class="ni"><i class="fas fa-history"></i></span> Redemption History

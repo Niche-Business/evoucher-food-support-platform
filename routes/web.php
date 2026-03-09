@@ -20,6 +20,7 @@ use App\Http\Controllers\Organisation\VoucherController as OrgVoucher;
 use App\Http\Controllers\DonationController as PublicDonationController;
 use App\Http\Controllers\Recipient\DashboardController as RecipientDashboard;
 use App\Http\Controllers\Recipient\VoucherController as RecipientVoucher;
+use App\Http\Controllers\Recipient\CartController as RecipientCart;
 use App\Http\Controllers\Recipient\ReportController as RecipientReport;
 use App\Http\Controllers\Shop\DashboardController as ShopDashboard;
 use App\Http\Controllers\Shop\FoodListingController as ShopListing;
@@ -155,6 +156,12 @@ Route::prefix('recipient')->name('recipient.')->middleware(['auth', 'role:recipi
     Route::get('/vouchers', [RecipientVoucher::class, 'index'])->name('vouchers');
     Route::get('/vouchers/{voucher}', [RecipientVoucher::class, 'show'])->name('vouchers.show');
     Route::get('/history', [RecipientDashboard::class, 'history'])->name('history');
+    // Shopping Cart
+    Route::get('/cart', [RecipientCart::class, 'index'])->name('cart');
+    Route::post('/cart/checkout', [RecipientCart::class, 'checkout'])->name('cart.checkout');
+    Route::post('/cart/{listing}', [RecipientCart::class, 'add'])->name('cart.add');
+    Route::delete('/cart/{listing}', [RecipientCart::class, 'remove'])->name('cart.remove');
+    Route::delete('/cart', [RecipientCart::class, 'clear'])->name('cart.clear');
     Route::get('/profile', [RecipientDashboard::class, 'profile'])->name('profile');
     Route::put('/profile', [RecipientDashboard::class, 'updateProfile'])->name('profile.update');
     // Reports
