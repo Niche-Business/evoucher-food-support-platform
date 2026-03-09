@@ -1,5 +1,11 @@
-@extends('layouts.app')
+@php
+    $isDashboardUser = auth()->check() && in_array(auth()->user()->role, ['admin','super_admin','vcfse','school_care']);
+@endphp
+@extends($isDashboardUser ? 'layouts.dashboard' : 'layouts.app')
 @section('title', ($shopProfile ? $shopProfile->shop_name : null) ?? $shop->name)
+@if($isDashboardUser)
+@section('page-title', ($shopProfile ? $shopProfile->shop_name : null) ?? $shop->name)
+@endif
 @section('content')
 
 <div style="background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;padding:40px 20px;margin-bottom:30px;border-radius:12px">
@@ -130,6 +136,7 @@
     @endif
 </div>
 
+@if(!$isDashboardUser)
 <!-- Footer -->
 <footer style="background:#0f172a;color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid #1e293b">
     <div style="max-width:1200px;margin:0 auto">
@@ -165,6 +172,7 @@
         </div>
     </div>
 </footer>
+@endif
 
 <style>
 .badge {

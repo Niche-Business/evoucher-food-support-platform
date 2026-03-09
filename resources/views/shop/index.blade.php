@@ -1,5 +1,11 @@
-@extends('layouts.app')
+@php
+    $isDashboardUser = auth()->check() && in_array(auth()->user()->role, ['admin','super_admin','vcfse','school_care']);
+@endphp
+@extends($isDashboardUser ? 'layouts.dashboard' : 'layouts.app')
 @section('title', 'Browse Shops')
+@if($isDashboardUser)
+@section('page-title', 'Browse Shops')
+@endif
 @section('content')
 
 <div style="background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:#fff;padding:40px 20px;margin-bottom:30px;border-radius:12px">
@@ -88,6 +94,7 @@
     @endif
 </div>
 
+@if(!$isDashboardUser)
 <!-- Footer -->
 <footer style="background:linear-gradient(135deg,#0f4c81 0%,#1a5fa0 100%);color:#fff;padding:40px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,.1);width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw">
     <div style="max-width:1200px;margin:0 auto;padding:0 24px">
@@ -131,6 +138,7 @@
         </div>
     </div>
 </footer>
+@endif
 
 <style>
 .shop-card:hover {
