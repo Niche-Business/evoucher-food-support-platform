@@ -58,7 +58,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 .card-title{font-size:18px;font-weight:800;color:#0f172a;margin-bottom:8px}
 .card-desc{font-size:14px;color:#64748b;line-height:1.7}
 /* Roles */
-.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1000px;margin:0 auto}
+.roles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto}
 .role-card{background:#fff;border-radius:14px;padding:24px;border:1px solid var(--gray-border);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:all .2s}
 .role-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
 .role-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px}
