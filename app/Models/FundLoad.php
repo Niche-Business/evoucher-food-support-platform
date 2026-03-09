@@ -11,6 +11,8 @@ class FundLoad extends Model
         'amount',
         'notes',
         'reference',
+        'stripe_transaction_id',
+        'payment_method',
     ];
 
     protected $casts = [

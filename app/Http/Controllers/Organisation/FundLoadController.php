@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Organisation;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankDeposit;
-use App\Models\SystemLog;
+use App\Models\FundLoad;
 use App\Models\Notification;
 use App\Models\OrganisationProfile;
+use App\Models\SystemLog;
 use App\Models\User;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\StripeService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class FundLoadController extends Controller
 {
@@ -81,51 +84,79 @@ class FundLoadController extends Controller
         $user = Auth::user();
 
         try {
-            $paymentIntent = $this->stripe->paymentIntents->retrieve($request->payment_intent_id);
+            // Use the static StripeService::client() — NOT $this->stripe
+            $stripe = StripeService::client();
 
-            if ($paymentIntent->status === 'succeeded') {
-                // Update wallet balance
-                $profile = $user->organisationProfile;
-                if ($profile) {
-                    $profile->increment('wallet_balance', $request->amount);
-                } else {
-                    OrganisationProfile::create([
-                        'user_id' => $user->id,
-                        'wallet_balance' => $request->amount,
-                    ]);
-                }
-
-                SystemLog::create([
-                    'user_id' => $user->id,
-                    'action' => 'fund_load_completed',
-                    'entity_type' => 'fund_load',
-                    'entity_id' => null,
-                    'description' => "Fund load of £{$request->amount} completed by {$user->name}",
-                    'ip_address' => $request->ip(),
-                ]);
-
-                // Create notification for admin
-                $admin = User::where('role', 'admin')->first();
-                if ($admin) {
-                    Notification::create([
-                        'user_id' => $admin->id,
-                        'title' => 'New Fund Load',
-                        'message' => "{$user->name} loaded £{$request->amount} via Stripe",
-                        'type' => 'fund_load',
-                        'icon' => 'wallet',
-                        'link' => '/admin/load-funds',
-                    ]);
-                }
-
+            if (!$stripe) {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Funds loaded successfully!',
-                    'amount' => $request->amount,
+                    'error' => 'Payment processing is not configured. Please contact the administrator.',
+                ], 503);
+            }
+
+            $paymentIntent = $stripe->paymentIntents->retrieve($request->payment_intent_id);
+
+            if ($paymentIntent->status !== 'succeeded') {
+                return response()->json(['error' => 'Payment has not succeeded yet. Status: ' . $paymentIntent->status], 400);
+            }
+
+            DB::beginTransaction();
+
+            // 1. Update (or create) the organisation wallet balance
+            $profile = $user->organisationProfile;
+            if ($profile) {
+                $profile->increment('wallet_balance', $request->amount);
+            } else {
+                OrganisationProfile::create([
+                    'user_id'        => $user->id,
+                    'wallet_balance' => $request->amount,
                 ]);
             }
 
-            return response()->json(['error' => 'Payment failed'], 400);
+            // 2. Save a FundLoad record so the transaction appears in the admin dashboard
+            FundLoad::create([
+                'organisation_user_id'  => $user->id,
+                'admin_user_id'         => null,
+                'amount'                => $request->amount,
+                'reference'             => 'STRIPE-' . strtoupper(Str::random(8)),
+                'stripe_transaction_id' => $paymentIntent->id,
+                'payment_method'        => 'stripe',
+                'notes'                 => 'Stripe fund load by ' . $user->name . ' (' . $user->email . ')',
+            ]);
+
+            // 3. System log
+            SystemLog::create([
+                'user_id'     => $user->id,
+                'action'      => 'fund_load_completed',
+                'entity_type' => 'fund_load',
+                'entity_id'   => null,
+                'description' => "Fund load of £{$request->amount} completed by {$user->name} via Stripe ({$paymentIntent->id})",
+                'ip_address'  => $request->ip(),
+            ]);
+
+            // 4. Notify admin
+            $admin = User::where('role', 'admin')->orWhere('role', 'super_admin')->first();
+            if ($admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'title'   => 'New Fund Load',
+                    'message' => "{$user->name} loaded £{$request->amount} via Stripe",
+                    'type'    => 'fund_load',
+                    'icon'    => 'wallet',
+                    'link'    => '/admin/load-funds',
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Funds loaded successfully! Your wallet balance has been updated.',
+                'amount'  => $request->amount,
+            ]);
+
         } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('FundLoad confirmPayment error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
