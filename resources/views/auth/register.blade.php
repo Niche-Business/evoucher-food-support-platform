@@ -247,8 +247,29 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="form-label">Town / City *</label>
-            <input type="text" name="org_town" value="{{ old('role') === 'vcfse' ? old('org_town') : '' }}" class="form-input" placeholder="e.g. Northampton">
+            <label class="form-label">Town *</label>
+            <select name="org_town" class="form-select">
+              <option value="">-- Select your town --</option>
+              <optgroup label="North Northamptonshire">
+                <option value="Wellingborough" {{ (old('role') === 'vcfse' && old('org_town') === 'Wellingborough') ? 'selected' : '' }}>Wellingborough</option>
+                <option value="Kettering" {{ (old('role') === 'vcfse' && old('org_town') === 'Kettering') ? 'selected' : '' }}>Kettering</option>
+                <option value="Corby" {{ (old('role') === 'vcfse' && old('org_town') === 'Corby') ? 'selected' : '' }}>Corby</option>
+              </optgroup>
+              <optgroup label="East Northamptonshire">
+                <option value="Rushden" {{ (old('role') === 'vcfse' && old('org_town') === 'Rushden') ? 'selected' : '' }}>Rushden</option>
+                <option value="Higham Ferrers" {{ (old('role') === 'vcfse' && old('org_town') === 'Higham Ferrers') ? 'selected' : '' }}>Higham Ferrers</option>
+                <option value="Raunds" {{ (old('role') === 'vcfse' && old('org_town') === 'Raunds') ? 'selected' : '' }}>Raunds</option>
+                <option value="Irthlingborough" {{ (old('role') === 'vcfse' && old('org_town') === 'Irthlingborough') ? 'selected' : '' }}>Irthlingborough</option>
+                <option value="Oundle" {{ (old('role') === 'vcfse' && old('org_town') === 'Oundle') ? 'selected' : '' }}>Oundle</option>
+                <option value="Thrapston" {{ (old('role') === 'vcfse' && old('org_town') === 'Thrapston') ? 'selected' : '' }}>Thrapston</option>
+              </optgroup>
+              <optgroup label="West Northamptonshire">
+                <option value="Northampton" {{ (old('role') === 'vcfse' && old('org_town') === 'Northampton') ? 'selected' : '' }}>Northampton</option>
+                <option value="Daventry" {{ (old('role') === 'vcfse' && old('org_town') === 'Daventry') ? 'selected' : '' }}>Daventry</option>
+                <option value="Brackley" {{ (old('role') === 'vcfse' && old('org_town') === 'Brackley') ? 'selected' : '' }}>Brackley</option>
+                <option value="Towcester" {{ (old('role') === 'vcfse' && old('org_town') === 'Towcester') ? 'selected' : '' }}>Towcester</option>
+              </optgroup>
+            </select>
           </div>
           <div>
             <label class="form-label">Postcode *</label>
@@ -291,8 +312,29 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="form-label">Town / City *</label>
-            <input type="text" name="school_town" value="{{ old('role') === 'school_care' ? old('school_town') : '' }}" class="form-input" placeholder="e.g. Northampton">
+            <label class="form-label">Town *</label>
+            <select name="school_town" class="form-select">
+              <option value="">-- Select your town --</option>
+              <optgroup label="North Northamptonshire">
+                <option value="Wellingborough" {{ (old('role') === 'school_care' && old('school_town') === 'Wellingborough') ? 'selected' : '' }}>Wellingborough</option>
+                <option value="Kettering" {{ (old('role') === 'school_care' && old('school_town') === 'Kettering') ? 'selected' : '' }}>Kettering</option>
+                <option value="Corby" {{ (old('role') === 'school_care' && old('school_town') === 'Corby') ? 'selected' : '' }}>Corby</option>
+              </optgroup>
+              <optgroup label="East Northamptonshire">
+                <option value="Rushden" {{ (old('role') === 'school_care' && old('school_town') === 'Rushden') ? 'selected' : '' }}>Rushden</option>
+                <option value="Higham Ferrers" {{ (old('role') === 'school_care' && old('school_town') === 'Higham Ferrers') ? 'selected' : '' }}>Higham Ferrers</option>
+                <option value="Raunds" {{ (old('role') === 'school_care' && old('school_town') === 'Raunds') ? 'selected' : '' }}>Raunds</option>
+                <option value="Irthlingborough" {{ (old('role') === 'school_care' && old('school_town') === 'Irthlingborough') ? 'selected' : '' }}>Irthlingborough</option>
+                <option value="Oundle" {{ (old('role') === 'school_care' && old('school_town') === 'Oundle') ? 'selected' : '' }}>Oundle</option>
+                <option value="Thrapston" {{ (old('role') === 'school_care' && old('school_town') === 'Thrapston') ? 'selected' : '' }}>Thrapston</option>
+              </optgroup>
+              <optgroup label="West Northamptonshire">
+                <option value="Northampton" {{ (old('role') === 'school_care' && old('school_town') === 'Northampton') ? 'selected' : '' }}>Northampton</option>
+                <option value="Daventry" {{ (old('role') === 'school_care' && old('school_town') === 'Daventry') ? 'selected' : '' }}>Daventry</option>
+                <option value="Brackley" {{ (old('role') === 'school_care' && old('school_town') === 'Brackley') ? 'selected' : '' }}>Brackley</option>
+                <option value="Towcester" {{ (old('role') === 'school_care' && old('school_town') === 'Towcester') ? 'selected' : '' }}>Towcester</option>
+              </optgroup>
+            </select>
           </div>
           <div>
             <label class="form-label">Postcode *</label>
