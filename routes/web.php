@@ -84,8 +84,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'approved', 'role:ad
     Route::get('/donations/{donation}', [\App\Http\Controllers\Admin\DonationController::class, 'show'])->name('donations.show');
     Route::get('/reports', [AdminReport::class, 'index'])->name('reports.index');
     Route::get('/reports/export', [AdminReport::class, 'export'])->name('reports.export');
-    Route::get('/settings', [AdminDashboard::class, 'settings'])->name('settings')->middleware('role:super_admin');
-    Route::post('/settings', [AdminDashboard::class, 'saveSettings'])->name('settings.save')->middleware('role:super_admin');
+    Route::get('/settings', [AdminDashboard::class, 'settings'])->name('settings');
+    Route::post('/settings', [AdminDashboard::class, 'saveSettings'])->name('settings.save');
     // Fund Loads
     Route::get('/fund-loads', [AdminFundLoad::class, 'index'])->name('fund-loads.index');
     Route::post('/fund-loads', [AdminFundLoad::class, 'store'])->name('fund-loads.store');
