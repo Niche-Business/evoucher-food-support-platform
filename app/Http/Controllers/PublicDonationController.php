@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Stripe\StripeClient;
 use App\Models\Donation;
+use App\Models\Notification;
+use App\Models\User;
 use App\Services\NotificationService;
 
 class PublicDonationController extends Controller
@@ -96,6 +98,19 @@ class PublicDonationController extends Controller
                     ])
                 ]);
 
+                // Create notification for admin
+                $admin = User::where('role', 'admin')->first();
+                if ($admin) {
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'title' => 'New Donation Received',
+                        'message' => "Donation of £{$validated['amount']} from {$validated['email']}",
+                        'type' => 'donation',
+                        'icon' => 'gift',
+                        'link' => '/admin/donations',
+                    ]);
+                }
+
                 // Notify admins about new donation
                 try {
                     NotificationService::notifyNewDonation($validated['amount'], $validated['email']);
@@ -133,6 +148,19 @@ class PublicDonationController extends Controller
                                 'charge_id' => $charge->id
                             ])
                         ]);
+
+                        // Create notification for admin
+                        $admin = User::where('role', 'admin')->first();
+                        if ($admin) {
+                            Notification::create([
+                                'user_id' => $admin->id,
+                                'title' => 'New Donation Received',
+                                'message' => "Donation of £{$validated['amount']} from {$validated['email']}",
+                                'type' => 'donation',
+                                'icon' => 'gift',
+                                'link' => '/admin/donations',
+                            ]);
+                        }
 
                         return response()->json([
                             'success' => true,

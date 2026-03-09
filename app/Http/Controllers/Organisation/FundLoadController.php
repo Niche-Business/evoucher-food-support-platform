@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Organisation;
 use App\Http\Controllers\Controller;
 use App\Models\BankDeposit;
 use App\Models\SystemLog;
+use App\Models\Notification;
 use App\Models\OrganisationProfile;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe\StripeClient;
@@ -104,6 +106,19 @@ class FundLoadController extends Controller
                     'description' => "Fund load of £{$request->amount} completed by {$user->name}",
                     'ip_address' => $request->ip(),
                 ]);
+
+                // Create notification for admin
+                $admin = User::where('role', 'admin')->first();
+                if ($admin) {
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'title' => 'New Fund Load',
+                        'message' => "{$user->name} loaded £{$request->amount} via Stripe",
+                        'type' => 'fund_load',
+                        'icon' => 'wallet',
+                        'link' => '/admin/load-funds',
+                    ]);
+                }
 
                 return response()->json([
                     'success' => true,

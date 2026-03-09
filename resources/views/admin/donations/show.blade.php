@@ -1,133 +1,165 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <a href="{{ route('admin.donations.index') }}" class="btn btn-secondary mb-3">← Back to Donations</a>
-            <h1 class="h3">Donation #{{ $donation->id }}</h1>
-        </div>
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <a href="{{ route('admin.donations.index') }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Donations
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">Donation #{{ $donation->id }}</h1>
     </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Donation Details</h5>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Donation Details Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Donation Details</h2>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-muted">Donor Email</label>
-                            <p class="h6">{{ $donation->donor_email ?? $donation->email ?? 'N/A' }}</p>
+                <div class="px-6 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Donor Email</label>
+                            <p class="text-gray-900 font-medium break-all">{{ $donation->donor_email ?? $donation->email ?? 'N/A' }}</p>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted">Amount</label>
-                            <p class="h6">£{{ number_format($donation->amount, 2) }}</p>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Amount</label>
+                            <p class="text-2xl font-bold text-green-600">£{{ number_format($donation->amount, 2) }}</p>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-muted">Status</label>
-                            <p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Status</label>
+                            <div>
                                 @if($donation->status === 'completed')
-                                    <span class="badge bg-success">Completed</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Completed
+                                    </span>
                                 @elseif($donation->status === 'processing')
-                                    <span class="badge bg-info">Processing</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        <svg class="w-4 h-4 mr-1 animate-spin" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 1119.414 5.414 1 1 0 11-1.414-1.414A5.002 5.002 0 005.659 5.659V3a1 1 0 01-1-1zm.008 9a1 1 0 011.992 0A5.002 5.002 0 0114.341 14.341v2.101a1 1 0 11-1.992 0v-2.1a7.002 7.002 0 01-6.341-6.341z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Processing
+                                    </span>
                                 @elseif($donation->status === 'failed')
-                                    <span class="badge bg-danger">Failed</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Failed
+                                    </span>
                                 @else
-                                    <span class="badge bg-secondary">{{ ucfirst($donation->status) }}</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        {{ ucfirst($donation->status) }}
+                                    </span>
                                 @endif
-                            </p>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted">Currency</label>
-                            <p class="h6">{{ $donation->currency ?? 'GBP' }}</p>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Currency</label>
+                            <p class="text-gray-900 font-medium">{{ $donation->currency ?? 'GBP' }}</p>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="text-muted">Date Created</label>
-                            <p class="h6">{{ $donation->created_at->format('d M Y H:i:s') }}</p>
-                        </div>
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Date Created</label>
+                        <p class="text-gray-900 font-medium">{{ $donation->created_at->format('d M Y H:i:s') }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card mt-3">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Payment Information</h5>
+            <!-- Payment Information Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Payment Information</h2>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="text-muted">Stripe Payment ID</label>
-                            <p class="h6 text-break">{{ $donation->stripe_payment_id ?? 'N/A' }}</p>
-                        </div>
+                <div class="px-6 py-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Stripe Payment ID</label>
+                        <p class="text-gray-900 font-mono text-sm break-all bg-gray-50 p-3 rounded border border-gray-200">{{ $donation->stripe_payment_id ?? 'N/A' }}</p>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="text-muted">Payment Intent ID</label>
-                            <p class="h6 text-break">{{ $donation->payment_intent_id ?? 'N/A' }}</p>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Payment Intent ID</label>
+                        <p class="text-gray-900 font-mono text-sm break-all bg-gray-50 p-3 rounded border border-gray-200">{{ $donation->payment_intent_id ?? 'N/A' }}</p>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="text-muted">Payment Method ID</label>
-                            <p class="h6 text-break">{{ $donation->payment_method_id ?? 'N/A' }}</p>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Payment Method ID</label>
+                        <p class="text-gray-900 font-mono text-sm break-all bg-gray-50 p-3 rounded border border-gray-200">{{ $donation->payment_method_id ?? 'N/A' }}</p>
                     </div>
                 </div>
             </div>
 
+            <!-- Additional Information Card -->
             @if($donation->notes)
-            <div class="card mt-3">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Additional Information</h5>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Additional Information</h2>
                 </div>
-                <div class="card-body">
-                    <pre class="mb-0">{{ json_encode(json_decode($donation->notes), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                <div class="px-6 py-6">
+                    <pre class="text-gray-900 text-sm bg-gray-50 p-4 rounded border border-gray-200 overflow-auto">{{ json_encode(json_decode($donation->notes), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
                 </div>
             </div>
             @endif
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Summary</h5>
+        <!-- Sidebar Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-8">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Summary</h2>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <small class="text-muted">Donation ID</small>
-                        <p class="h6">#{{ $donation->id }}</p>
+                <div class="px-6 py-6 space-y-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Donation ID</label>
+                        <p class="text-lg font-bold text-gray-900">#{{ $donation->id }}</p>
                     </div>
-                    <div class="mb-3">
-                        <small class="text-muted">Amount</small>
-                        <p class="h5 text-success">£{{ number_format($donation->amount, 2) }}</p>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Amount</label>
+                        <p class="text-3xl font-bold text-green-600">£{{ number_format($donation->amount, 2) }}</p>
                     </div>
-                    <div class="mb-3">
-                        <small class="text-muted">Status</small>
-                        <p>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Status</label>
+                        <div>
                             @if($donation->status === 'completed')
-                                <span class="badge bg-success">Completed</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Completed
+                                </span>
                             @elseif($donation->status === 'processing')
-                                <span class="badge bg-info">Processing</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Processing
+                                </span>
                             @elseif($donation->status === 'failed')
-                                <span class="badge bg-danger">Failed</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    Failed
+                                </span>
                             @else
-                                <span class="badge bg-secondary">{{ ucfirst($donation->status) }}</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                    {{ ucfirst($donation->status) }}
+                                </span>
                             @endif
-                        </p>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <small class="text-muted">Date</small>
-                        <p class="h6">{{ $donation->created_at->format('d M Y') }}</p>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Date</label>
+                        <p class="text-gray-900 font-medium">{{ $donation->created_at->format('d M Y') }}</p>
                     </div>
                 </div>
             </div>
