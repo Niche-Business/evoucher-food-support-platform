@@ -1,57 +1,63 @@
-<!-- Modern Statistics Widgets for this Type -->
-<div class="row mb-4 g-3 type-stats-grid">
-    <!-- Total Redemptions Widget -->
-    <div class="col-12 col-sm-6 col-lg-3 mb-3">
-        <div class="modern-stat-widget widget-primary">
-            <div class="widget-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="widget-content">
-                <div class="widget-label">{{ __('app.total_redemptions') }}</div>
-                <div class="widget-value">{{ $stats['total_redemptions'] }}</div>
-                <div class="widget-subtext">{{ __('app.total_redemptions') }}</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Value Widget -->
-    <div class="col-md-3 mb-3">
-        <div class="modern-stat-widget widget-success">
-            <div class="widget-icon">
-                <i class="fas fa-pound-sign"></i>
-            </div>
-            <div class="widget-content">
-                <div class="widget-label">{{ __('app.total_value') }}</div>
-                <div class="widget-value">£{{ number_format($stats['total_value'], 2) }}</div>
-                <div class="widget-subtext">{{ __('app.total_value') }}</div>
+<!-- Type-Specific Statistics Widgets -->
+<div class="type-stats-section mb-4">
+    <h5 class="mb-3 text-muted">
+        <i class="fas fa-chart-line"></i> Type-Specific Breakdown
+    </h5>
+    
+    <div class="row mb-4 g-3 type-stats-grid">
+        <!-- Total Redemptions Widget -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+            <div class="modern-stat-widget widget-primary type-widget">
+                <div class="widget-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="widget-content">
+                    <div class="widget-label">{{ __('app.total_redemptions') }}</div>
+                    <div class="widget-value">{{ $stats['total_redemptions'] }}</div>
+                    <div class="widget-subtext">This Type</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Average Value Widget -->
-    <div class="col-md-3 mb-3">
-        <div class="modern-stat-widget widget-warning">
-            <div class="widget-icon">
-                <i class="fas fa-chart-bar"></i>
-            </div>
-            <div class="widget-content">
-                <div class="widget-label">{{ __('app.avg_value') }}</div>
-                <div class="widget-value">£{{ number_format($stats['average_value'], 2) }}</div>
-                <div class="widget-subtext">{{ __('app.avg_value') }}</div>
+        <!-- Total Value Widget -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+            <div class="modern-stat-widget widget-success type-widget">
+                <div class="widget-icon">
+                    <i class="fas fa-pound-sign"></i>
+                </div>
+                <div class="widget-content">
+                    <div class="widget-label">{{ __('app.total_value') }}</div>
+                    <div class="widget-value">£{{ number_format($stats['total_value'], 2) }}</div>
+                    <div class="widget-subtext">This Type</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Payment Collected Widget -->
-    <div class="col-md-3 mb-3">
-        <div class="modern-stat-widget widget-info">
-            <div class="widget-icon">
-                <i class="fas fa-credit-card"></i>
+        <!-- Average Value Widget -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+            <div class="modern-stat-widget widget-warning type-widget">
+                <div class="widget-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="widget-content">
+                    <div class="widget-label">{{ __('app.avg_value') }}</div>
+                    <div class="widget-value">£{{ number_format($stats['average_value'], 2) }}</div>
+                    <div class="widget-subtext">This Type</div>
+                </div>
             </div>
-            <div class="widget-content">
-                <div class="widget-label">{{ __('app.payment_collected') }}</div>
-                <div class="widget-value">{{ $stats['total_collected'] }}<span style="font-size: 0.6em; margin-left: 0.25rem;">/{{ $stats['total_redemptions'] }}</span></div>
-                <div class="widget-subtext">{{ __('app.payment_collected') }}</div>
+        </div>
+
+        <!-- Payment Collected Widget -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+            <div class="modern-stat-widget widget-info type-widget">
+                <div class="widget-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="widget-content">
+                    <div class="widget-label">{{ __('app.payment_collected') }}</div>
+                    <div class="widget-value">{{ $stats['total_collected'] }}<span style="font-size: 0.6em; margin-left: 0.25rem;">/{{ $stats['total_redemptions'] }}</span></div>
+                    <div class="widget-subtext">This Type</div>
+                </div>
             </div>
         </div>
     </div>
@@ -121,6 +127,53 @@
         flex-shrink: 0;
     }
 
+    .widget-content {
+        flex: 1;
+    }
+
+    .widget-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #6c757d;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .widget-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2e3338;
+        margin-bottom: 0.25rem;
+    }
+
+    .widget-subtext {
+        font-size: 0.75rem;
+        color: #adb5bd;
+    }
+
+    /* Type-specific widget styling */
+    .type-widget {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.95));
+        border-left: 3px solid;
+    }
+
+    .type-widget.widget-primary {
+        border-left-color: #4e73df;
+    }
+
+    .type-widget.widget-success {
+        border-left-color: #1cc88a;
+    }
+
+    .type-widget.widget-warning {
+        border-left-color: #f6c23e;
+    }
+
+    .type-widget.widget-info {
+        border-left-color: #36b9cc;
+    }
+
     /* Grid layout for type stats */
     .type-stats-grid {
         display: grid;
@@ -145,6 +198,24 @@
     }
 
     @media (max-width: 768px) {
+        .modern-stat-widget {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .widget-icon {
+            margin-right: 0;
+            margin-bottom: 0.75rem;
+        }
+
+        .widget-value {
+            font-size: 1.5rem;
+        }
+
+        .widget-label {
+            font-size: 0.75rem;
+        }
+
         .type-stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -156,50 +227,14 @@
         }
     }
 
-    .widget-content {
-        flex: 1;
-    }
-
-    .widget-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #6c757d;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-    }
-
-    .widget-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2e3338;
-        margin-bottom: 0.25rem;
-    }
-
-    .widget-subtext {
-        font-size: 0.8rem;
-        color: #adb5bd;
-    }
-
-    @media (max-width: 768px) {
-        .modern-stat-widget {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .widget-icon {
-            margin-right: 0;
-            margin-bottom: 1rem;
-        }
-
-        .widget-value {
-            font-size: 1.75rem;
-        }
+    .type-stats-section h5 {
+        border-bottom: 2px solid #e3e6f0;
+        padding-bottom: 0.75rem;
     }
 </style>
 
 <!-- Redemptions Table -->
-<div class="table-responsive">
+<div class="table-responsive mt-4">
     @if($redemptions->count() > 0)
         <table class="table table-hover table-sm">
             <thead class="bg-light">
