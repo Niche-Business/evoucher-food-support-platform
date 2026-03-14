@@ -119,18 +119,39 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 
     <!-- Language Switcher -->
     <div style="position:relative;display:inline-block" x-data="{ open: false }">
-      <button @click="open = !open" class="nav-link" style="display:flex;align-items:center;gap:6px;cursor:pointer;border:none;background:none">
+      <button @click="open = !open" id="langBtn" class="nav-link" style="display:flex;align-items:center;gap:6px;cursor:pointer;border:none;background:none">
         <i class="fas fa-globe"></i>
-        <span style="font-size:12px;font-weight:700;text-transform:uppercase">{{ app()->getLocale() }}</span>
+        <span style="font-size:12px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>
         <i class="fas fa-chevron-down" style="font-size:10px"></i>
       </button>
       <div x-show="open" @click.away="open = false" x-transition style="position:absolute;right:0;top:110%;background:#fff;border:1px solid var(--gray-border);border-radius:10px;min-width:160px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.1)">
-        <a href="{{ route('lang.switch', 'en') }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px;border-radius:8px 8px 0 0">🇬🇧 English</a>
-        <a href="{{ route('lang.switch', 'ar') }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px">🇸🇦 العربية</a>
-        <a href="{{ route('lang.switch', 'ro') }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px">🇷🇴 Română</a>
-        <a href="{{ route('lang.switch', 'pl') }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px;border-radius:0 0 8px 8px">🇵🇱 Polski</a>
+        <a href="#" onclick="switchLanguage('en'); return false;" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px;border-radius:8px 8px 0 0">🇬🇧 English</a>
+        <a href="#" onclick="switchLanguage('ar'); return false;" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px">🇸🇦 العربية</a>
+        <a href="#" onclick="switchLanguage('ro'); return false;" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px">🇷🇴 Română</a>
+        <a href="#" onclick="switchLanguage('pl'); return false;" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:13px;border-radius:0 0 8px 8px">🇵🇱 Polski</a>
       </div>
     </div>
+    <script>
+      function switchLanguage(locale) {
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        fetch(`/lang/${locale}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('langCode').textContent = locale.toUpperCase();
+              window.location.reload();
+            }
+          })
+          .catch(error => console.error('Error:', error));
+      }
+    </script>
 
     @auth
     <!-- Notification Bell -->

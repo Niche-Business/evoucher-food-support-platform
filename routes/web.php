@@ -32,7 +32,7 @@ use App\Http\Controllers\SurplusClaimController;
 use Illuminate\Support\Facades\Route;
 
 // Language Switcher
-Route::get('/lang/{locale}', function ($locale) {
+Route::post('/lang/{locale}', function ($locale) {
     $supported = ['en', 'ar', 'ro', 'pl'];
     if (in_array($locale, $supported)) {
         session(['locale' => $locale]);
@@ -40,6 +40,16 @@ Route::get('/lang/{locale}', function ($locale) {
     }
     return response()->json(['success' => false], 400);
 })->name('lang.switch');
+
+// Also support GET for backward compatibility
+Route::get('/lang/{locale}', function ($locale) {
+    $supported = ['en', 'ar', 'ro', 'pl'];
+    if (in_array($locale, $supported)) {
+        session(['locale' => $locale]);
+        return redirect()->back();
+    }
+    return redirect()->back();
+})->name('lang.switch.get');
 
 // Public
 Route::get('/', function () { return view('welcome'); })->name('home');
