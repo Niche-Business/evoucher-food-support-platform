@@ -108,6 +108,13 @@
             </ul>
         </div>
 
+        <!-- Type-Specific Breakdown Heading -->
+        <div class="card-header bg-light border-bottom">
+            <h5 class="mb-0 text-muted">
+                <i class="fas fa-chart-line"></i> {{ __('app.food_breakdown_title') }} - Type Details
+            </h5>
+        </div>
+
         <div class="card-body">
             <div class="tab-content">
                 <!-- Free Food Tab -->
