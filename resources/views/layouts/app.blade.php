@@ -6,6 +6,18 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'eVoucher Food Support'))</title>
     <meta name="description" content="eVoucher Food Support Platform - Northamptonshire">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#16a34a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="eVoucher">
+    <link rel="apple-touch-icon" href="{{ asset('images/icon-192.png') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/icon-512.png') }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -156,5 +168,74 @@
 <!-- Footer removed - using page-specific footers -->
 
 @stack('scripts')
+
+<!-- PWA Service Worker Registration -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered successfully:', registration);
+                    
+                    // Check for updates periodically
+                    setInterval(() => {
+                        registration.update();
+                    }, 60000); // Check every minute
+                })
+                .catch((error) => {
+                    console.warn('Service Worker registration failed:', error);
+                });
+        });
+        
+        // Listen for controller change (new service worker activated)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker controller changed');
+            // Optionally show update notification to user
+        });
+    }
+    
+    // Handle PWA installation prompt
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('PWA install prompt ready');
+        
+        // Show install button if not already installed
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) {
+            installBtn.style.display = 'block';
+        }
+    });
+    
+    // Handle app installed event
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        deferredPrompt = null;
+        
+        // Hide install button
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
+    });
+    
+    // Expose install function globally
+    window.installPWA = function() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        }
+    };
+</script>
+
 </body>
 </html>

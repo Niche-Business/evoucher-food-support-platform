@@ -397,6 +397,11 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
   <div class="topbar-title">@yield('page-title', 'Dashboard')</div>
   <div class="flex items-center gap-3">
     @yield('topbar-actions')
+    <!-- PWA Install Button -->
+    <button id="pwa-install-btn" onclick="installPWA()" class="tb-btn" title="Install App" style="display:none;">
+      <i class="fas fa-download"></i>
+    </button>
+    
     <!-- Notifications Button -->
     <div class="relative" x-data="{ notifOpen: false }">
       <button @click="notifOpen=!notifOpen" class="tb-btn" title="Notifications" id="notif-btn">
