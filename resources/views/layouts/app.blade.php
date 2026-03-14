@@ -173,18 +173,29 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
                 .then((registration) => {
-                    console.log('Service Worker registered successfully:', registration);
+                    console.log('✓ Service Worker registered successfully');
+                    console.log('Scope:', registration.scope);
                     
                     // Check for updates periodically
                     setInterval(() => {
                         registration.update();
                     }, 60000); // Check every minute
+                    
+                    // Force activation
+                    if (registration.waiting) {
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
                 })
                 .catch((error) => {
-                    console.warn('Service Worker registration failed:', error);
+                    console.error('✗ Service Worker registration failed:', error.message);
                 });
+        });
+        
+        // Handle service worker updates
+        navigator.serviceWorker.ready.then((registration) => {
+            console.log('✓ Service Worker is ready');
         });
         
         // Listen for controller change (new service worker activated)
@@ -196,18 +207,31 @@
     
     // Handle PWA installation prompt
     let deferredPrompt;
+    console.log('PWA: Waiting for beforeinstallprompt event...');
     
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('✓ PWA install prompt event fired!');
         e.preventDefault();
         deferredPrompt = e;
-        console.log('PWA install prompt ready');
         
         // Show install button if not already installed
         const installBtn = document.getElementById('pwa-install-btn');
         if (installBtn) {
             installBtn.style.display = 'block';
+            console.log('✓ Install button shown');
+        } else {
+            console.warn('✗ Install button element not found');
         }
     });
+    
+    // Fallback: Show install button after 3 seconds if beforeinstallprompt didn't fire
+    setTimeout(() => {
+        if (!deferredPrompt) {
+            console.log('Note: beforeinstallprompt did not fire. This is normal on iOS or if PWA is already installed.');
+            console.log('On iOS: Use Safari menu > Add to Home Screen');
+            console.log('On Android: Look for install prompt or use browser menu > Install app');
+        }
+    }, 3000);
     
     // Handle app installed event
     window.addEventListener('appinstalled', () => {
