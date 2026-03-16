@@ -500,7 +500,7 @@ return [
     'amount_owed' => 'Amount Owed',
     'payment_status' => 'Payment Status',
     'redeemed_date' => 'Redeemed Date',
-    'total_redemptions' => 'Total Redemptions',
+    'total_redemptions' => 'Total Redeem',
     'total_value' => 'Total Value',
     'total_owed' => 'Total Owed',
     'payment_collected' => 'Payment Collected',
