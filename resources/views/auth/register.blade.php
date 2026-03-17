@@ -402,14 +402,8 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
         </div>
       </div>
 
-      <button type="submit" class="btn-submit" @click="handleSubmit" :disabled="isSubmitting" :style="isSubmitting ? 'opacity:0.7;cursor:not-allowed;min-height:48px' : ''">
-        <template x-if="!isSubmitting">
-          <i class="fas fa-user-plus"></i> Create Account
-        </template>
-        <template x-if="isSubmitting">
-          <div class="manus-spinner"></div>
-          <span>Creating Account...</span>
-        </template>
+      <button type="submit" class="btn-submit" @click="handleSubmit">
+        <i class="fas fa-user-plus"></i> Create Account
       </button>
     </form>
   </div>
