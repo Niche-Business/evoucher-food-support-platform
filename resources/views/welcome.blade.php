@@ -96,6 +96,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
   .footer-grid{grid-template-columns:1fr}
   .footer-bottom{flex-direction:column;text-align:center}
   .nav-links .nav-link{display:none}
+  .nav-links .nav-link:nth-child(4){display:inline-flex !important}
   .nav-links .nav-link-primary{display:inline-flex}
   .cards-grid{grid-template-columns:1fr}
   .roles-grid{grid-template-columns:1fr}
