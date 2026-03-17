@@ -46,8 +46,8 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0f172a;min-height:
 /* Topbar */
 .topbar{position:fixed;top:0;left:var(--sw);right:0;height:58px;background:#fff;
   border-bottom:1px solid var(--border);display:flex;align-items:center;
-  padding:0 24px;gap:14px;z-index:40;}
-.topbar-title{font-size:14.5px;font-weight:700;color:#0f172a;flex:1;}
+  padding:0 0;gap:0;z-index:40;}
+.topbar-title{font-size:14.5px;font-weight:700;color:#0f172a;flex:1;padding:0 24px;}
 .tb-btn{width:34px;height:34px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;
   transition:all .15s;text-decoration:none;font-size:13px;}
@@ -400,11 +400,11 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
 
 <!-- Topbar -->
 <header class="topbar">
-  <button class="tb-btn md:hidden" @click="sidebarOpen=!sidebarOpen">
+  <button class="tb-btn md:hidden" @click="sidebarOpen=!sidebarOpen" style="margin-left:0;border-radius:0;border:none;border-right:1px solid var(--border);">
     <i class="fas fa-bars"></i>
   </button>
   <div class="topbar-title">@yield('page-title', 'Dashboard')</div>
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-3" style="margin-left:auto;padding-right:0;">
     @yield('topbar-actions')
     <!-- PWA Install Button -->
     <button id="pwa-install-btn" onclick="installPWA()" class="tb-btn" title="Install App" style="display:none;">
@@ -434,7 +434,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     </div>
 
     <div class="relative" x-data="{ open: false }">
-      <div class="user-pill" @click="open=!open">
+      <div class="user-pill" @click="open=!open" style="border-radius:0;border-left:1px solid var(--border);border-right:none;">
         <div class="u-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}</div>
         <div>
           <div class="u-name">{{ auth()->user()->name ?? 'User' }}</div>
