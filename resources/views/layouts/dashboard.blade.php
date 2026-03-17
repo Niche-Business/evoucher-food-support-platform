@@ -455,9 +455,11 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
           <i class="fas fa-lock w-4 text-slate-400"></i> Change Password
         </a>
         <div class="border-t border-slate-100 my-1"></div>
+        @if(in_array(auth()->user()->role, ['vcfse', 'school']))
         <a href="{{ url('/food') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
           <i class="fas fa-globe w-4 text-slate-400"></i> Public Listings
         </a>
+        @endif
         <!-- Language Options -->
         <div x-data="{ langOpen: false }" class="relative">
           <button @click="langOpen=!langOpen" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 w-full text-left">
