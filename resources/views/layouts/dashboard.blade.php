@@ -432,24 +432,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
         </div>
       </div>
     </div>
-    <a href="{{ url('/food') }}" class="tb-btn" title="Public Listings">
-      <i class="fas fa-globe"></i>
-    </a>
-    <!-- Language Switcher -->
-    <div class="relative" x-data="{ langOpen: false }">
-      <button @click="langOpen=!langOpen" class="tb-btn flex items-center gap-1" title="Language" style="width:auto;padding:0 10px;" id="langBtn">
-        <i class="fas fa-language"></i>
-        <span style="font-size:11px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>
-      </button>
-      <div x-show="langOpen" x-cloak @click.away="langOpen=false"
-           class="absolute right-0 top-full mt-2 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-50"
-           style="min-width:160px" x-transition>
-        <a href="#" onclick="switchLanguage('en', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='en' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="en">🇬🇧 English</a>
-        <a href="#" onclick="switchLanguage('ar', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='ar' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ar">🇸🇦 العربية</a>
-        <a href="#" onclick="switchLanguage('ro', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='ro' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ro">🇷🇴 Română</a>
-        <a href="#" onclick="switchLanguage('pl', event)" class="flex items-center gap-2 px-4 py-2 text-sm lang-option {{ app()->getLocale()==='pl' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="pl">🇵🇱 Polski</a>
-      </div>
-    </div>
+
     <div class="relative" x-data="{ open: false }">
       <div class="user-pill" @click="open=!open">
         <div class="u-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}</div>
@@ -470,6 +453,25 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
         <a href="{{ route('password.change') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
           <i class="fas fa-lock w-4 text-slate-400"></i> Change Password
         </a>
+        <div class="border-t border-slate-100 my-1"></div>
+        <a href="{{ url('/food') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+          <i class="fas fa-globe w-4 text-slate-400"></i> Public Listings
+        </a>
+        <!-- Language Options -->
+        <div x-data="{ langOpen: false }" class="relative">
+          <button @click="langOpen=!langOpen" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 w-full text-left">
+            <i class="fas fa-language w-4 text-slate-400"></i> <span id="langCode">{{ app()->getLocale() }}</span>
+            <i class="fas fa-chevron-right text-xs ml-auto" :class="{ 'rotate-90': langOpen }"></i>
+          </button>
+          <div x-show="langOpen" x-cloak @click.away="langOpen=false"
+               class="absolute left-0 top-0 ml-48 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-50"
+               style="min-width:140px" x-transition>
+            <a href="#" onclick="switchLanguage('en', event)" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='en' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="en">🇬🇧 English</a>
+            <a href="#" onclick="switchLanguage('ar', event)" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='ar' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ar">🇸🇦 العربية</a>
+            <a href="#" onclick="switchLanguage('ro', event)" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='ro' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="ro">🇷🇴 Română</a>
+            <a href="#" onclick="switchLanguage('pl', event)" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale()==='pl' ? 'text-green-600 font-semibold bg-green-50' : 'text-slate-700 hover:bg-slate-50' }}" data-lang="pl">🇵🇱 Polski</a>
+          </div>
+        </div>
         <div class="border-t border-slate-100 my-1"></div>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
