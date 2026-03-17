@@ -75,7 +75,7 @@
 
         {{-- ── Voucher Value ───────────────────────────────────────────────── --}}
         <div x-show="!isSurplus" x-cloak class="mb-4">
-          <label class="form-label">Voucher Redemption Value (£)</label>
+          <label class="form-label">Voucher Redeem Value (£)</label>
           <input type="number" name="voucher_value" value="{{ old('voucher_value', $listing->voucher_value) }}" min="0" step="0.01" class="form-input">
         </div>
         <input x-show="isSurplus" type="hidden" name="voucher_value" value="0">

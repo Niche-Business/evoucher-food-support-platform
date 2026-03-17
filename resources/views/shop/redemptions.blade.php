@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
-@section('title','Redemptions')
-@section('page-title','Voucher Redemptions')
+@section('title','Redeems')
+@section('page-title','Voucher Redeems')
 @section('content')
 <div class="page-hd">
   <div>
-    <h1>Redemption History</h1>
-    <p>All voucher redemptions for your food listings</p>
+    <h1>Redeem History</h1>
+    <p>All voucher redeems for your food listings</p>
   </div>
   <a href="{{ route('shop.payouts.index') }}" class="btn btn-primary btn-sm">
     <i class="fas fa-money-bill-transfer mr-1"></i> Request Payout
@@ -21,7 +21,7 @@
 
 <div class="card">
   <div class="card-hd">
-    <div class="card-title"><i class="fas fa-check-double text-green-600"></i> Redemptions <span class="badge badge-gray ml-2">{{ count($redemptions) }}</span></div>
+    <div class="card-title"><i class="fas fa-check-double text-green-600"></i> Redeems <span class="badge badge-gray ml-2">{{ count($redemptions) }}</span></div>
   </div>
   <div style="overflow-x:auto">
     <table class="data-table">
@@ -104,7 +104,7 @@
           </td>
         </tr>
         @empty
-        <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="fas fa-check-double"></i></div><h3>No redemptions yet</h3><p>Redemptions will appear here when recipients use vouchers on your listings</p></div></td></tr>
+        <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="fas fa-check-double"></i></div><h3>No redeems yet</h3><p>Redeems will appear here when recipients use vouchers on your listings</p></div></td></tr>
         @endforelse
       </tbody>
     </table>

@@ -200,8 +200,8 @@
       @if($unpaidRedemptions->isEmpty())
         <div class="empty-state" style="padding:30px 0">
           <div class="empty-icon"><i class="fas fa-check-double"></i></div>
-          <h3>No Unpaid Redemptions</h3>
-          <p>All your collected redemptions have been included in a payout request.</p>
+          <h3>No Unpaid Redeems</h3>
+          <p>All your collected redeems have been included in a payout request.</p>
         </div>
       @else
         <p style="font-size:13px;color:#6b7280;margin-bottom:16px">

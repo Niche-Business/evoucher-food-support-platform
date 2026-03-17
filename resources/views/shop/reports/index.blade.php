@@ -31,10 +31,10 @@
   </div>
 </div>
 
-<!-- Redemption Statistics -->
+<!-- Redeem Statistics -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
   <div class="stat-card" style="border-left:4px solid #16a34a">
-    <div class="stat-label">Total Redemptions</div>
+    <div class="stat-label">Total Redeems</div>
     <div class="stat-value text-green-600">{{ $totalRedemptions }}</div>
     <div class="stat-sub">Items redeemed by recipients</div>
   </div>
@@ -45,10 +45,10 @@
   </div>
 </div>
 
-<!-- Recent Redemptions -->
+<!-- Recent Redeems -->
 <div class="card">
   <div class="card-hd">
-    <div class="card-title"><i class="fas fa-history text-blue-500"></i> Recent Redemptions</div>
+    <div class="card-title"><i class="fas fa-history text-blue-500"></i> Recent Redeems</div>
   </div>
   @if(count($recentRedemptions) > 0)
   <div style="overflow-x:auto">
@@ -76,8 +76,8 @@
   @else
   <div class="empty-state" style="padding:64px 24px">
     <div class="empty-icon"><i class="fas fa-chart-bar"></i></div>
-    <h3>No redemptions yet</h3>
-    <p>Your shop's redemption history will appear here</p>
+    <h3>No redeems yet</h3>
+    <p>Your shop's redeem history will appear here</p>
   </div>
   @endif
 </div>

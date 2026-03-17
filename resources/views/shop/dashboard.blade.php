@@ -9,7 +9,7 @@
 @section('content')
 <div class="page-hd">
   <h1>Welcome, {{ auth()->user()->name }}</h1>
-  <p>Manage your food listings and track voucher redemptions</p>
+  <p>Manage your food listings and track voucher redeems</p>
 </div>
 <!-- Stats -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -103,7 +103,7 @@
   <!-- Recent Redemptions -->
   <div class="card">
     <div class="card-hd">
-      <div class="card-title"><i class="fas fa-check-circle text-green-600"></i> Recent Redemptions</div>
+      <div class="card-title"><i class="fas fa-check-circle text-green-600"></i> Recent Redeems</div>
       <a href="{{ route('shop.redemptions') }}" class="btn btn-secondary btn-sm">All</a>
     </div>
     <div style="padding:0">
@@ -119,7 +119,7 @@
         @else<span class="badge badge-gray">{{ ucfirst($r->status) }}</span>@endif
       </div>
       @empty
-      <div class="empty-state"><div class="empty-icon"><i class="fas fa-check-circle"></i></div><h3>No redemptions yet</h3></div>
+      <div class="empty-state"><div class="empty-icon"><i class="fas fa-check-circle"></i></div><h3>No redeems yet</h3></div>
       @endforelse
     </div>
   </div>
