@@ -8,10 +8,18 @@
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{
   listingType: '{{ old('listing_type', $listing->listing_type ?? 'free') }}',
+  originalPrice: parseFloat('{{ old('original_price', $listing->original_price ?? 0) }}') || 0,
+  discountedPrice: parseFloat('{{ old('discounted_price', $listing->discounted_price ?? 0) }}') || 0,
+  voucherValue: parseFloat('{{ old('voucher_value', $listing->voucher_value ?? 0) }}') || 0,
   get isDiscounted() { return this.listingType === 'discounted'; },
   get isSurplus()    { return this.listingType === 'surplus'; },
-  get isFree()       { return this.listingType === 'free'; }
-}">
+   get isFree()       { return this.listingType === 'free'; },
+  updateVoucherValue() {
+    if (this.isDiscounted && this.discountedPrice > 0) {
+      this.voucherValue = parseFloat(this.discountedPrice.toFixed(2));
+    }
+  }
+}>
   <div class="card lg:col-span-2">
     <div class="card-hd"><div class="card-title"><i class="fas fa-edit text-green-600"></i> Edit Details</div></div>
     <div class="card-body">
@@ -68,7 +76,7 @@
             </div>
             <div>
               <label class="form-label">Discounted Price (£) *</label>
-              <input type="number" name="discounted_price" value="{{ old('discounted_price', $listing->discounted_price) }}" min="0.01" step="0.01" placeholder="e.g. 1.00" class="form-input">
+              <input type="number" name="discounted_price" x-model.number="discountedPrice" @input="updateVoucherValue()" value="{{ old('discounted_price', $listing->discounted_price) }}" min="0.01" step="0.01" placeholder="e.g. 1.00" class="form-input">
             </div>
           </div>
         </div>
@@ -76,7 +84,9 @@
         {{-- ── Voucher Value ───────────────────────────────────────────────── --}}
         <div x-show="!isSurplus" x-cloak class="mb-4">
           <label class="form-label">Voucher Redeem Value (£)</label>
-          <input type="number" name="voucher_value" value="{{ old('voucher_value', $listing->voucher_value) }}" min="0" step="0.01" class="form-input">
+          <input type="number" name="voucher_value" x-model.number="voucherValue" value="{{ old('voucher_value', $listing->voucher_value) }}" min="0" step="0.01" class="form-input" :readonly="isDiscounted">
+          <p style="font-size:11px;color:#94a3b8;margin-top:4px" x-show="isDiscounted">The amount the recipient will pay using their voucher.</p>
+          <p style="font-size:11px;color:#94a3b8;margin-top:4px" x-show="isFree">Set to £0.00 for completely free items.</p>
         </div>
         <input x-show="isSurplus" type="hidden" name="voucher_value" value="0">
 

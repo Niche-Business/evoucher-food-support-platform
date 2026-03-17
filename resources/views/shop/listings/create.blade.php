@@ -8,9 +8,17 @@
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{
   listingType: '{{ old('listing_type', 'free') }}',
+  originalPrice: parseFloat('{{ old('original_price', 0) }}') || 0,
+  discountedPrice: parseFloat('{{ old('discounted_price', 0) }}') || 0,
+  voucherValue: parseFloat('{{ old('voucher_value', 0) }}') || 0,
   get isDiscounted() { return this.listingType === 'discounted'; },
   get isSurplus()    { return this.listingType === 'surplus'; },
-  get isFree()       { return this.listingType === 'free'; }
+  get isFree()       { return this.listingType === 'free'; },
+  updateVoucherValue() {
+    if (this.isDiscounted && this.discountedPrice > 0) {
+      this.voucherValue = parseFloat(this.discountedPrice.toFixed(2));
+    }
+  }
 }">
   <div class="card lg:col-span-2">
     <div class="card-hd"><div class="card-title"><i class="fas fa-plus-circle text-green-600"></i> Listing Details</div></div>
@@ -76,7 +84,7 @@
             </div>
             <div>
               <label class="form-label">Discounted Price (£) *</label>
-              <input type="number" name="discounted_price" value="{{ old('discounted_price') }}" min="0.01" step="0.01" placeholder="e.g. 1.00" class="form-input">
+              <input type="number" name="discounted_price" x-model.number="discountedPrice" @input="updateVoucherValue()" value="{{ old('discounted_price') }}" min="0.01" step="0.01" placeholder="e.g. 1.00" class="form-input">
               <p style="font-size:11px;color:#94a3b8;margin-top:4px">What the recipient pays at your shop</p>
             </div>
           </div>
@@ -85,8 +93,8 @@
         {{-- ── Voucher Value (hidden for surplus, shown for free/discounted) ── --}}
         <div x-show="!isSurplus" x-cloak class="mb-4">
           <label class="form-label">Voucher Redeem Value (£)</label>
-          <input type="number" name="voucher_value" value="{{ old('voucher_value', 0) }}" min="0" step="0.01" placeholder="0.00 = free" class="form-input">
-          <p style="font-size:11px;color:#94a3b8;margin-top:4px" x-show="isDiscounted">Amount deducted from the recipient's voucher. The rest they pay at your shop.</p>
+          <input type="number" name="voucher_value" x-model.number="voucherValue" value="{{ old('voucher_value', 0) }}" min="0" step="0.01" placeholder="0.00 = free" class="form-input" :readonly="isDiscounted">
+          <p style="font-size:11px;color:#94a3b8;margin-top:4px" x-show="isDiscounted">The amount the recipient will pay using their voucher.</p>
           <p style="font-size:11px;color:#94a3b8;margin-top:4px" x-show="isFree">Set to £0.00 for completely free items.</p>
         </div>
         {{-- Hidden voucher_value for surplus --}}
