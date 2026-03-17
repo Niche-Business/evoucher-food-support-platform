@@ -510,4 +510,7 @@ return [
     'avg_value' => 'Average Value',
     'back' => 'Back',
     'food_breakdown' => 'Food Breakdown',
+    
+    // Footer
+    'footer_copy' => '© {year} eVoucher Food Support Platform — Built for BAKUP CIC · Northamptonshire Pilot',
 ];
