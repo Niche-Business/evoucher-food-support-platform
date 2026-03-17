@@ -46,7 +46,7 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0f172a;min-height:
 /* Topbar */
 .topbar{position:fixed;top:0;left:var(--sw);right:0;height:58px;background:#fff;
   border-bottom:1px solid var(--border);display:flex;align-items:center;
-  padding:0 24px;gap:14px;z-index:40;}
+  padding:0 24px;gap:12px;z-index:40;overflow:hidden;}
 .topbar-title{font-size:14.5px;font-weight:700;color:#0f172a;flex:1;}
 .tb-btn{width:38px;height:38px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;
@@ -154,12 +154,13 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0f172a;min-height:
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);}
   .sidebar.open{transform:translateX(0);}
-  .topbar{left:0;}
+  .topbar{left:0;padding:0 12px;gap:8px;}
   .main-wrap{margin-left:0;}
   .page-content{padding:20px 16px 40px;}
-  .topbar-title{font-size:13px;flex:1;}
-  .tb-btn{width:40px;height:40px;font-size:18px;}
-  .topbar{padding:0 16px;}
+  .topbar-title{font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tb-btn{width:36px;height:36px;font-size:16px;}
+  .topbar .md\:hidden{display:none;}
+  .topbar > .hidden{display:none !important;}
 }
 /* Direct element overrides — force proper form styling regardless of Tailwind reset */
 input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=tel],input[type=url],select,textarea{
@@ -420,8 +421,8 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
         <span id="notif-badge" class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center" style="display:none;font-size:10px;font-weight:bold">0</span>
       </button>
       <div x-show="notifOpen" x-cloak @click.away="notifOpen=false"
-           class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl border border-slate-200 shadow-lg py-2 z-50 max-h-96 overflow-y-auto"
-           x-transition>
+           class="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl border border-slate-200 shadow-lg py-2 z-50 max-h-96 overflow-y-auto"
+           style="max-width:calc(100vw - 32px)" x-transition>
         <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
           <span class="font-semibold text-sm">Notifications</span>
           <div class="flex gap-2">
@@ -434,11 +435,11 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
         </div>
       </div>
     </div>
-    <a href="{{ url('/food') }}" class="tb-btn" title="Public Listings">
+    <a href="{{ url('/food') }}" class="tb-btn hidden md:flex" title="Public Listings">
       <i class="fas fa-globe"></i>
     </a>
     <!-- Language Switcher -->
-    <div class="relative" x-data="{ langOpen: false }">
+    <div class="relative hidden md:block" x-data="{ langOpen: false }">
       <button @click="langOpen=!langOpen" class="tb-btn flex items-center gap-1" title="Language" style="width:auto;padding:0 10px;" id="langBtn">
         <i class="fas fa-language"></i>
         <span style="font-size:11px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>

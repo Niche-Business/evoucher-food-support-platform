@@ -27,9 +27,9 @@
         @endif">
         <i class="{{ $notif->icon ?? 'fas fa-bell' }}"></i>
       </div>
-      <div style="flex:1;min-width:0;word-break:break-word">
-        <div style="font-weight:600;color:#0f172a;margin-bottom:4px;word-break:break-word">{{ $notif->title }}</div>
-        <div style="font-size:13px;color:#64748b;line-height:1.5;word-break:break-word">{{ $notif->message }}</div>
+      <div style="flex:1;min-width:0;word-break:break-word;overflow:hidden">
+        <div style="font-weight:600;color:#0f172a;margin-bottom:4px;word-break:break-word;overflow-wrap:break-word">{{ $notif->title }}</div>
+        <div style="font-size:13px;color:#64748b;line-height:1.5;word-break:break-word;overflow-wrap:break-word;white-space:normal">{{ $notif->message }}</div>
         <div style="font-size:11px;color:#94a3b8;margin-top:6px;white-space:nowrap">{{ $notif->created_at->diffForHumans() }}</div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
