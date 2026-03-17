@@ -39,9 +39,20 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
 .section-divider{height:1px;background:#f1f5f9;margin:4px 0 16px}
 .section-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:12px}
 [x-cloak]{display:none!important}
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes manusSpin {
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  50% { transform: rotate(180deg) scale(1.1); opacity: 0.8; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+.manus-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-right-color: #fff;
+  border-radius: 50%;
+  animation: manusSpin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 </style>
 </head>
@@ -365,7 +376,7 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;padding:
         </template>
         <template x-if="isSubmitting">
           <span style="display:flex;align-items:center;justify-content:center;gap:8px">
-            <i class="fas fa-spinner" style="animation:spin 1s linear infinite"></i> Creating Account...
+            <div class="manus-spinner"></div> Creating Account...
           </span>
         </template>
       </button>
