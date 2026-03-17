@@ -46,16 +46,11 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0f172a;min-height:
 /* Topbar */
 .topbar{position:fixed;top:0;left:var(--sw);right:0;height:58px;background:#fff;
   border-bottom:1px solid var(--border);display:flex;align-items:center;
-  padding:0 24px;gap:12px;z-index:40;overflow:hidden;flex-wrap:nowrap;}
-.topbar .flex.items-center{display:flex;align-items:center;gap:8px;overflow:hidden;flex-wrap:nowrap;}
-@media(min-width:769px){
-  .globe-btn{display:flex !important;}
-  .lang-switcher{display:block !important;}
-}
+  padding:0 24px;gap:14px;z-index:40;}
 .topbar-title{font-size:14.5px;font-weight:700;color:#0f172a;flex:1;}
-.tb-btn{width:38px;height:38px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);
+.tb-btn{width:34px;height:34px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;
-  transition:all .15s;text-decoration:none;font-size:16px;padding:0;min-width:38px;}
+  transition:all .15s;text-decoration:none;font-size:13px;}
 .tb-btn:hover{background:#f1f5f9;color:#0f172a;}
 .user-pill{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;
   background:#f8fafc;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;}
@@ -159,13 +154,10 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0f172a;min-height:
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);}
   .sidebar.open{transform:translateX(0);}
-  .topbar{left:0;padding:0 12px;gap:8px;}
+  .topbar{left:0;}
   .main-wrap{margin-left:0;}
   .page-content{padding:20px 16px 40px;}
-  .topbar-title{font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .tb-btn{width:36px;height:36px;font-size:16px;}
-  .globe-btn{display:none !important;}
-  .lang-switcher{display:none !important;}
+  .topbar-title{font-size:13px;}
 }
 /* Direct element overrides — force proper form styling regardless of Tailwind reset */
 input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=tel],input[type=url],select,textarea{
@@ -408,7 +400,7 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
 
 <!-- Topbar -->
 <header class="topbar">
-  <button class="tb-btn hamburger-btn" @click="sidebarOpen=!sidebarOpen" style="display:flex">
+  <button class="tb-btn md:hidden" @click="sidebarOpen=!sidebarOpen">
     <i class="fas fa-bars"></i>
   </button>
   <div class="topbar-title">@yield('page-title', 'Dashboard')</div>
@@ -421,13 +413,13 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
     
     <!-- Notifications Button -->
     <div class="relative" x-data="{ notifOpen: false }">
-      <button @click="notifOpen=!notifOpen" class="tb-btn notif-btn" title="Notifications" id="notif-btn" style="cursor:pointer;flex-shrink:0">
+      <button @click="notifOpen=!notifOpen" class="tb-btn" title="Notifications" id="notif-btn">
         <i class="fas fa-bell"></i>
         <span id="notif-badge" class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center" style="display:none;font-size:10px;font-weight:bold">0</span>
       </button>
       <div x-show="notifOpen" x-cloak @click.away="notifOpen=false"
-           class="absolute right-0 top-full mt-2 bg-white rounded-xl border border-slate-200 shadow-lg py-2 z-50 max-h-96 overflow-y-auto"
-           style="width:320px;max-width:calc(100vw - 32px)" x-transition>
+           class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl border border-slate-200 shadow-lg py-2 z-50 max-h-96 overflow-y-auto"
+           x-transition>
         <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
           <span class="font-semibold text-sm">Notifications</span>
           <div class="flex gap-2">
@@ -440,11 +432,11 @@ input[type=checkbox],input[type=radio]{width:auto !important;display:inline-bloc
         </div>
       </div>
     </div>
-    <a href="{{ url('/food') }}" class="tb-btn globe-btn" title="Public Listings">
+    <a href="{{ url('/food') }}" class="tb-btn" title="Public Listings">
       <i class="fas fa-globe"></i>
     </a>
     <!-- Language Switcher -->
-    <div class="relative lang-switcher" x-data="{ langOpen: false }">
+    <div class="relative" x-data="{ langOpen: false }">
       <button @click="langOpen=!langOpen" class="tb-btn flex items-center gap-1" title="Language" style="width:auto;padding:0 10px;" id="langBtn">
         <i class="fas fa-language"></i>
         <span style="font-size:11px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>
