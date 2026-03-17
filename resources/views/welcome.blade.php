@@ -16,7 +16,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 /* Colors */
 :root{--primary:#0f4c81;--primary-light:#1a5fa0;--accent:#16a34a;--accent-light:#22c55e;--gray-light:#f8fafc;--gray-border:#e2e8f0}
 /* Nav */
-.nav{display:flex;align-items:center;padding:16px 40px;gap:20px;border-bottom:1px solid var(--gray-border);background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.nav{display:flex;align-items:center;padding:16px 40px;gap:20px;border-bottom:1px solid var(--gray-border);background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05);position:relative}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo-img{width:40px;height:40px;object-fit:contain}
 .nav-logo-text{font-size:13px;font-weight:700;color:#0f172a;display:flex;flex-direction:column;line-height:1.2}
@@ -26,6 +26,8 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 .nav-link:hover{background:var(--gray-light);color:var(--primary)}
 .nav-link-primary{background:var(--accent);color:#fff}
 .nav-link-primary:hover{background:var(--accent-light)}
+.nav-mobile-toggle{display:none;background:none;border:none;font-size:20px;cursor:pointer;color:#0f172a;padding:8px 12px}
+.nav-desktop-only{display:inline-flex !important}
 /* Hero */
 .hero{background:linear-gradient(135deg,var(--primary) 0%,#1a5fa0 100%);padding:120px 40px;text-align:center;color:#fff}
 .hero-content{max-width:900px;margin:0 auto}
@@ -88,16 +90,23 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
   .footer-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:640px){
-  .nav{padding:14px 20px}
-  .hero{padding:80px 20px}
-  .section{padding:60px 20px}
-  .cta-section{padding:60px 20px}
-  .footer{padding:40px 20px 24px}
+  .nav{padding:12px 16px;flex-wrap:wrap}
+  .nav-logo{flex-shrink:0}
+  .nav-logo-text{font-size:11px}
+  .nav-logo-img{width:32px;height:32px}
+  .nav-mobile-toggle{display:inline-flex !important;order:3}
+  .nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--gray-border);padding:12px;gap:8px;max-height:0;overflow:hidden;transition:max-height .3s ease;z-index:999}
+  .nav-links.nav-mobile-open{max-height:500px}
+  .nav-link{padding:10px 12px;font-size:12px;width:100%;text-align:left;border-radius:6px}
+  .nav-link-primary{width:100%}
+  .nav-desktop-only{display:none !important}
+  .nav-signin-btn{display:inline-flex !important}
+  .hero{padding:60px 20px}
+  .section{padding:40px 20px}
+  .cta-section{padding:40px 20px}
+  .footer{padding:30px 20px 20px}
   .footer-grid{grid-template-columns:1fr}
   .footer-bottom{flex-direction:column;text-align:center}
-  .nav-links .nav-link{display:none}
-  .nav-links .nav-link:nth-child(4){display:inline-flex !important}
-  .nav-links .nav-link-primary{display:inline-flex}
   .cards-grid{grid-template-columns:1fr}
   .roles-grid{grid-template-columns:1fr}
 }
@@ -106,7 +115,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 <body>
 
 <!-- NAV -->
-<nav class="nav">
+<nav class="nav" x-data="{ mobileMenuOpen: false }">
   <a href="/" class="nav-logo">
     <img src="{{ asset('images/logo.png') }}" alt="eVoucher Logo" class="nav-logo-img">
     <div class="nav-logo-text">
@@ -114,13 +123,20 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       <span>eVoucher</span>
     </div>
   </a>
-  <div class="nav-links">
-    <a href="{{ url('/food') }}" class="nav-link"><i class="fas fa-basket-shopping mr-1"></i> {{ __('app.browse_food') }}</a>
-    <a href="{{ url('/shops') }}" class="nav-link"><i class="fas fa-store mr-1"></i> {{ __('app.shops') }}</a>
+  
+  <!-- Mobile Menu Button -->
+  <button @click="mobileMenuOpen = !mobileMenuOpen" class="nav-mobile-toggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="nav-links" :class="{ 'nav-mobile-open': mobileMenuOpen }">
+    <!-- Desktop Only Links -->
+    <a href="{{ url('/food') }}" class="nav-link nav-desktop-only"><i class="fas fa-basket-shopping mr-1"></i> {{ __('app.browse_food') }}</a>
+    <a href="{{ url('/shops') }}" class="nav-link nav-desktop-only"><i class="fas fa-store mr-1"></i> {{ __('app.shops') }}</a>
 
     <!-- Language Switcher -->
     <div style="position:relative;display:inline-block" x-data="{ open: false }">
-      <button @click="open = !open" id="langBtn" class="nav-link" style="display:flex;align-items:center;gap:6px;cursor:pointer;border:none;background:none">
+      <button @click="open = !open" id="langBtn" class="nav-link" style="display:flex;align-items:center;gap:6px;cursor:pointer;border:none;background:none;width:100%">
         <i class="fas fa-globe"></i>
         <span style="font-size:12px;font-weight:700;text-transform:uppercase" id="langCode">{{ app()->getLocale() }}</span>
         <i class="fas fa-chevron-down" style="font-size:10px"></i>
@@ -156,7 +172,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 
     @auth
     <!-- Notification Bell -->
-    <div style="position:relative" x-data="{ open: false }">
+    <div style="position:relative" x-data="{ open: false }" class="nav-desktop-only">
       <button @click="open = !open" class="nav-link" style="position:relative;padding:8px 12px;border-radius:8px;color:#0f172a;transition:all .15s;border:none;background:none;font-size:16px;cursor:pointer">
         <i class="fas fa-bell"></i>
         <span style="position:absolute;top:4px;right:6px;background:#ef4444;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px">0</span>
@@ -172,11 +188,11 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
         </div>
       </div>
     </div>
-    <a href="{{ route(auth()->user()->getDashboardRoute()) }}" class="nav-link nav-link-primary">
+    <a href="{{ route(auth()->user()->getDashboardRoute()) }}" class="nav-link nav-link-primary nav-desktop-only">
       <i class="fas fa-tachometer-alt mr-1"></i> {{ __('app.dashboard') }}
     </a>
     @else
-    <a href="{{ route('login') }}" class="nav-link">{{ __('app.sign_in') }}</a>
+    <a href="{{ route('login') }}" class="nav-link nav-signin-btn">{{ __('app.sign_in') }}</a>
     <a href="{{ route('register') }}" class="nav-link nav-link-primary">{{ __('app.get_started_free') }}</a>
     @endauth
   </div>
@@ -199,24 +215,36 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 <!-- STATS -->
 <div class="section">
   <div class="stats-grid">
-    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">{{ __('app.free_to_use') }}</div></div>
-    <div class="stat-item"><div class="stat-num">0</div><div class="stat-lbl">{{ __('app.food_wasted') }}</div></div>
-    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">{{ __('app.user_roles') }}</div></div>
-    <div class="stat-item"><div class="stat-num">NHS</div><div class="stat-lbl">{{ __('app.community_backed') }}</div></div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">{{ __('app.free_to_use') }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">{{ __('app.food_wasted') }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">6</div>
+      <div class="stat-lbl">{{ __('app.user_roles') }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">NHS</div>
+      <div class="stat-lbl">{{ __('app.community_backed') }}</div>
+    </div>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
 <div class="section section-alt">
-  <div class="section-title">{{ __('app.how_it_works') }}</div>
-  <div class="section-sub">{{ __('app.how_it_works_description') }}</div>
+  <h2 class="section-title">{{ __('app.how_it_works') }}</h2>
+  <p class="section-sub">{{ __('app.how_it_works_desc') }}</p>
   <div class="cards-grid">
     <div class="card">
       <div class="card-icon">🏪</div>
       <div class="card-body">
         <div class="card-num">1</div>
         <div class="card-title">{{ __('app.shops_list_food') }}</div>
-        <div class="card-desc">{{ __('app.shops_list_food_description') }}</div>
+        <div class="card-desc">{{ __('app.shops_list_food_desc') }}</div>
       </div>
     </div>
     <div class="card">
@@ -224,7 +252,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       <div class="card-body">
         <div class="card-num">2</div>
         <div class="card-title">{{ __('app.recipients_get_vouchers') }}</div>
-        <div class="card-desc">{{ __('app.recipients_get_vouchers_description') }}</div>
+        <div class="card-desc">{{ __('app.recipients_get_vouchers_desc') }}</div>
       </div>
     </div>
     <div class="card">
@@ -232,7 +260,7 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       <div class="card-body">
         <div class="card-num">3</div>
         <div class="card-title">{{ __('app.organisations_fund_it') }}</div>
-        <div class="card-desc">{{ __('app.organisations_fund_it_description') }}</div>
+        <div class="card-desc">{{ __('app.organisations_fund_it_desc') }}</div>
       </div>
     </div>
   </div>
@@ -240,47 +268,47 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
 
 <!-- WHO USES EVOUCHER -->
 <div class="section">
-  <div class="section-title">{{ __('app.who_uses_evoucher') }}</div>
-  <div class="section-sub">{{ __('app.who_uses_evoucher_description') }}</div>
+  <h2 class="section-title">{{ __('app.who_uses_evoucher') }}</h2>
+  <p class="section-sub">{{ __('app.who_uses_evoucher_desc') }}</p>
   <div class="roles-grid">
     <div class="role-card">
-      <div class="role-icon" style="background:#fee2e2;color:#dc2626">👑</div>
+      <div class="role-icon" style="background:#e0e7ff;color:#4f46e5">👑</div>
       <div class="role-name">{{ __('app.super_admin') }}</div>
-      <div class="role-desc">{{ __('app.super_admin_description') }}</div>
+      <div class="role-desc">{{ __('app.super_admin_desc') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:#fef3c7;color:#f59e0b">🔐</div>
+      <div class="role-icon" style="background:#fef3c7;color:#d97706">🔐</div>
       <div class="role-name">{{ __('app.admin') }}</div>
-      <div class="role-desc">{{ __('app.admin_description') }}</div>
+      <div class="role-desc">{{ __('app.admin_desc') }}</div>
     </div>
     <div class="role-card">
       <div class="role-icon" style="background:#dbeafe;color:#0284c7">🏪</div>
       <div class="role-name">{{ __('app.local_shops') }}</div>
-      <div class="role-desc">{{ __('app.local_shops_description') }}</div>
+      <div class="role-desc">{{ __('app.local_shops_desc') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:#dcfce7;color:#16a34a">👤</div>
+      <div class="role-icon" style="background:#f0fdf4;color:#16a34a">👤</div>
       <div class="role-name">{{ __('app.recipients') }}</div>
-      <div class="role-desc">{{ __('app.recipients_description') }}</div>
+      <div class="role-desc">{{ __('app.recipients_desc') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:#f3e8ff;color:#a855f7">🤲</div>
+      <div class="role-icon" style="background:#fce7f3;color:#ec4899">🤲</div>
       <div class="role-name">{{ __('app.vcfse') }}</div>
-      <div class="role-desc">{{ __('app.vcfse_description') }}</div>
+      <div class="role-desc">{{ __('app.vcfse_desc') }}</div>
     </div>
     <div class="role-card">
-      <div class="role-icon" style="background:#fce7f3;color:#ec4899">🎓</div>
+      <div class="role-icon" style="background:#f3e8ff;color:#a855f7">🎓</div>
       <div class="role-name">{{ __('app.schools_care') }}</div>
-      <div class="role-desc">{{ __('app.schools_care_description') }}</div>
+      <div class="role-desc">{{ __('app.schools_care_desc') }}</div>
     </div>
   </div>
 </div>
 
-<!-- CTA SECTION -->
+<!-- CTA -->
 <div class="cta-section">
   <h2>{{ __('app.ready_to_get_started') }}</h2>
-  <p>{{ __('app.ready_to_get_started_description') }}</p>
-  <a href="{{ route('register') }}" class="btn btn-primary" style="background:#fff;color:var(--primary)"><i class="fas fa-arrow-right"></i> {{ __('app.get_started_free') }}</a>
+  <p>{{ __('app.ready_to_get_started_desc') }}</p>
+  <a href="{{ route('register') }}" class="btn btn-primary" style="background:#fff;color:var(--primary)"><i class="fas fa-rocket"></i> {{ __('app.get_started_free') }}</a>
 </div>
 
 <!-- FOOTER -->
@@ -291,13 +319,13 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
         <img src="{{ asset('images/logo.png') }}" alt="eVoucher Logo" class="footer-logo-img">
         <div class="footer-logo-text">eVoucher</div>
       </div>
-      <p class="footer-tagline">{{ __('app.footer_tagline') }}</p>
+      <div class="footer-tagline">{{ __('app.footer_tagline') }}</div>
     </div>
     <div>
       <div class="footer-col-title">{{ __('app.platform') }}</div>
       <a href="{{ url('/food') }}" class="footer-link">{{ __('app.browse_food') }}</a>
-      <a href="{{ url('/shops') }}" class="footer-link">{{ __('app.browse_shops') }}</a>
-      <a href="{{ route('register') }}" class="footer-link">{{ __('app.get_started') }}</a>
+      <a href="{{ url('/shops') }}" class="footer-link">{{ __('app.shops') }}</a>
+      <a href="{{ route('login') }}" class="footer-link">{{ __('app.sign_in') }}</a>
     </div>
     <div>
       <div class="footer-col-title">{{ __('app.company') }}</div>
@@ -309,220 +337,21 @@ body{font-family:'Inter',sans-serif;color:#0f172a;background:#fff}
       <div class="footer-col-title">{{ __('app.legal') }}</div>
       <a href="#" class="footer-link">{{ __('app.privacy_policy') }}</a>
       <a href="#" class="footer-link">{{ __('app.terms_of_use') }}</a>
-      <a href="#" class="footer-link">{{ __('app.donate') }}</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© 2026 BAKUP CIC. {{ __('app.all_rights_reserved') }}</div>
+    <div class="footer-copy">{{ __('app.footer_copy', ['year' => date('Y')]) }}</div>
     <div class="footer-badges">
-      <span class="footer-badge">{{ __('app.nhs_partnership') }}</span>
-      <span class="footer-badge">{{ __('app.community_backed') }}</span>
+      <div class="footer-badge">Northamptonshire Pilot</div>
+      <div class="footer-badge">BAKUP CIC</div>
     </div>
   </div>
 </footer>
 
-<!-- DONATION MODAL -->
-<div id="donateModal" style="display:none !important;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;padding:40px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <h2 style="font-size:24px;font-weight:900;color:#0f172a">Donate</h2>
-      <button onclick="closeDonateModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8">&times;</button>
-    </div>
-    <p style="color:#64748b;margin-bottom:24px;line-height:1.6">Your donation helps us continue providing food support to families in need. Every contribution makes a difference.</p>
-    <form id="donateForm" method="POST">
-      <div style="margin-bottom:20px">
-        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">Donation Amount</label>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
-          <button type="button" onclick="setDonationAmount(25)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£25</button>
-          <button type="button" onclick="setDonationAmount(50)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£50</button>
-          <button type="button" onclick="setDonationAmount(100)" style="padding:12px;border:2px solid var(--gray-border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#0f172a;transition:all .2s">£100</button>
-        </div>
-        <input type="number" name="amount" id="donationAmount" placeholder="Enter custom amount" min="1" step="0.01" style="width:100%;padding:12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px" required>
-      </div>
-      <div style="margin-bottom:24px">
-        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">Email Address</label>
-        <input type="email" name="email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px" required>
-      </div>
-      <div style="margin-bottom:24px">
-        <label style="display:block;font-size:14px;font-weight:600;color:#0f172a;margin-bottom:8px">Card Details</label>
-        <div id="card-element" style="border:1px solid var(--gray-border);border-radius:8px;padding:12px;background:#fff;min-height:40px"></div>
-      </div>
-      <div id="card-errors" style="color:#ef4444;font-size:13px;margin-bottom:12px"></div>
-      <button type="button" onclick="handleDonation(event)" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s">Proceed to Payment</button>
-    </form>
-  </div>
-</div>
-
-<!-- Stripe Script -->
-<script src="https://js.stripe.com/v3/"></script>
-
 <script>
-let stripe, elements, cardElement;
-
-// Initialize Stripe
-function initStripe() {
-  try {
-    if (stripe) return; // Already initialized
-    
-    var stripePublishableKey = '{{ \App\Services\StripeService::publishableKey() }}';
-    if (!stripePublishableKey) {
-      console.warn('Stripe is not configured. Please set the Stripe keys in Admin Settings.');
-      return;
-    }
-    stripe = Stripe(stripePublishableKey);
-    elements = stripe.elements();
-    
-    // Destroy existing card element if it exists
-    if (cardElement) {
-      cardElement.destroy();
-    }
-    
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          fontSize: '14px',
-          color: '#0f172a',
-          fontFamily: 'Inter, sans-serif'
-        },
-        invalid: {
-          color: '#ef4444'
-        }
-      }
-    });
-    
-    const cardElementDiv = document.getElementById('card-element');
-    if (cardElementDiv) {
-      cardElement.mount('#card-element');
-      
-      cardElement.on('change', function(event) {
-        const displayError = document.getElementById('card-errors');
-        if (event.error) {
-          displayError.textContent = event.error.message;
-        } else {
-          displayError.textContent = '';
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Stripe initialization error:', error);
-  }
-}
-
 function openDonateModal() {
-  const modal = document.getElementById('donateModal');
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-  // Initialize Stripe when modal opens
-  if (!stripe) {
-    setTimeout(initStripe, 200);
-  }
+  alert('Donate functionality coming soon!');
 }
-
-function closeDonateModal() {
-  document.getElementById('donateModal').style.display = 'none';
-}
-
-function setDonationAmount(amount) {
-  document.getElementById('donationAmount').value = amount;
-  document.querySelectorAll('#donateModal button[type="button"]').forEach(btn => {
-    btn.style.borderColor = 'var(--gray-border)';
-    btn.style.background = '#fff';
-  });
-  event.target.style.borderColor = 'var(--accent)';
-  event.target.style.background = 'rgba(22, 163, 74, 0.1)';
-}
-
-async function handleDonation(event) {
-  event.preventDefault();
-  const amount = document.getElementById('donationAmount').value;
-  const email = document.querySelector('input[name="email"]').value;
-  const submitBtn = event.target;
-  
-  if (!amount || !email) {
-    alert('Please enter both amount and email');
-    return;
-  }
-  
-  if (!cardElement) {
-    alert('Payment form is loading. Please try again.');
-    return;
-  }
-  
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-  
-  try {
-    const intentResponse = await fetch('/api/donations/create-payment-intent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-      },
-      body: JSON.stringify({ amount, email })
-    });
-    
-    const intentData = await intentResponse.json();
-    if (intentData.error) throw new Error(intentData.error);
-    
-    const result = await stripe.confirmCardPayment(intentData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: { email }
-      }
-    });
-    
-    if (result.error) {
-      document.getElementById('card-errors').textContent = result.error.message;
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Proceed to Payment';
-      return;
-    }
-    
-    const payloadData = {
-      amount,
-      email,
-      payment_intent_id: result.paymentIntent.id
-    };
-    console.log('Sending donation payload:', payloadData);
-    
-    const saveResponse = await fetch('/api/donations/process', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-      },
-      body: JSON.stringify(payloadData)
-    });
-    
-    console.log('Response status:', saveResponse.status);
-    const saveData = await saveResponse.json();
-    console.log('Response data:', saveData);
-    
-    if (saveData.success) {
-      alert('Thank you for your donation of GBP' + amount + '! Your support helps us reduce food waste and support families in need.');
-      closeDonateModal();
-      document.getElementById('donateForm').reset();
-    } else {
-      console.error('Error response:', saveData);
-      alert('Error saving donation: ' + saveData.message);
-    }
-  } catch (error) {
-    document.getElementById('card-errors').textContent = error.message;
-    console.error('Donation error:', error);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = 'Proceed to Payment';
-  }
-}
-
-document.addEventListener('click', function(event) {
-  const modal = document.getElementById('donateModal');
-  if (event.target === modal) {
-    closeDonateModal();
-  }
-});
 </script>
-
 </body>
 </html>
