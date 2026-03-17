@@ -30,7 +30,7 @@ body{font-family:'Inter',sans-serif;background:#f1f5f9;min-height:100vh;display:
 .password-toggle:hover{color:#64748b}
 .btn-submit{width:100%;padding:13px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:14.5px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-submit:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 4px 12px rgba(22,163,74,.3)}
-@media(max-width:640px){.auth-left{display:none}.auth-right{padding:32px 24px}.auth-wrap{max-width:440px;border-radius:16px}}
+@media(max-width:640px){.auth-left{display:none !important}.auth-right{flex:1;padding:32px 24px;width:100%;display:flex;flex-direction:column;justify-content:center}.auth-wrap{max-width:100%;width:100%;min-height:auto;border-radius:16px;flex-direction:column}}
 </style>
 </head>
 <body>
