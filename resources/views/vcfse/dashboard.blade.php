@@ -15,7 +15,8 @@
 <!-- Wallet Balance Banner -->
 @if(isset($walletBalance) && $walletBalance > 0)
 <div style="background:linear-gradient(135deg,#16a34a,#15803d);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;color:#fff">
-  <div    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">{{ __('app.available_wallet_balance') }}</div>
+  <div>
+    <div style="font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">{{ __('app.available_wallet_balance') }}</div>
     <div style="font-size:32px;font-weight:900">£{{ number_format($walletBalance, 2) }}</div>
     <div style="font-size:12.5px;opacity:.75;margin-top:4px">{{ __('app.funds_loaded_by_admin') }}</div>
   </div>
