@@ -29,7 +29,7 @@
       <div class="stat-label">Total Spent</div>
       <div class="stat-value">£{{ number_format($totalSpent ?? 0, 2) }}</div>
       <div style="font-size:12px;color:#64748b;margin-top:8px">
-        {{ $redemptionCount ?? 0 }} Voucher Redemptions
+        {{ $redemptionCount ?? 0 }} Voucher Redeemed
       </div>
     </div>
     
